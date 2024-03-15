@@ -1,0 +1,234 @@
+// app global css in SCSS form
+
+  //add Dark as plugin then acess it as ...
+  // @click="$q.dark.toggle()"
+  //this only work for defined class_variables..
+  .body--light {  //this work for light /dark mode
+    --q-primary: #0026ff;
+    --q-secondary: #1537a7;
+    --q-accent: #cc00ff;
+  
+    --q-dark: #ffffff;
+    --q-light: #000000;
+    --q-dark-page: #030000;
+    --q-light-page: #000613;
+
+    --q-positive: #2aca50;
+    --q-negative: #c0051b;
+    --q-info: #00d0fa;
+    --q-warning: #ffbb00;
+
+    .text-light{
+      color:blue($color: #920fc5)
+    }
+
+    .bg-light{
+      color:blue($color: #88008d);
+      background:blue;
+    }
+
+  }
+
+  .body--dark {   //this work for dark/light moode
+    --q-primary: #0044ff;
+    --q-secondary: #0030ce;
+    --q-accent: #cc00ff;
+  
+    --q-dark: #011029;
+    --q-light: #000000;
+    --q-dark-page: #000000;
+    --q-light-page: #000613;
+  
+    --q-positive: #0dbb35;
+    --q-negative: #c0051b;
+    --q-info: #00d0fa;
+    --q-warning: #ffbb00;
+
+  }
+
+  //---------------------------- ColorPlate Definitions
+
+  .bg-cplate-2{
+      background:rgb(255, 0, 0)
+    }
+  .bg-cplate-0{
+      background:rgb(0, 0, 0)
+    }
+  
+  .bg-cplate-1{
+      background:rgb(255, 0, 0)
+    }
+
+
+.cplate-6{
+  color:rgb(255, 0, 0)
+}
+.cplate-0{
+  color:rgb(0, 0, 0)
+}
+
+.cplate-1{
+  color:rgb(41, 243, 0)
+}
+.cplate-2{
+  color:rgb(0, 87, 248)
+}
+.cplate-3{
+  color:rgb(255, 255, 255)
+}
+.cplate-4{
+  color:rgb(19, 255, 204)
+}
+.cplate-5{
+  color:rgb(184, 6, 255)
+}
+.cplate-5{
+  color:rgb(255, 208, 0)
+}
+
+//----------------backdrop_filters
+.iserviceMenu-Glass {
+  backdrop-filter: blur(3px);
+  background-color: rgba(253, 194, 0, 0.11);
+  color: rgb(0, 0, 255);
+ }
+ 
+ .iserviceMenu-Glass:hover {
+  backdrop-filter: blur(0.2px);
+  width:5vw;
+ }
+
+ .overlay-Glass {
+  backdrop-filter: blur(85px);
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 83);
+}
+.overlay-Glass:before {
+  background: inherit;
+}
+.overlay-GlassDark {
+  background: inherit;
+}
+
+.marquee {
+   animation:myfirst 1.5s linear infinite;
+   -webkit-animation: rightThenLeft 20s linear;
+}
+
+
+ .saleitContent-Glass {
+  backdrop-filter: blur(3px);
+  background-color: rgba(187, 143, 0, 0.11);
+
+  border-radius: 7px;
+  border: 0.02px solid rgba(255, 255, 255, 0.295);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ }
+ .saleitHeader-Glass {
+  backdrop-filter: blur(3px);
+  background-color: rgba(0, 110, 255, 0.11);
+
+  border-radius: 7px;
+  border: 0.02px solid rgba(255, 255, 255, 0.295);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ }
+
+ .saleitContentOps-Glass {
+  backdrop-filter: blur(3px);
+  background-color: rgba(0, 110, 255, 0.11);
+  color: rgb(0, 0, 255);
+  
+  border-radius: 7px;
+  border: 0.02px solid rgba(255, 255, 255, 0.295);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+ }
+
+//------------------cplate Definitions as class
+
+.triShapeU{
+  min-width: 1vw;
+  min-height: 1vw;
+  background: rgb(1, 255, 1);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+
+}
+.triShapeD{
+  min-width: 1vw;
+  min-height: 1vw;
+  background: rgb(255, 0, 0);
+  clip-path: polygon(50% 100%, 0% 0%,100% 0%);
+}
+//-------------------LayOut Wall - Global Styling
+
+.WAL{
+  width: 100%;
+  height: 100%;
+  padding-top: 0px;
+  padding-bottom: 3em;
+
+  &::before // sset the wall_Style & before any child tage draw this style
+  {
+    height: 10vh;
+    position: fixed;
+    content: '';
+    top: 0;
+    width: 100%;
+    //background-color: #0077ff;
+  }
+
+  &__layout{
+
+    margin: 0 auto;
+   
+    height: 100%;   
+    width: 100%;
+    max-width: 100vw;
+    border-radius: 2px;
+  }
+
+  .q-drawer--standard
+  {
+      .WAL__drawer-close
+    {
+        display: none;
+        
+    }
+  }
+  
+
+}
+  
+      
+@media (max-width: 850px) {//for screen size of below 850px
+
+  .WAL
+  {
+    padding: 0;
+ 
+    &__layout{
+
+      margin: 0 auto;
+      padding: 0px;
+      z-index: 4000;
+      height: 100%;   
+      width: 100%;
+      max-width: 70vw;
+      border-radius: 5px;
+    }
+}
+}
+
+@media (min-width: 691px) //for screen size of below 850px
+{
+.WAL
+{
+&__drawer-open
+{
+    display: none;
+
+}
+
+}
+
+}
+  

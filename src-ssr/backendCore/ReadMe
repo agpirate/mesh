@@ -1,0 +1,112 @@
+
+//setup mongoose variable as new variable_defining default database.....
+// define multiple database instances and import each in thier placess..
+
+// when model is made use the database instances or default instancess....
+
+import {model, Schema} from "mongoose"; // this mongoose has opened default databases...
+
+//One to One
+
+const modelOne = model(
+    "Customer",
+    new Schema({
+      name: String,
+      age: Number,
+      gender: String
+    })
+  );
+
+
+  const modelTwo = model(
+    "Identifier",
+    new mongoose.Schema({
+      cardCode: String,
+      customer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "modelOne"
+      }
+    })
+  );
+
+  module.exports = {modelOne, modelTwo };
+            //----------------------------------or
+
+            const mongoose = require("mongoose");
+
+const CustomerSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  gender: String
+});
+
+const Customer = mongoose.model("Customer", CustomerSchema);
+
+module.exports = { Customer, CustomerSchema };
+
+const mongoose = require("mongoose");
+const CustomerSchema = require("./Customer").CustomerSchema;
+
+const Identifier = mongoose.model(
+  "Identifier",
+  new mongoose.Schema({
+    cardCode: String,
+    customer: CustomerSchema
+  })
+);
+
+module.exports = Identifier;
+
+
+
+  //-----------------
+
+  const Customer = require("./models/Customer");
+  const Identifier = require("./models/Identifier");
+  
+  const createCustomer = function(name, age, gender) {
+
+      // Validate request
+
+
+
+      //------creating data models
+    const customer = new Customer({                         //
+      name,
+      age,
+      gender
+    });
+  
+
+            //-------
+    return customer.save();               // save into default mongoose database
+    /*
+    return customer.save().then (data =>{}).catch (err {})
+    */
+  };
+  
+  const createIdentifier = function(cardCode, customer) {   
+    const identifier = new Identifier({
+      cardCode,
+      customer
+    });
+  
+    return identifier.save();
+  };
+
+  //---------------------
+
+
+
+  createCustomer("bezkoder", 29, "male")            // receive return values or then/catch values....
+  .then(customer => {
+    console.log("> Created new Customer\n", customer);
+    
+    const customerId = customer._id.toString();
+    return createIdentifier(customerId.substring(0, 10).toUpperCase(), customerId);
+  })
+  .then(identifier => {
+    console.log("> Created new Identifier\n", identifier);
+  })
+  .catch(err => console.log(err));
+
