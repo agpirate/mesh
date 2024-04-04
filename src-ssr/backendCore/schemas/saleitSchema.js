@@ -1,7 +1,7 @@
 
 //import user3A from "src/hooks/user3A";
-//var todday = () => Math.floor(Date.now() / 1000);
-var todday = () => new Date().toLocaleDateString();//.split("T")[0];
+//var new Date() = () => Math.floor(Date.now() / 1000);
+var todday = () => new Date().toLocaleString();//.split("T")[0];
 var ObjectID =""
 //-------------USER PROFILE_Variables..
 
@@ -24,9 +24,15 @@ const saleitSchema = {
     $ifNull: "",
   },
   phone: { // will hold User_ID/phone as ref_value
-    type: String,vtype:"String",
+    type: Number,vtype:"Number",
     default: "",
     $ifNull: "",
+  },
+  phoneCode: {
+    type: Array,vtype:"Array",
+    default: ['',''],
+    $ifNull: ['',''],
+    required:true,
   },
   userName: { // will hold User_ID/phone as ref_value
     type: String,vtype:"String",
@@ -36,10 +42,16 @@ const saleitSchema = {
   //---------//----  jack
   catagory: {
     type: String,vtype:"String",
-    default: "Vehicles",
-    $ifNull: "",
-    enum: ["Vehicles", "Households","Phones","Displays","?",""],
+    default: "Households",
+    $ifNull: "Households",
+    enum: ["Vehicles", "Households","Phones","Displays"],
   },
+  queryWeight: { //yyyy(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+    type: String,vtype:"String",
+    default: "00-00-0",
+    $ifNull: "00-00-0",
+  },
+  //---------
   usage: { //
       type: String,vtype:"String",
       default: "Used",
@@ -76,24 +88,39 @@ const saleitSchema = {
       default: 0,
       $ifNull: 0,
     },
+  discount: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
   tPrice: {
       type: Number,vtype:'Number',
        default: 0,
        $ifNull: 0,
      },
-  location: { //content physical location
-    city: {
-      type: String,vtype:"String",
-      default: "Mekelle - Tigrai",
-      $ifNull: "Mekelle - Tigrai",
-    },
-    street: {
-      type: String,vtype:"String",
-      default: "Hawelti",
-      $ifNull: "Hawelti",
-    },
-    },
-  coordinate: { //content GPS locations
+  location: {
+      country: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        provinance: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        city: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        street: {
+          type: String,
+            default: "",
+            $ifNull: "",
+          },
+      },
+  geolocation: { //content GPS locations
       lat: {
         type: String,vtype:"String",
         default: "000000",
@@ -136,12 +163,30 @@ const saleitSchema = {
      },
      clients:{
       type:Array,
-      default:[{ phone:"",userID:'',userName:'',orderID:'',confirmID:'', quantity:0,price:0,paymentMethod:'onDelivery',locked:"No",time:new Date() } ],
+      default:[],
       vdata: {
-        phone: {
-          type: String,vtype:"String",
-          default: "+251-",
-          $ifNull: "+251-",
+        geolocation: { //content GPS locations
+          lat: {
+            type: String,vtype:"String",
+            default: "000000",
+            $ifNull: "000000",
+          },
+          long: {
+            type:String,vtype:"String",
+            default: "000001",
+            $ifNull: "000001",
+          }
+        },
+        phone: { // will hold User_ID/phone as ref_value
+          type: Number,vtype:"Number",
+          default: "",
+          $ifNull: "",
+        },
+        phoneCode: {
+          type: Array,vtype:"Array",
+          default: ['',''],
+          $ifNull: ['',''],
+          required:true,
         },
         userName: {
           type: String,vtype:"String",
@@ -177,18 +222,18 @@ const saleitSchema = {
           type: String,vtype:"String",
           default: "onDelivery",
           $ifNull: "onDelivery",
-          enum: ["onDelivery","Tele_Birr","EBC_Birr","others"],
+          enum: ["onDelivery","TELBirr","EBCBirr","others"],
         },
         time: {
           type: Date,vtype:'Date',
           default:new Date(),
           $ifNull:new Date(),
         },
-        locked: {
+        served: {
           type: String,vtype:"String",
-          default: "No",
-          $ifNull: "No",
-          enum: ["Yes", "No"],
+          default: "Requested",
+          $ifNull: "Requested",
+          enum: ["Served","Queed", "Requested"],
         },
         description: {
           type: String,vtype:"String",
@@ -199,7 +244,7 @@ const saleitSchema = {
     },
      comments:{
       type:Array,
-      default:[ { comment:"", UserID:"",time:new Date() } ],
+      default:[],
       vdata: {
         comment: {
           type: String,vtype:"String",
@@ -207,6 +252,11 @@ const saleitSchema = {
           $ifNull: "",
         },
         userID: {
+          type: String,vtype:"String",
+          default: "",
+          $ifNull: "",
+        },
+        userName: {
           type: String,vtype:"String",
           default: "",
           $ifNull: "",

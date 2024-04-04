@@ -7,7 +7,7 @@ import { profileMetaSchema } from "../schemas/profileSchemas";
 var Schema = mongoose.Schema,
 ObjectId = Schema.ObjectId;
 
-var todday = () => new Date().toLocaleDateString();//.split("T");
+var todday = () => new Date().toLocaleString();//.split("T");
 //------------------------------------------------------------------
 let _profileSchema = new Schema(
   profileSchema,
@@ -21,6 +21,7 @@ _profileSchema.method("toJSON", function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
   object.updatedAt=object.updatedAt.toLocaleDateString()
+  
   return object;
 });
 

@@ -5,12 +5,25 @@ import { saleitMetaSchema } from "../schemas/saleitSchema";
 //import { accComputing } from "../../services/accessComputing"
 // initialize the connections on boots...
 var Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
+ObjectId = Schema.ObjectId;
 
 mongoose.set("strictQuery", true);
 
 //-------
-var todday = () => new Date().toLocaleDateString();
+var todday = () => new Date().toLocaleString();
+const _dateConv = 1000 * 60 * 60 * 24
+
+function _eldate(startDate) {
+  var elapsedTime = new Date() - new Date(startDate)
+  // Calculate days and hours from milliseconds
+  var days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
+  var hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+  var minutes = Math.floor(elapsedTime / (1000 * 60));
+    hours %= 24;
+    minutes %= 60;
+
+  return { days: days, hours: hours,minutes:minutes};
+}
 
 //------------------------------empy Schema
 
@@ -18,21 +31,13 @@ let _saleit = new Schema(
   saleitSchema,
   { timestamps: todday }
 );
-
 _saleit.method("toJSON",  function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
 
-  object.updatedAt=object.updatedAt.toLocaleDateString()
-
-  //is_user // root,regAdmin,[status_controller]
-  //object.accprivileges = await accComputing();
-  //enum datatype require exactselections options..but other Number/String could handle null,undefined values
-  //but takecare enum values and numbers(which has to be used in computing_equations( w/c shouldn't be null/undefined))
-  //object.department.role= nul.includes(object.department.role) ? "" : object.department.role
-  // object.department.role= nul.includes(object.department.mainRole) ? "" : object.department.mainRole
+  //object.updatedAt= object.updatedAt
+  object.fupdatedAt= _eldate(object.updatedAt)
   //---------------
-
   return object;
 });
 

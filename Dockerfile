@@ -75,3 +75,28 @@ CMD ["quasar","dev"]
 
 #use git commands to fetch and commit of project activities into github
 #--------------pm2 ls ; pm2 start "quasar dev -m ssr" ; pm2 stop/start "quasar    ...." ; or add pm2 to boot start....
+
+
+#create github_folder(workspace)_repository
+#install git_tools on localsystem (intialized)
+#git init (git status)
+
+#1] tell what to push(into repo)..which is all the folder_in here
+#git add .  (push all this_folder_file).. if ignoregit(add blacklist)
+#2] and commit the push_changing..apply the push
+#git commit 
+
+#3]...here is the github_repository(store).. i need to push(the commite_changes(folders))
+#git remote add origin https://github..../agpirate/itserive.git
+#4] finally change the commit into the destination git_url of given branch(master default)
+#git push origin master  
+
+#git checkout -b itservice(create new_branck other than_main/master)
+
+
+#ctl+shift+p ( create (nodejs+mongodb dev container on workspace/project_directory))
+#rebuild the container(the node++ are to be installed_over_the workspace>>)
+#&install the quasar and create new_project(with it's own directory)
+
+#then you can ( clone it into git_connected_vs_code....as workspace/project_dire/quasar_dir)
+#or from github page..goes to code and open on installed vscode ( then save it.......into local system & commit(push...next))

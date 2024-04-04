@@ -1,7 +1,7 @@
 
 //import user3A from "src/hooks/user3A";
 //var todday = () => Math.floor(Date.now() / 1000);
-var todday = () => new Date().toLocaleDateString();//.split("T")[0];
+var todday = () => new Date().toLocaleString();//.split("T")[0];
 var ObjectID =""
 //-------------USER PROFILE_Variables..
 
@@ -24,9 +24,15 @@ const saleitSchema = {
     $ifNull: "",
   },
   phone: { // will hold User_ID/phone as ref_value
-    type: String,vtype:"String",
+    type: Number,vtype:"Number",
     default: "",
     $ifNull: "",
+  },
+  phoneCode: {
+    type: Array,vtype:"Array",
+    default: ['',''],
+    $ifNull: ['',''],
+    required:true,
   },
   userName: { // will hold User_ID/phone as ref_value
     type: String,vtype:"String",
@@ -36,10 +42,15 @@ const saleitSchema = {
   //---------//----  jack
   catagory: {
     type: String,vtype:"String",
-    default: "Vehicles",
-    $ifNull: "",
-    enum: ["Vehicles", "Households","Phones","Displays","?",""],
+    default: "Households",
+    enum: ["Vehicles", "Households","Phones","Displays"],
   },
+  queryWeight: { //yyyy(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+    type: String,vtype:"String",
+    default: "2024-00-00-0",
+    $ifNull: "2024-00-00-0",
+  },
+  //---------
   usage: { //
       type: String,vtype:"String",
       default: "Used",
@@ -47,7 +58,6 @@ const saleitSchema = {
       enum: ["New", "Used","?",""],
     },
   //---------
-
   saleitgr:{
     type:Array,
     default:["/saleitgr/saleitpng.png"],
@@ -76,24 +86,39 @@ const saleitSchema = {
       default: 0,
       $ifNull: 0,
     },
+  discount: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
   tPrice: {
       type: Number,vtype:'Number',
        default: 0,
        $ifNull: 0,
      },
-  location: { //content physical location
-    city: {
-      type: String,vtype:"String",
-      default: "Mekelle - Tigrai",
-      $ifNull: "Mekelle - Tigrai",
-    },
-    street: {
-      type: String,vtype:"String",
-      default: "Hawelti",
-      $ifNull: "Hawelti",
-    },
-    },
-  coordinate: { //content GPS 
+  location: {
+      country: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        provinance: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        city: {
+        type: String,
+          default: "",
+          $ifNull: "",
+        },
+        street: {
+          type: String,
+            default: "",
+            $ifNull: "",
+          },
+      },
+  geolocation: { //content GPS 
       lat: {
         type: String,vtype:"String",
         default: "000000",
@@ -135,13 +160,32 @@ const saleitSchema = {
        enum: ["posted", "sold","Paused","discarded"],
      },
     clients:{
-      type:Array,
-      default:[{ phone:"",userID:'',userName:'',orderID:'',confirmID:'', quantity:0,price:0,paymentMethod:'onDelivery',locked:"No",time:new Date() } ],
+      type:Array,   ///array better to have default value on client side, for template form_generation
+      default:[{ phone:"",phoneCode:'',userID:'',userName:'',orderID:'',confirmID:'',
+       quantity:0,price:0,paymentMethod:'onDelivery',served:"Requested",time:new Date() } ],
       vdata: {
-        phone: {
-          type: String,vtype:"String",
-          default: "+251-",
-          $ifNull: "+251-",
+        geolocation: { //content GPS locations
+          lat: {
+            type: String,vtype:"String",
+            default: "000000",
+            $ifNull: "000000",
+          },
+          long: {
+            type:String,vtype:"String",
+            default: "000001",
+            $ifNull: "000001",
+          }
+        },
+        phone: { // will hold User_ID/phone as ref_value
+          type: Number,vtype:"Number",
+          default: "",
+          $ifNull: "",
+        },
+        phoneCode: {
+          type: Array,vtype:"Array",
+          default: ['',''],
+          $ifNull: ['',''],
+          required:true,
         },
         userName: {
           type: String,vtype:"String",
@@ -173,11 +217,12 @@ const saleitSchema = {
           default: 0,
           $ifNull: 0,
         },
+
         paymentMethod: {
           type: String,vtype:"String",
           default: "onDelivery",
           $ifNull: "onDelivery",
-          enum: ["onDelivery","Tele_Birr","EBC_Birr","others"],
+          enum: ["onDelivery","TELBirr","EBCBirr","others"],
         },
         time: {
           type: Date,vtype:'Date',
@@ -189,11 +234,11 @@ const saleitSchema = {
           default: "",
           $ifNull: "",
         },
-        locked: {
+        served: {
           type: String,vtype:"String",
-          default: "",
-          $ifNull: "No",
-          enum: ["Yes", "No"],
+          default: "Requested",
+          $ifNull: "Requested",
+          enum: ["Served","Queed", "Requested"],
         },
       }
     },
@@ -207,6 +252,11 @@ const saleitSchema = {
           $ifNull: "",
         },
         userID: {
+          type: String,vtype:"String",
+          default: "",
+          $ifNull: "",
+        },
+        userName: {
           type: String,vtype:"String",
           default: "",
           $ifNull: "",
@@ -251,6 +301,7 @@ const saleitMetacompute ={
       type: String,
       default: "others",
     },
+
   }
 const saleitMetaSchema ={
   _stage_: {

@@ -10,7 +10,10 @@
  * anything you import here (except for express and compression).
  */
 import express from "express";
-import compression from "compression";
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+//import compression from "compression";
 import {
   ssrClose,
   ssrCreate,
@@ -19,81 +22,10 @@ import {
   ssrServeStaticContent,
 } from "quasar/wrappers";
 
-  //---------------------------------------------------Custome Routes
-  //1) Home & token authentication
-  const tokenApi = require('./ssrAPIs/profileAPIs/tokenApi');
-
-  //2) Login (Authentications Users)
-  const profileApi = require('./ssrAPIs/profileAPIs/profileApi');
-  const profileMetaApi = require('./ssrAPIs/profileAPIs/profileMetaApi');
-
-  //[[[[[3]]]]] ----Client_User content(Modeling)
-  const saleitApi = require('./ssrAPIs/modalAPIs/saleitApi');
-  const saleitMetaApi = require('./ssrAPIs/modalAPIs/saleitMetaApi');
-  //[[[[[3]]]]] ----Client_User content(Modeling)
   
 const bodyParser = require("body-parser");
 //const path = require('path');
-const fs = require("fs");
-const multer = require("multer");
-//const mongoose = require("mongoose");
-//var imageModel = require('../models/imageModel');
-
-//-------------------------------------------------
-//is used to parse request.body datas to be visible as json form when..thier are requesting as json_content_type
-// create application/json parser ///// none global parsing usage
-//var jsonParser = bodyParser.json(); // or we can use this on each request_paths
-//import fs from "fs";
-//import path from "path";
-// create application/x-www-form-urlencoded parser //// non global parsing usage
-//var urlencodedParser = bodyParser.urlencoded({ extended: false });
-
 //-----------
-
-const nul = [null, undefined, false, "", [], {},NaN];
-
-
-let doNotCache={"Cache-Control": "no-cache"}
-let cacheIndefinitely={"Cache-Control":"public, max-age=31557600"}
-let cacheForOneDay={"Cache-Control":"public, max-age=86400"}
-
-///////-----------Headers Response
-//Session Configuration
-
-async function computeSession(key){
-
-  const session = {
-    secret: process.env.SESSION_SECRET,
-    cookie: {},
-    resave: false,
-    saveUninitialized: false,
-  };
-  return session
-}
-
-let resHeader = {
-  "Content-Type": "application/json", //  response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
-  "Content-Length": "123",
-  yrgrequest: "12345",
-  "Set-Cookie": ["type=ninja", "language=javascript","SameSite=None",],
-
-  doNotCache //
-};
-
-let staticHeader = {
-  "Content-Type": "application/json", //  response.setHeader('Set-Cookie', ['type=ninja', 'language=javascript']);
-  "Content-Length": "123",
-  yrgrequest: "12345",
-  "Set-Cookie": ["type=ninja", "language=javascript","SameSite=None",],
-  "SameSite": "None",
-  cacheForOneDay,
-};
-
-//if (app.get("env") === "production") {
-// Serve secure cookies, requires HTTPS
-//  session.cookie.secure = true;
-//}
-
 //================================================Defined...
 /**
  * Create your webserver and return its instance.
@@ -133,10 +65,9 @@ In other words, it simplifies the incoming request.
 */
 app.set("view engine", "ejs");
 
+app.use(bodyParser.json());
 
-  app.use(bodyParser.json());
-
-  //---------------serving statics
+//---------------serving statics
 // Serving static files from 'public' directory
 //app.use(express.static("public")); //server static of public_folder on hardcoded_path as ip:port/public [this way is vulnerable for accessing other project folders..use virtual path]
 app.use(express.static('public')); 
@@ -146,14 +77,13 @@ app.use("virtualPath",express.static('public')); //or you can use alias_name for
 
 // Serving static files from 'public' directory at a virtual path '/static'
 app.use('/static', express.static('public'));//server static of pulic folder on virtual url_ of ip:port/static
-
 app.use("/css", express.static(__dirname+"public/css"));
 app.use("/img", express.static(__dirname+"public/img"));
 app.use("/js", express.static(__dirname+"public/js"));
 
 // Serving static files with cache control
 app.use('/public',express.static('public', {
-  maxAge: '1d', /* Cache for 1 day,*/
+  maxAge: '7d', /* Cache for 1 day,*/
   etag: true, /* Enable ETag headers..helps in efficient cache validation */
  index: false /*By default, Express does not list directory contents, but it's important to ensure that this feature remains
  disabled to prevent information disclosure.*/
@@ -164,8 +94,9 @@ app.use('/public',express.static('public', {
  the speed of a web application. */
 
 
-//and serve static files from 'assets' directory tooo
-app.use("assets",express.static('src/assets'));//
+//and serve static files from 'assets' directory tooo ('/..' required)
+app.use("/assets",express.static('src/assets'));//
+
 //enables to access--childs of assets_folder..using_appending </> or </assets> to ( foldername/file or file)_ inside
 app.use("virtualPath",express.static('public')); //or you can use alias_name for the </> or </assets>_appending ( /virtualPath/foldername/file or justFile)
 
@@ -181,7 +112,6 @@ app.use((req, res, next) => {
 //res.setHeader('Cache-Control', 'public, max-age=31536000');//This header instructs browsers to cache the resource for one year.
 
 //-------------------------serving statics
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
   /*Multer is a node.js middleware for handling multipart/form-data , 
@@ -198,9 +128,43 @@ app.use(bodyParser.urlencoded({ extended: true }));
     
   }
 
-  //------------------------------------------
+  //------------------------------------------setting headers as middleware for each response
+// Middleware to parse cookies
+app.use(cookieParser());
 
+// Middleware for session management
+
+  app.use((req, res, next) => {
+    // Set common headers for all responses
+    res.setHeader('X-Powered-By', 'YitService');
+    res.setHeader('Content-Type', 'application/json');
+    
+    // Set security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    
+    // Prevent browser caching
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '4d');
+
+    // Call the next middleware
+    next();
+});
   //-------------------------------------------Custome Routes
+  //---------------------------------------------------Custome Routes
+  //1) Home & token authentication
+  const tokenApi = require('./ssrAPIs/profileAPIs/tokenApi');
+
+  //2) Login (Authentications Users)
+  const profileApi = require('./ssrAPIs/profileAPIs/profileApi');
+  const profileMetaApi = require('./ssrAPIs/profileAPIs/profileMetaApi');
+
+  //[[[[[3]]]]] ----Client_User content(Modeling)
+  const saleitApi = require('./ssrAPIs/modalAPIs/saleitApi');
+  const saleitMetaApi = require('./ssrAPIs/modalAPIs/saleitMetaApi');
+  //[[[[[3]]]]] ----Client_User content(Modeling)
 
   //1) Home & token authentication
 

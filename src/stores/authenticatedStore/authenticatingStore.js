@@ -187,6 +187,7 @@ export const authenticatingStore = defineStore(STORE_NAME, () => {
   let yearDatasParam = ref({}); //
   let monthDatas = ref({}); //
   let monthDatasParam = ref({}); //
+  //---------
   //---------------------------
   let logStatus = reactive(initialState);
   let _priviledgedFor = reactive({});
@@ -244,7 +245,7 @@ async function wrapDataPriviledge(userData){
 
   //
  // //console.log(acces,userData,'modalaccess0')
- userData['_anyAccess'] = false; //has any access level
+ userData['_hasAccess'] = false; //has any access level
  userData['_isupgraded'] = false; //has specific access level(upgraded)
  userData['_ispremium'] = false; //has specific access level(primium)
  userData['_iss'] = {};
@@ -265,7 +266,7 @@ async function wrapDataPriviledge(userData){
 
         if(acces){ //if there is any accccc?
                   //------------user_has_privileges Accesss...[there is access privileges....]
-          userData['_anyAccess'] = true; 
+          userData['_hasAccess'] = true; 
           //------initializing_iss ['isstore','issale',.....]
           userData['_iss'][keyy]=[]
           var Modalacces = nul.includes(_acctype[keyy]) ? "" : _acctype[keyy] //the modalAccess priV
@@ -359,23 +360,22 @@ return await procApiWrap
 .then( async (resp) => {
 if (resp[0]) {
   //Good Day....Data IS comings with .data .headers .Ok(200)_staus
-
   var _userData = await wrapDataPriviledge(resp[1]);
-  var __anyAccess = nul.includes(_userData._anyAccess) ? false : _userData._anyAccess;
+  var __hasAccess = nul.includes(_userData._hasAccess) ? false : _userData._hasAccess;
   logStatus = { _isRegistered: true,user: _userData };
   return logStatus;
 
 } else {
 } //Handler Friendly Errors (with Response of Respective_401,501,404)
 
-logStatus ={ _isRegistered: false, user: null,_anyAccess:false } ;
+logStatus ={ _isRegistered: false, user: null,_hasAccess:false } ;
 return logStatus;
 // return false;
 })
 .catch((error) => {}); //Handler NonFriendly Errors
 } catch (error) {} //Handler Supper Non_Friendly Errors
 
-logStatus = { ...logStatus, ...{ _isRegistered: false, user: null,_anyAccess:false } };
+logStatus = { ...logStatus, ...{ _isRegistered: false, user: null,_hasAccess:false } };
 
 return logStatus;
 
@@ -387,7 +387,7 @@ return logStatus;
   //intialize..async lates_data fetching..
 
   return {
-
+    getLogStatus,
     //asyncDatas,
     useLogin
   };

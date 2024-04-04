@@ -1,25 +1,16 @@
 import { defineStore } from "pinia";
 import { ref, reactive, computed } from "vue";
-//import qs from "qs"; //it format any_formated(obj,array) of params into url queriess....when there is params>
-//const querystring = require("node:querystring"); //querystring.parse
-
 import { ssrAPI } from "../../srcenv";
-//import { databaseAPI_URL } from "../../config";
 import axios from "axios";
+//import { _wiseDating } from "src/composables/utilServices/datePeriod";
 
 //const $q = useQuasar();              //{[[[[   .get(   url,{params:{},headers:{}})  ]]]]}....received as obj_req.params || response.data/staus/
 
 const API_URL = ssrAPI+"/profileapi"; //const API_URL = `${import.meta.env.API_URL}/users`;
 const _model_mainURL="/profile"
 const STORE_NAME ="profileStore";
-//
-
-const SETTINGS_LOCAL_STORAGE_KEY = "settings";
 
 const authApi = axios.create({ baseURL: API_URL, timeout: 7000 });
-
-const nul = [null, undefined, false, "", [], {}];
-
 const procApiWrap = {get: request("GET"), post: request("POST"), put: request("PUT"), patch: request("PATCH"), delete: request("DELETE")};
 
 function request(method) {
@@ -32,14 +23,29 @@ function request(method) {
     
     StoreDebug = "Store Parameters and Header Setted Up..."
 
-    if (body) {
-
-        let tobeUpload = nul.includes(body.upload) ? false : body.upload  
+    if (body != null) {
+        var _formData = new FormData()
+        let tobeUpload = body['upload'] ?? false 
         if (tobeUpload) {
             requestOptions.headers = {'Content-Type':"multipart/form-data"}
-            requestOptions.params['upload'] = tobeUpload
+            requestOptions.params['upload'] = tobeUpload //holding the fileName as file:__ or files:___
+            //------------
+            let file_ = [tobeUpload['file'],tobeUpload['files']]
+
+            for(let key in body){ //if there is file_data duplicate all data into formData(format)...since file uploading is better as formData
+                if(file_.includes(key)){    ///if file_data embed it as ('key',_value) and if multiple file_ iterate them 
+                  for(let kkey in body[key]){    //to support uploading multiple_file of sameName...
+                  _formData.append(key,body[key][kkey])
+                  }
+                }else{
+                    if(typeof body[key] != 'object'){ //it's hard to send object([]-{}) _ sending file_won't involve_object_data
+                      _formData.append(key,body[key])  //and object(array specially has to be defined manually)
+                    }
+                  }
+            }
+            body=_formData
          }
-         console.log(requestOptions,'post/put_store.....')
+      console.log(_formData,'post/put_store.....aaaa')
       //---------------------------
       try {
         ////API_GATEWAY {{{[[[[[[[[[[[---------]]]]]]]]]]]]]]]}}} e POST/PUT
@@ -169,17 +175,16 @@ const yearDataFilter = ref({ //{  date: { $gte: "2022-01-01", $lte: "2022-12-30"
 
 //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
 
-let getuserID = async () =>
-  process.browser ? localStorage.getItem("userID") : "";
+let getuserID = async () => process.browser ? localStorage.getItem("userID") : "";
 
 export const profileStore = defineStore(STORE_NAME, () => {
   //state
   let Datas = ref([]); //
-  let DatasParam = ref({});
+  let syncQuery = ref({});
   let yearDatas = ref({});
-  let yearDatasParam = ref({}); //
+  let yearsyncQuery = ref({}); //
   let monthDatas = ref({}); //
-  let monthDatasParam = ref({}); //
+  let monthsyncQuery = ref({}); //
   //---------------------------
   let loadingStatus = ref(false);
   let syncPeriod = ref(5000);
@@ -189,133 +194,22 @@ export const profileStore = defineStore(STORE_NAME, () => {
 
   //getter/ computed
   const getDatas = computed(() => Datas.value);
-  //const getFDatas = computed((filterOps) => Datas.value);
   const getyearDatas = computed(() => yearDatas.value);
   const getmonthDatas = computed(() => monthDatas.value);
-  const getloadingStatus = computed(() => loadingStatus.value);
 
-  const getFDatas = (filterOps) => {
-
-    yearDatas.value;
-    return ""
-  }
-  const getalert = {
-    alertI: computed(() => alertI),
-    alertII: computed(() => alertII),
-  };
   //action
-  function set_DatasParam(objParams) {
-    //set user_controllable alerts
-    DatasParam.value = objParams;
-    //alertI.sms = message;
+  function set_syncQuery(objParams) {
+    syncQuery.value = objParams;
     return;
   }
 
-  function set_alertI(logic, message) {
-    //set user_controllable alerts
-    alertI.status = logic;
-    alertI.sms = message;
-    return;
-  }
-
-  function set_alertII(logic, message) {
-    //set user_controllable alerts
-    alertII.status = logic;
-    alertII.sms = message; //
-    return;
-  }
-
-  const asyncAnualData = async function (objParam = null) {
-    //+++++++++++++++++++...
-    loadingStatus.value = true;
-    objParam = yearDataFilter.value;
-    try {
-      return await procApiWrap
-        .get(_model_mainURL+"s", null, objParam)
-        .then((resp) => {
-          if (resp[0]) {
-            try {
-              let yearlyData = resp[1];
-              let monthsData = { 1: [], 2: [],3: [],4: [],5: [], 6: [],7: [],8: [],9: [],10: [],11: [],12: []};
-
-              for (let items of yearlyData) {
-              console.log(items["updatedAt"],"Annual Data Date Format")
-               let monthIndex = items["updatedAt"].split("/")[0];
-
-                monthIndex = Number(monthIndex);
-
-                monthsData[monthIndex].push(items);
-              }
-              yearDatas.value = monthsData; //{'apr':[{},{}],'jun':[{},{}]}
-            
-
-              return true;
-            } catch {}
-          } else {
-            //returns.......data [False,'Error...']
-          } //Handler Friendly Errors (with Response of Respective_401,501,404)
-          return false;
-        })
-        .catch((error) => {
-          return false;
-        }); //Handler NonFriendly Errors
-    } catch (error) {} //Handler Supper Non_Friendly Errors
-
-    return false;
-  };
-
-  asyncAnualData();
-
-  const asyncMonthData = async function (objParam = null) {
-    //+++++++++++++++++++...
-    loadingStatus.value = true;
-    objParam = monthDataFilter.value;
-
-    try {
-      return await procApiWrap
-        .get(_model_mainURL, null, objParam)
-        .then((resp) => {
-          if (resp[0]) {
-            try {
-              let monthData = resp[1]["data"];
-              let monthsData = {
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: [],
-                10: [],
-                11: [],
-                12: [],
-              };
-              for (let items of monthData) {
-                let monthIndex = items["updatedAt"].split("-")[1];
-                monthIndex = Number(monthIndex);
-
-                monthsData[monthIndex].push(items);
-              }
-              monthDatas.value = monthsData; //{'apr':[{},{}],'jun':[{},{}]}
-              ////console.log(yearDatas.value,'uuuuuuuuuuuuuuuuuuuuuuuu')
-              return true;
-            } catch {}
-          } else {
-            //returns.......data [False,'Error...']
-          } //Handler Friendly Errors (with Response of Respective_401,501,404)
-          return false;
-        })
-        .catch((error) => {
-          return false;
-        }); //Handler NonFriendly Errors
-    } catch (error) {} //Handler Supper Non_Friendly Errors
-
-    return false;
-  };
-
-  let counter = 0;
+    //action
+function set_syncQuery(objParams) {
+      //set user_controllable alerts
+      syncQuery.value = objParams;
+      //alertI.sms = message;
+      return;
+    }
 
   const asyncDatas = async (syncState = 60000, reqParams = {}) => {
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -325,23 +219,23 @@ export const profileStore = defineStore(STORE_NAME, () => {
     } 
 
     let asyncing = setInterval(async () => {
-      ////console.log(DatasParam.value,syncPeriod.value,"authStore#asyncDatas New Arrived....YO");
+      ////console.log(syncQuery.value,syncPeriod.value,"authStore#asyncDatas New Arrived....YO");
       try {
         return await procApiWrap
-          .get(_model_mainURL+"s", null, reqParams)
+          .get(_model_mainURL+"s", null, syncQuery.value)
           .then((resp) => {
             if (resp[0]) {
               let users = resp[1];
               try {
                 if (Datas.value.length !== users.length) {
-                  //console.log("_Update Detected...#profile@store",syncPeriod.value)
+                  //console.log("_Update Detected...#saleit@store",syncPeriod.value)
                   Datas.value = resp[1];
                   counter = 0;
                   syncPeriod.value = 30000;
                   //clearInterval(asyncing);
                   return true;
                 } else {
-                  //console.log("No_Update Detected...#profile@store",syncPeriod.value)
+                  console.log("No_Update Detected...#saleit@storepppp",Datas.value.length,'-',syncQuery.value,syncPeriod.value)
                   counter = counter + 1;
                   if (counter === 5) {
                     syncPeriod.value = 20000;
@@ -357,6 +251,8 @@ export const profileStore = defineStore(STORE_NAME, () => {
       } catch (error) { return true;  } //Handler Supper Non_Friendly Errors
     }, syncPeriod.value); //set it to zero/# to stop/Synchronizing...
   };
+  
+  //asyncDatas(5000);
   //asyncDatas(5000);
 
   //createDataa
@@ -453,21 +349,13 @@ export const profileStore = defineStore(STORE_NAME, () => {
    // return false;
   }
   
-
-
   return {
     //-----synchronize give (DATAs)
-    asyncAnualData,
-    asyncMonthData,
     asyncDatas,
     //------------getter(computed) porting
-    getyearDatas,
-    getmonthDatas,
     getDatas,
     //------------------set client_controller setting..
-    set_DatasParam,
-    set_alertI,
-    set_alertII,
+    set_syncQuery,
     //--------------actions porting
     createData,
     readData,

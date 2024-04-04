@@ -1,11 +1,11 @@
 <template>
-    <q-page class="q-px-sm q-gutter-sm column justify-center items-center bg-dark" >
 
- 
+    <q-page class="q-px-sm q-gutter-sm column justify-center items-center bg-orange"  v-if="_loging__spin">
+
       <div v-if="_loging__spin" >
         <q-spinner-rings
           color="blue"
-          size="2em"
+          size="10em"
         />
         <q-tooltip :offset="[0, 8]">QSpinnerRings</q-tooltip>
       </div>
@@ -13,24 +13,76 @@
       <div class="q-mt-sm"  v-else>
 
         <div class="text-white">
-
-        {{  _loging__message }}
-
+              {{  _loging__message }}
         </div>
       </div>
         
+      </q-page>
+
+    <q-page v-model="_confirmPhone._dialog" persistent class="bg-orange column" v-else-if="_confirmPhone._dialog">
+      
+      <div class="col flex flex-center column q-gutter-md">
+
+        <q-card  class="text-weight-bold text-h4 text-white transparent q-pa-sm" hidden>
+
+            <q-item-label>
+                itService
+            </q-item-label>          
+
+          </q-card>
+
+        <q-card style="min-width: 350px" class="bg-dark">
+        <q-card-section class="q-pa-sm q-gutter-sm">
+          <q-item-label class="text-weight-bold text-orange text-h5">Create 'My Store'</q-item-label>
+          <q-item-label caption>Enter Phone Number, to Join Saler and Buyer</q-item-label>
+        </q-card-section>
+       
+        <q-card-section class="q-pa-md row  q-gutter-sm column ">      
+               <q-select rounded outline color="orange" bottom-slots filled v-model="onplayRowItem.phoneCode" :options="Object.values(countries)" label="Country" :dense='true' class="col">  
+                <template v-slot:prepend>
+                  <q-icon name="place" />
+                </template>              
+              </q-select>
+              
+              <q-input type='Number' rounded outlined bottom-slots v-model="onplayRowItem.phone" label="Phone Number" :prefix="'+'+onplayRowItem.phoneCode[1]+'-'" :dense='true' counter>
+                <template v-slot:hint>
+                  {{ _phoneDebug }}
+                </template>
+              </q-input>
+
+        </q-card-section>
+        <q-card-section class="q-py-xs">
+          <q-item-label caption>Free to Sale & Buy</q-item-label>
+        </q-card-section>
+        <q-card-actions class="text-dark bg-orange">
+          <q-btn flat label="Cancel" v-close-popup class="text-black"/>
+          <q-btn flat label="Create Store" @click="_manageStoreLogin()" />
+        </q-card-actions>
+      </q-card>
+
+      <q-card class="q-py-md">
+
+        {{  _loging__message  }}
+      </q-card>
+
+        </div>
     </q-page>
+
+
  
   </template>
   
   <script setup>
-  import { ref, reactive, onMounted } from "vue";
+  import { ref, reactive, onMounted,onBeforeMount } from "vue";
   
   //---------------------Login form
   import { authenticatingStore } from "stores/authenticatedStore/authenticatingStore";
   import { profileStore } from "stores/authenticatedStore/profileStore";
+
+  import {getCountry,getState,countries } from "src/services/geotimezone"
   import { useRouter } from "vue-router";
   import { LocalStorage, useQuasar, useMeta } from "quasar";
+import { computed } from "vue";
   
   const authenticateService = authenticatingStore();
   const profileService = profileStore();
@@ -63,13 +115,21 @@
   
   //-------------UserInformations
 var onplayRowItem =ref({})
-var _clientData =ref({})
+const _buildDataModel = () =>{
+  onplayRowItem.value.geolocation={}
+  onplayRowItem.value.geolocation={'lat':'','long':''}
 
+  onplayRowItem.value.location={}
+  onplayRowItem.value.location ={'country':'','city':'','street':''};
+
+  return true
+}
+_buildDataModel()
   //--------------------------- reactive Variables
   //const profileStore={};
   let siteLoading = ref(true);
   let message = ref("Please write you correct keys..");
-  let _loging__spin = ref(false);
+  let _loging__spin = ref(true);
   var _loging__message =ref("")
   
   //------------------------authentications variables
@@ -79,101 +139,45 @@ var _clientData =ref({})
   
   //----------------------------authentications Logics
   async function storeLogin() {
-  //response is applied as keyword,..when it is async_await function... but not if it really deep
-  _loging__spin.value = true;
-   localStorage.clear();
-  //-----------------------embed dynamic userData
-  //onplayRowItem.value.value.phone = _clientData.phone //__liveCord
-  //onplayRowItem.value.value.__liveCord = _clientData.__liveCord //__liveCord
-  //--------------
-    return await authenticateService.useLogin(onplayRowItem.value).then( (response) => {
 
-      var _isRegistered = response['_isRegistered'] //is authenticated
-      //----><
-      _localStorage._set("_isRegistered",_isRegistered); ////does it'has any priviledge in any model
-      //-------
-      var _Userdata = nul.value.includes(response["user"])  ? false   : response["user"];
-      //-------------
+    if(onplayRowItem.value.phone ?? false){
 
-      if (!(_isRegistered)) {
-        notifyit.info("wrong keys !");
-        return false;
-      }
-        //Extracting Meta_Datas [[  personal Infomation Logged]]
-        var id = ref(_Userdata["id"]);
-        var userID =ref(_Userdata["userID"]);
-         //---><
-        //_localStorage._set("id", String(id.value));
-        _localStorage._set("userID", String(id.value));
-        //--------
-        var _anyAccess = ref(_Userdata['_anyAccess'])  //does  Upgrade/unUpgraded
-        //----><
-          _localStorage._set("_anyAccess",_anyAccess); ////does it'has any priviledge in any model
-       
-        //------------------------------------------->>
-        //_localStorage._set("phone", _Userdata["phone"]); //['enginerring']
-        //_localStorage._set("userName", _Userdata["userName"]); //['enginerring']
-        //_localStorage._set("address",_Userdata["address"]); //['enginerring'] 
-        //_localStorage._set("__liveCord",_Userdata["__liveCord"]); //['enginerring'] 
-        //----------------------
-        //-----------------Register_User_Info(Datails) into LocalStorage
-        let blacklist = ["phone","address","acctype",'_isupgraded','_ispremium','_iss']; //what_to_not_Store
-        for (let key in _Userdata) {
-          if (blacklist.includes(key)) {
-            continue;
-          }
-          _localStorage._set(key, _Userdata[key]); //session|local|cookies ---- removeItem,getItem,setItem
-        }
-     
+        _loging__spin.value = true;
+        //-----------------------embed dynamic userData
+          return await authenticateService.useLogin(onplayRowItem.value).then( (response) => {
+            var _isRegistered = response['_isRegistered'] ?? false//is authenticated
+            var _Userdata = response["user"] ?? false 
 
-        //--------------------------------------    
-        if(_anyAccess.value){ //&& !nul.value.includes(_Userdata["acctype"])
-            //----------------------
-            _localStorage._set("_iss",_Userdata["_iss"]); ////does it'has any priviledge in any model
-            _localStorage._set("_isupgraded", _Userdata["_isupgraded"])
-            _localStorage._set("_ispremium", _Userdata["_ispremium"])
-      
-            var _priviledgedFor =Object.keys(_Userdata["acctype"]).length ? _Userdata["acctype"] : false;
-            if(_priviledgedFor){ //superpriviledged...
-                  var modalNames=Object.keys(_priviledgedFor)
-                  
-                  _localStorage._set("_priviledgedFor", _priviledgedFor); //['asset':[1,2,3],'raw':[2,3]]
-                  _localStorage._set("_Modals", modalNames); //['asset':[1,2,3],'raw':[2,3]]
-                  //--
-                  _loging__message.value='HHave Nice Stay!'
-                  _loging__spin.value=false
-                  
-                  return true
+            if (!(_isRegistered && _Userdata)) {
+              notifyit.info("wrong keys !");
+              return false;
             }
-            return true
+              let toStore=[['_isRegistered',true],
+              ['id',_Userdata['id'] ?? null],['phone',_Userdata['phone'] ?? null],
+              ['_userData',_Userdata],
+              ['_hasAccess',_Userdata['_hasAccess'] ?? null],['_iss',_Userdata['_iss'] ?? null],
+              ['_isupgraded',_Userdata['_isupgraded'] ?? null],['_ispremium',_Userdata['_ispremium'] ?? null],
+              ['_accessPackage',_Userdata['acctype']?.length ?? null],
+            ]
+              for (let i = 0; i < toStore.length; i++) {
+                console.log('storing',toStore[i])
+                _storageClass._setstore(toStore[i][0],toStore[i][1]);
+              }
+              _loging__message.value='HHave Nice Stay!'
+              _loging__spin.value=false
+              //--------------------------------------      
+              return true
+          }).catch(()=>{
+            return false
+          })
+    }
+    else{      
+      return false
+    }
 
-        }
-        else{   
-          return true        
-         // return router.push({path:"/play", name:'playTrends',query:{_request_id:"gpg"+'nnpriv'},params: {} } ); //is slim enter , it doesn't create loudness in router_gates 
-        }
-    });
 }
 
   //--------------------------------------------------------------------UTILITIED_FUNCTIONS ( LocalStarage -- Profiling)
-  //----Local Storage___
-  const _localStorage = {
-    _get: (_item) => {
-      return $q.localStorage.getItem(_item);
-    },
-    _set: (_key, _item) => {
-      return $q.localStorage.set(_key, _item);
-    },
-    _clear: (_key, _item) => {
-      return $q.localStorage.clear();
-    },
-  };
-
-    //---- console.log .. as non proxy_contents...
-    function _log(data) {
-    console.log(JSON.parse(JSON.stringify(data)));
-  } 
-
   //--------------
   const loadit = {
     process: async function (notes = "wellcom", period = 3000) {
@@ -219,18 +223,6 @@ var _clientData =ref({})
     },
   };
 
-
-
-async function _dataExtractionsystem(){
-
-  onplayRowItem.value.phone="091410414240"; //
-  onplayRowItem.value.phoneCode="251"; //
-  onplayRowItem.value.__liveCord={
-    'lat':"12323",
-    'long':'2342312'
-  }
-  return true;
-}
   //----------------
 let createKey = "phone";
 let updateKey = "id";
@@ -242,20 +234,21 @@ const Crud_ = {
   createData: async function () {
     let objParam = {};
     objParam[createKey] = onplayRowItem.value[createKey];
+
     try {
-      if (Object.keys(objParam).length ==0) {
-        //notifyit.warn("Incompleted Form ?");
-       // return false;
+      if (!onplayRowItem.value?.[createKey] ?? true) {
+        notifyit.warn("Error Phone Number?");
+        return false;
       }
     } catch {
-      //notifyit.warn("Refresh It Please ?");
-     // return false;
+       notifyit.warn("Refresh It Please ?");
+       return false;
     }
-    
+    console.log(onplayRowItem.value,'creating new')
   return await _theService
     .createData(onplayRowItem.value, objParam)
       .then((response) => { //returning as [false,response]
-        if (response[0]) {
+        if (response[0] ?? false) {
           return response[1];
         } else {
           //notifyit.warn("Error ! .." + response[1]);
@@ -267,25 +260,158 @@ const Crud_ = {
         return false;
       });
   },
-
 }
-  //------------------------------------------------------------------------------ Warming UP(BIOS_Process.....POST)
-  onMounted(async () => {  //--------------ON MOUNT
-    _localStorage._clear()
-   _dataExtractionsystem() //automatically grab user_data
 
+
+//------------------------------------------------------------------------------ Warming UP(BIOS_Process.....POST)
+var _confirmPhone=ref({
+  _dialog:false,
+  _phone:0,
+  _phoneCode:['',''],
+})
+
+let _ccode = ref(null)
+_ccode = computed(() => {
+  return getCountry()});
+
+let _onPlayNavGeo = ref(null)
+var _navgatorMeta = function (){
+    return {
+            _init: async function (){
+              try{
+                if(navigator?.geolocation ?? false){     
+                      _onPlayNavGeo.value = navigator.geolocation  
+                      console.log(_onPlayNavGeo.value,'navigat....')       
+                    }
+              }catch{  }
+              return true
+            },
+            _navPhone: async function (){
+                    let _clientPhone = null
+                    onplayRowItem.value.phone = _clientPhone ?? null
+                    onplayRowItem.value.phoneCode = _ccode.value ?? ['','']
+                    onplayRowItem.value.location ={'country':_ccode.value?.[0] ?? '','city':'','street':''}; // 
+                    return true
+            },
+            _navGeo: async function (){
+              if(_onPlayNavGeo.value ?? false){
+                        _onPlayNavGeo.value.watchPosition((geodata)=>{   
+                        if(geodata.coords.latitude != onplayRowItem.value.geolocation.lat){
+                          onplayRowItem.value.geolocation['lat'] = geodata.coords.latitude// this._clientGeolocation
+                          onplayRowItem.value.geolocation['long'] = geodata.coords.longitude// this._clientGeolocatio
+                        }
+                        console.error("Error getting user location:", geodata);
+                        return this
+                      },(error) => {  // Handle errors, e.g. user denied location sharing permissions
+                        console.error("Error getting user location:", error);
+                        return this    
+                    },{ enableHighAccuracy: true, timeout: 1000*60*24, maximumAge: 60000 })
+              }else{  
+                navigator.geolocation.value.watchPosition((geodata)=>{   
+                        if(geodata.coords.latitude != onplayRowItem.value.geolocation.lat){
+                          
+                          onplayRowItem.value.geolocation['lat'] = geodata.coords.latitude// this._clientGeolocation
+                          onplayRowItem.value.geolocation['long'] = geodata.coords.longitude// this._clientGeolocatio
+                        }
+                        console.error("Error getting user location:", geodata);
+                        return this
+                      },(error) => {  // Handle errors, e.g. user denied location sharing permissions
+                        console.error("Error getting user location:", error);
+                        return this    
+                    },{ enableHighAccuracy: true, timeout: 1000*60*24, maximumAge: 60000 })
+
+                  }
+              return true
+            }
+  }
+}
+
+var _storageMeta = function (){
+  return {
+    _storageapi : $q.localStorage,
+    _getstore : function (_item) {
+      return this._storageapi.getItem(_item);
+    },
+    _setstore : function (_key, _item) {
+      return this._storageapi.set(_key, _item);
+    },
+    _clearstore : function (_key, _item)  {
+      return this._storageapi.clear();
+    }
+
+  }
+}
+
+var _navClass = new _navgatorMeta() //constructorialize navigator class
+_navClass._init()
+var _storageClass =new _storageMeta() //constructorialize stre class
+//var _clientCcode=ref(getCountry() ? getCountry() : ['',''])
+
+async function _miningClientDevice(){
+  //--------reintiate_navigation)class
+    await _navClass._navPhone()
+    await _navClass._navGeo()
+
+    if(onplayRowItem.value.phone ?? false  ){ //ask for user to enter phone
+      return true;
+    }else{
+      let _checkstore= _storageClass._getstore('phone') ?? false
+      if(_checkstore){
+            onplayRowItem.value.phone = _checkstore
+            return true
+      }else{
+        _confirmPhone.value._dialog=true //wait for user_input
+        _loging__spin.value=false
+
+      }
+      return false
+    }
+
+    console.log('waitingooooooooooo')
+  //-----------------------------------re intiate_class_computing
+  
+}
+
+onMounted(async () => {
+})
+onBeforeMount(async () => {  //--------------ON MOUNT
+
+    console.log('New registered_user & authenticate as client',onplayRowItem.value)
+    //---------constructorialize onplayrowItem
+    //_localStorage._clear()
+   return await _miningClientDevice().then(async (resp)=>{
+    if(resp){
+     _manageStoreLogin()
+    }
+    else{  } //wait for user_input and button
+    return true
+   }) //automatically grab user_data
+});
+
+async function _manageStoreLogin(){
+  _confirmPhone.value._dialog=false //wait for user_input
+  //---------
   return await storeLogin()
     .then(async (resp) => {
-      console.log(resp,'responsesssssssssrtrtssssssssssss')
-
-      if (!resp) {
+       if (!resp) {
            _loging__message.value='Exploring..'
+    
             return Crud_.createData().then((response) => {
+            console.log('New registered_user & authenticate as RRRRRRRRr',onplayRowItem.value)
+
               if(response && Object.keys(response).length){
                  _loging__message.value='success..'
                  _loging__spin.value=false
-                 return router.push({path:"/play", name:'playTrends',query:{_request_id:"gpg"+'nnpriv'},params: {} } ); 
+                 //------then reauthenticate
+                 console.log(response,'New registered_user & authenticate as client')
+                //----><
+                let toStore=[['_isRegistered',true],['id',response['id']],['phone',response['phone']],['_userData',response]]
+                  for (let i = 0; i < toStore.length; i++) {
+                    _storageClass._setstore(toStore[i][0],toStore[i][1]);
+                  }
+                    return router.push({path:"/play", name:'playTrends',query:{_request_id:"sit"+'nnpriv'},params: {} } );  //for authenticated, but not upgraded_user
                 }else{
+                  //there is problem with that number on server/dbs
                 _loging__message.value='You Have Connectiity Problems..GPS/Cell..refresh it please'
               }
               _loging__spin.value=false
@@ -296,30 +422,24 @@ const Crud_ = {
             return true;
             })
       }
-
-      // return router.push({path:_priviledgedFor[_defaultName][1],query:{_request_id:"gpg"+'nnpriv'},params: {_accetype:_priviledgedFor[_defaultName],id:id.value,userID: userID.value,_thisusertoken: 1} } ); //is slim enter , it doesn't create loudness in router_gates 
-
-      return router.push({path:"/play", name:'playTrends',query:{_request_id:"gpg"+'nnpriv'},params: {} } );  //for authenticated, but not upgraded_user
-      //enter for already registered client_, but unupgraded
+      console.log(resp,'already registered_user & authenticate as client')
+      router.push({path:"/play", name:'playTrends',query:{_request_id:"sit"+'nnpriv'},params: {} } );  //for authenticated, but not upgraded_user
     })
     .catch((cerr) => {
       _loging__message.value='You Have Connectiity Problems..GPS/Cell..try with other device(auth)'
       _loging__spin.value=false
-      console.log(cerr,'responsesssssssssssssshhhhhhhssssssssss22222')
       return false;
     });
-});
-
-var timerResponse_=ref(500)
-//-- form name
-async function timerResponse(period = 6000, message = "") {  //put inside code to wait for given time... as timer++
-  _loging__message.value = message;
-  setTimeout(() => {
-    _loging__spin.value = false;
-    return true;
-  }, period);
 }
 
+//-- form name
+async function timerResponse(period = 15000, message = "") {  //put inside code to wait for given time... as timer++
+  _loging__message.value = message;
+  return setTimeout(() => {
+    _loging__spin.value = false;
+    return true;
+  }, 8000);
+}
 
   </script>
   

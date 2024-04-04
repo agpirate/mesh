@@ -18,7 +18,7 @@ const SETTINGS_LOCAL_STORAGE_KEY = "settings";
 
 const authApi = axios.create({ baseURL: API_URL, timeout: 7000 });
 
-const nul = [null, undefined, false, "", [], {}];
+const nul = [null,undefined,'undefined',false, "", [], {}];
 
 const procApiWrap = {get: request("GET"), post: request("POST"), put: request("PUT"), patch: request("PATCH"), delete: request("DELETE")};
 
@@ -32,14 +32,29 @@ function request(method) {
     
     StoreDebug = "Store Parameters and Header Setted Up..."
 
-    if (body) {
-
-        let tobeUpload = nul.includes(body.upload) ? false : body.upload  
+    if (body != null) {
+        var _formData = new FormData()
+        let tobeUpload = body['upload'] ?? false 
         if (tobeUpload) {
             requestOptions.headers = {'Content-Type':"multipart/form-data"}
-            requestOptions.params['upload'] = tobeUpload
+            requestOptions.params['upload'] = tobeUpload //holding the fileName as file:__ or files:___
+            //------------
+            let file_ = [tobeUpload['file'],tobeUpload['files']]
+
+            for(let key in body){ //if there is file_data duplicate all data into formData(format)...since file uploading is better as formData
+                if(file_.includes(key)){    ///if file_data embed it as ('key',_value) and if multiple file_ iterate them 
+                  for(let kkey in body[key]){    //to support uploading multiple_file of sameName...
+                  _formData.append(key,body[key][kkey])
+                  }
+                }else{
+                    if(typeof body[key] != 'object'){ //it's hard to send object([]-{}) _ sending file_won't involve_object_data
+                      _formData.append(key,body[key])  //and object(array specially has to be defined manually)
+                    }
+                  }
+            }
+            body=_formData
          }
-         console.log(requestOptions,'post/put_store.....')
+      //console.log(_formData,'post/put_store.....aaaa')
       //---------------------------
       try {
         ////API_GATEWAY {{{[[[[[[[[[[[---------]]]]]]]]]]]]]]]}}} e POST/PUT
@@ -47,11 +62,11 @@ function request(method) {
         const response =  method === "POST" ? await authApi.post(url, body, requestOptions) : await authApi.put(url, body, requestOptions); // axioscreate is best work if, the method(post/put) is givennn pricissly
         StoreDebug = "Store Showing BackEnd Debug :- ...#"+method+response
         return await respHandler(response).then((HandledRESP) => { return [true, HandledRESP]; }, // Handling Friendly Errors of the response
-                                                (error) => {//console.log(StoreDebug)
+                                                (error) => {////console.log(StoreDebug)
                                                    return [false,error]; }); // the friendly errors
       } catch (error) {
         StoreDebug = "Request_aborted_OnStore :-Axios_Error "+method+tobeUpload+error
-        console.log(StoreDebug)
+        //console.log(StoreDebug)
         return [false, error];
       } finally {}
 
@@ -60,12 +75,15 @@ function request(method) {
         StoreDebug = "Store Requesting Setted Up...#"+method
         const response = method === "GET" ? await authApi.get(url, requestOptions) : await authApi.delete(url, requestOptions);
         StoreDebug = "Store Showing BackEnd Debug :- ...#"+method+response
-        return await respHandler(response).then((HandledRESP) => { return [true, HandledRESP];  }, // Handling Friendly Errors of the response
-                                                (error) => {//console.log(StoreDebug)
+        return await respHandler(response).then((HandledRESP) => { 
+          //console.log(HandledRESP.length,'response dataaaa')    
+          
+          return [true, HandledRESP];  }, // Handling Friendly Errors of the response
+                                                (error) => {////console.log(StoreDebug)
                                                   return [false,error]; } ); // the friendly errors
       } catch (error) {
         StoreDebug = "Request_aborted_OnStore :-Axios_Error "+method+tobeUpload+error
-        //console.log(StoreDebug)
+        ////console.log(StoreDebug)
         return [false,error];
       } finally {  }
     }
@@ -75,9 +93,10 @@ function request(method) {
 async function respHandler(response) {
   ////((((((((RESPONSE HANDLER  [.data / .statusText]))))))))
   try {
-    const isJson = response.headers ?.get("content-type")  ?.includes("application/json"); //res.headers['content-type']; :- if application/json(extract json file from res.data)
-    let resData = isJson ? response.data : null;
-    if (response.statusText === "OK" && resData) { return response['data']; // return all data++Headers
+    const isJson = response.headers ?.get("content-type") ?.includes("application/json"); //res.headers['content-type']; :- if application/json(extract json file from res.data)
+    let resData = isJson ? response.data : false;
+    if (response.statusText === "OK" && (Object.keys(resData).length ?? false)) { 
+      return resData
     } else {
       const error = (resData && resData.msg) || response.status;
       if ([401, 403, 404, 505].includes(response.status)) { return Promise.reject("please try again"); // or redirect it to ;- //logout();
@@ -169,17 +188,14 @@ const yearDataFilter = ref({ //{  date: { $gte: "2022-01-01", $lte: "2022-12-30"
 
 //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
 
-let getuserID = async () =>
-  process.browser ? localStorage.getItem("userID") : "";
-
 export const saleitStore = defineStore(STORE_NAME, () => {
   //state
-  let Datas = ref([]); //
-  let DatasParam = ref({});
+  let Datas = ref([{}]); //
+  let syncQuery = ref({_trend:'', catagory:'',usage:'',content:''});
   let yearDatas = ref({});
-  let yearDatasParam = ref({}); //
+  let yearsyncQuery = ref({}); //
   let monthDatas = ref({}); //
-  let monthDatasParam = ref({}); //
+  let monthsyncQuery = ref({}); //
   //---------------------------
   let loadingStatus = ref(false);
   let syncPeriod = ref(5000);
@@ -188,25 +204,25 @@ export const saleitStore = defineStore(STORE_NAME, () => {
   const alertII = reactive({ status: false, sms: "" });
 
   //getter/ computed
-  const getDatas = computed(() => Datas.value);
+  const getDatas = computed(() =>Datas.value  );
   //const getFDatas = computed((filterOps) => Datas.value);
   const getyearDatas = computed(() => yearDatas.value);
   const getmonthDatas = computed(() => monthDatas.value);
   const getloadingStatus = computed(() => loadingStatus.value);
 
   const getFDatas = (filterOps) => {
-
     yearDatas.value;
     return ""
   }
+
   const getalert = {
     alertI: computed(() => alertI),
     alertII: computed(() => alertII),
   };
   //action
-  function set_DatasParam(objParams) {
+  function set_syncQuery(objParams) {
     //set user_controllable alerts
-    DatasParam.value = objParams;
+    syncQuery.value = objParams;
     //alertI.sms = message;
     return;
   }
@@ -225,128 +241,37 @@ export const saleitStore = defineStore(STORE_NAME, () => {
     return;
   }
 
-  const asyncAnualData = async function (objParam = null) {
-    //+++++++++++++++++++...
-    loadingStatus.value = true;
-    objParam = yearDataFilter.value;
-    try {
-      return await procApiWrap
-        .get(_model_mainURL+"s", null, objParam)
-        .then((resp) => {
-          if (resp[0]) {
-            try {
-              let yearlyData = resp[1];
-              let monthsData = { 1: [], 2: [],3: [],4: [],5: [], 6: [],7: [],8: [],9: [],10: [],11: [],12: []};
-
-              for (let items of yearlyData) {
-              console.log(items["updatedAt"],"Annual Data Date Format")
-               let monthIndex = items["updatedAt"].split("/")[0];
-
-                monthIndex = Number(monthIndex);
-
-                monthsData[monthIndex].push(items);
-              }
-              yearDatas.value = monthsData; //{'apr':[{},{}],'jun':[{},{}]}
-            
-
-              return true;
-            } catch {}
-          } else {
-            //returns.......data [False,'Error...']
-          } //Handler Friendly Errors (with Response of Respective_401,501,404)
-          return false;
-        })
-        .catch((error) => {
-          return false;
-        }); //Handler NonFriendly Errors
-    } catch (error) {} //Handler Supper Non_Friendly Errors
-
-    return false;
-  };
-
-  asyncAnualData();
-
-  const asyncMonthData = async function (objParam = null) {
-    //+++++++++++++++++++...
-    loadingStatus.value = true;
-    objParam = monthDataFilter.value;
-
-    try {
-      return await procApiWrap
-        .get(_model_mainURL, null, objParam)
-        .then((resp) => {
-          if (resp[0]) {
-            try {
-              let monthData = resp[1]["data"];
-              let monthsData = {
-                1: [],
-                2: [],
-                3: [],
-                4: [],
-                5: [],
-                6: [],
-                7: [],
-                8: [],
-                9: [],
-                10: [],
-                11: [],
-                12: [],
-              };
-              for (let items of monthData) {
-                let monthIndex = items["updatedAt"].split("-")[1];
-                monthIndex = Number(monthIndex);
-
-                monthsData[monthIndex].push(items);
-              }
-              monthDatas.value = monthsData; //{'apr':[{},{}],'jun':[{},{}]}
-              ////console.log(yearDatas.value,'uuuuuuuuuuuuuuuuuuuuuuuu')
-              return true;
-            } catch {}
-          } else {
-            //returns.......data [False,'Error...']
-          } //Handler Friendly Errors (with Response of Respective_401,501,404)
-          return false;
-        })
-        .catch((error) => {
-          return false;
-        }); //Handler NonFriendly Errors
-    } catch (error) {} //Handler Supper Non_Friendly Errors
-
-    return false;
-  };
-
   let counter = 0;
+  //let asyncing = setInterval();
 
-  const asyncDatas = async (syncState = 60000, reqParams = {}) => {
+let _newsChecker = {}
+const asyncDatas =async function (){
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    syncPeriod.value = syncState;
-    if (typeof reqParams != 'object') {
-      reqParams = {};
-    } 
-
-    let asyncing = setInterval(async () => {
-      ////console.log(DatasParam.value,syncPeriod.value,"authStore#asyncDatas New Arrived....YO");
       try {
         return await procApiWrap
-          .get(_model_mainURL+"s", null, reqParams)
+          .get(_model_mainURL, null,syncQuery.value)
           .then((resp) => {
             if (resp[0]) {
               let users = resp[1];
+              //console.log('New data',(_newsChecker === resp[1][0]),(_newsChecker === users[0]),(_newsChecker !== users[0]))
+             
               try {
-                if (Datas.value.length !== users.length) {
-                  //console.log("_Update Detected...#saleit@store",syncPeriod.value)
+                if (Datas.value.length !== users.length){// || (Datas.value[0] !== users[0]) ) {
+                  ////console.log("_Update Detected...#saleit@store",syncPeriod.value)
+                  // Datas.value = []
+                  // _newsChecker = users[0]
                   Datas.value = resp[1];
-                  counter = 0;
-                  syncPeriod.value = 30000;
-                  //clearInterval(asyncing);
+                  console.log('first responseYYYYYYYYYYYYY',resp[1])
+                  //counter = 0;
+                  //syncPeriod.value = 30000000;
+                  //clearInterval(syncInt);
+                  //syncInt = setInterval(asyncDatas, 7000);
+                  //console.log("*****888888888888*******_Update Detected...#saleit@store",Datas.value[0],users[0])
                   return true;
                 } else {
-                  //console.log("No_Update Detected...#saleit@store",syncPeriod.value)
-                  counter = counter + 1;
-                  if (counter === 5) {
-                    syncPeriod.value = 20000;
-                    syncState = 20000;
-                  }
+                  //clearInterval(syncInt);
+                  //syncInt = setInterval(asyncDatas, 2000);
+                  console.log("No_Update Detected...#saleit@storepppp",'-',syncQuery.value,syncPeriod.value)
                   return true;
                 }
               } catch {return true; }
@@ -355,10 +280,14 @@ export const saleitStore = defineStore(STORE_NAME, () => {
           })
           .catch((error) => { return false;  }); //Handler NonFriendly Errors
       } catch (error) { return true;  } //Handler Supper Non_Friendly Errors
-    }, syncPeriod.value); //set it to zero/# to stop/Synchronizing...
+
+  // }, syncPeriod.value); //set it to zero/# to stop/Synchronizing...
   };
-  
-  asyncDatas(5000);
+
+var changeSpeed = 500;
+//let syncInt = setInterval(asyncDatas, 500);
+//saleitService.set_syncQuery(_querySE.value)   
+//let syncInt = setInterval(asyncDatas, 3000);
 
   //createDataa
   async function createData(formData = null, objParam = null) {
@@ -386,7 +315,7 @@ export const saleitStore = defineStore(STORE_NAME, () => {
       return await procApiWrap
         .put(_model_mainURL, formData, objParam)
         .then((resp) => {
-          console.log('Updating Response',formData,resp[1])
+          ////console.log('Updating Response',formData,resp[1])
           if (resp[0] && Object.keys(resp[1]).length) {
             try {
               //asyncDatas(1000);
@@ -458,15 +387,16 @@ export const saleitStore = defineStore(STORE_NAME, () => {
 
   return {
     //-----synchronize give (DATAs)
-    asyncAnualData,
-    asyncMonthData,
+    //asyncAnualData,
+    //asyncMonthData,
     asyncDatas,
     //------------getter(computed) porting
-    getyearDatas,
-    getmonthDatas,
+    //getyearDatas,
+    //getmonthDatas,
     getDatas,
+    Datas,
     //------------------set client_controller setting..
-    set_DatasParam,
+    set_syncQuery,
     set_alertI,
     set_alertII,
     //--------------actions porting

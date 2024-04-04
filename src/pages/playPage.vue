@@ -1,18 +1,18 @@
 <template>
 
   <q-dialog
-      v-model="_setpopDialogBox"
+      v-model="_onplayRowItemBox"
       transition-show="scale"
       transition-hide="scale"   
       :style="{ 'background-image': 'url('  + ')' }"
     >
-    <q-card style="min-width: 20vw;" class="overlay-Glass " >
+    <q-card style="min-width: 50vw;" class="overlay-Glass " >
   
       <!----HEADER-TOP Begin-->
       
           <q-linear-progress :value="0.8" color="orange" />
-  
-          <q-bar style='font-weight: bold;'>
+
+          <!--q-bar style='font-weight: bold;'>
             <div>{{  new Date().toDateString() }}</div>
             <q-space />
             <q-btn dense flat  v-close-popup>
@@ -23,134 +23,161 @@
               Save
               <q-tooltip>Save</q-tooltip>
             </q-btn>
-            <q-btn dense flat icon="close" @click="_closeDialog()">
+            <q-btn dense flat icon="close" @click="_onplayRowItemBoxset()">
               <q-tooltip>Close</q-tooltip>
             </q-btn>
-          </q-bar>
+          </q-bar -->
   
           <q-card-section class="row items-center no-wrap q-pa-none"  >
             
-            <div class="col " >
-                        
-                    <q-img  :src="_fileSRC && graphicColumn[0] =='saleitgr' ? _fileSRC : onplayRowItem['saleitgr'][0]"   style="min-height:20vw;aspect-ratio: 2/1;">  
-                    
+            <div class="col " style="max-height:80vh;" >
+          <q-img            
+              loading="lazy"
+               style="max-height: 100%;"
+                      :src="_fileAttributeName ? _fileAsSRC[_fileAsSRCIndex] : onplayRowItem['saleitgr'][_fileAsSRCIndex]">  
+                  
                             <div class="absolute-full transparent column justify-between " >
                               
                               <div class="row" style="width:100%" >
-                                <div class="col">
-                                     {{ onplayRowItem.header}} 
-                                </div>
-                                <div class="column col-auto " style="width: 5vw;">                                        
-                                        <q-item-label class="text-grey"> Via</q-item-label>
-                                        <input type="file" multiple ref="filep" style="display: none" @change="_folderProfiling($event,'saleitgr',0)" /> 
-                                        <q-btn icon="folder" @click="$refs.filep.click()" :dense="true" />
-                                        <q-btn icon="add_a_photo" @click="_cameraModule._openCamera('saleitgr',0)" :dense="true"  />
+                                    <div class="col">
+                                      
                                     </div>
-                              </div>
-                              <div v-if="_filePreview">
-                                <q-img :src="_filePreview"   />
+                                    <div class="column col-auto " style="width: 5vw;">                                        
+                                            <q-item-label class="text-grey"> Via  </q-item-label>
+                                            <input type="file" multiple ref="filep" style="display: none" @change="_fileSourceFolder($event,'saleitgr')" /> 
+                                            <q-btn icon="folder" @click="$refs.filep.click()" :dense="true" />
+                                            <q-btn icon="add_a_photo" @click="_cameraInstance._openCamera('saleitgr')" :dense="true"  />
+                                      </div>
                               </div>
                              
-                              <div>
-                                    <div class="self-end justify-left col "> 
-                                      <div v-if="onplayRowItemOps == 'CreateRowItem'" style="color:blue;" >
-                                     
-                                        <q-btn no-caps :dense="true" :loading="_rowOpsLoadingStatus" class="gt-xs" color="warning" label="saleIt"  icon="done" @click="_createRow(false)" v-if="typeof onplayRowItem.saleitgr[0] == 'string'" >
+                              
+                             
+                              <div class="col row justify-between">
+                               
 
-                                            <template v-slot:_rowOpsLoadingStatus>
-                                              uploading...
-                                              <q-spinner-radio class="on-left" />
-                                              uploading...
-                                            </template>
-                                            </q-btn>
+                                    <div class="self-end justify-left col-auto "> 
+                                              <div v-if="_onplayRowItemOps == 'CreateRowItem'"  style="background-color:rgba(106, 93, 255,0.6)" >
+                                            
+                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="q-px-sm "  color="warning" label="Upload"  icon="upload" 
+                                                @click="_createRow(false)" v-if="_fileAsSRC?.length ?? false" >
+                                                    <!--template v-slot:_onplayRowItemOpsStatus>
+                                                      uploading...
+                                                      <q-spinner-radio class="on-left" />
+                                                      uploading...
+                                                    </template-->
+                                                    </q-btn>
+                                                  <q-btn  outline rounded no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="warning" label="saleIt"  icon="upload" 
+                                                    @click="_createRow(true)" v-else />
 
-                                            <q-btn no-caps :dense="true" :loading="_rowOpsLoadingStatus" class="gt-xs" color="warning" label="saleIt"  icon="done" @click="_createRow(true)" v-else >
-                                              uploading...
-                                            <template v-slot:_rowOpsLoadingStatus>
-                                              <q-spinner-radio class="on-left" />
-                                              uploading...
-                                            </template>
-                                            </q-btn>
+                                              </div>   
 
-                                      </div>   
-
-                                      <div v-else>                                       
-                                        <q-btn no-caps :dense="true" :loading="_rowOpsLoadingStatus" class="gt-xs" color="warning" label="saleIt"  icon="done" @click="_updateRow(false)" v-if="typeof onplayRowItem.saleitgr[0] == 'string'" >
-
-                                          <template v-slot:_rowOpsLoadingStatus>
-                                            uploading...
-                                            <q-spinner-radio class="on-left" />
-                                            uploading...
-                                          </template>
-                                        </q-btn>
-
-                                        <q-btn no-caps :dense="true" :loading="_rowOpsLoadingStatus" class="gt-xs" color="warning" label="saleIt"  icon="done" @click="_updateRow(true)" v-else >
-      
-                                          <template v-slot:_rowOpsLoadingStatus>
-                                            uploading...
-                                            <q-spinner-radio class="on-left" />
-                                            uploading...
-                                          </template>
-                                        </q-btn>
-
-
-                                      </div>        
+                                              <div v-else  style="background-color:rgba(255, 165, 0,0.2)"  >                                    
+                                               
+                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="warning" label="saleIt"  icon="upload" 
+                                                @click="_updateRow(true)" v-if="_fileAsSRC?.length ?? false" />
+                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="black" label="saleIt"  icon="upload" 
+                                                @click="_updateRow(false)" v-else/>
+                                              </div>        
                                       
-                                                          </div>
-                                                          </div>
+                                        </div>
+                                        
+                                        <div class="self-end justify-right col-grow column  q-pa-xs" v-if="_fileAsSRC?.length ?? false"  style="max-height:100%;" > 
+                                          
+                                              <div class="self-end justify-right col row  q-pa-xs">
+                                                  <q-checkbox
+                                                        left-label
+                                                        v-model="_fileAsSRCOps"
+                                                        label="Delete"
+                                                        checked-icon="task_alt"
+                                                        unchecked-icon="highlight_off"
+                                                      />
+                                              </div>
+                                             
+                                              <div  class="self-end justify-right col row shadow-5 q-pa-xs" style="max-height:100%;max-width: 100%;" v-if="_fileAttributeName ?? false">
+                                                      <div v-for="item,fileIndx in _fileAsSRC" :key="fileIndx" class="col row inset-shadow q-px-xs" 
+                                                    style="max-height:100%;" > {{  fileIndx }}                                           
+                                                      
                                                           
+                                                            <q-btn round @click="_fileAsSRCOpsCall(fileIndx)" class="col-auto">
+                                                            <q-avatar size="42px">
+                                                              <img :src="item">
+                                                            </q-avatar>
+                                                          </q-btn>
+
+                                                    </div>
+
+                                              </div>
+                                              <div  class="self-end justify-right col row shadow-5 q-pa-xs" style="max-height:100%;max-width: 100%;" v-else>
+                                                      <div v-for="item,fileIndx in onplayRowItem['saleitgr']" :key="fileIndx" class="col row inset-shadow q-px-xs" 
+                                                    style="max-height:100%;" > {{  fileIndx }}                                       
+                                                      
+                                                          
+                                                            <q-btn round @click="_fileAsSRCOpsCall(fileIndx)" class="col-auto">
+                                                            <q-avatar size="42px">
+                                                              <img :src="item">
+                                                            </q-avatar>
+                                                          </q-btn>
+
+                                                    </div>
+
+                                              </div>
+                                        
+                                              
+                                          </div>
+                                  </div>                                                         
                                 
-                                                        </div>
+                                </div>
                                                         
                               </q-img>
                                     </div>
   
           </q-card-section>
      
-          <q-card-section class="column bg-orange text-dark">
-           <fieldset class="col  q-gutter-xs" style="border-radius: 5px;border: 1px solid grey;"  >
+          <q-card-section class="column text-dark bg-orange" >
+           <fieldset class="col  q-gutter-xs" style="border-radius: 5px;border: 3px solid grey;"  >
   
-            <legend @click="_formsMeta.description = ! _formsMeta.description">
+            <legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
                 Descriptions
             </legend>
             <template v-if="_formsMeta.description">
             
             
               <div class="row  flex flex-center">
-                <q-input class="col-md-auto col-xs-auto q-pa-sm"  outlined v-model="onplayRowItem['header']" label="what you selling" stack-label :dense="true"  />
-              <q-input class="col-md-auto col-xs-auto"  outlined v-model="onplayRowItem['quantity']" label="quantity" stack-label :dense="true"  />
+                <q-input class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['header']" label="what you selling" stack-label :dense="true"  />
+              <q-input class="col-md-4 col-xs-4" type="Number" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['quantity']" label="quantity" stack-label :dense="true"  />
   
             </div>
           
       <q-separator inset  />
         <q-input
-        outlined v-model="onplayRowItem['content']" label="decscriptions"
+        outlined v-model="onplayRowItem['content']" label="decscriptions" style="text-transform: capitalize;" 
         filled  
         autogrow
       />  
     
-      <fieldset class="col-grow row  q-pa-sm q-gutter-xs" style="text-transform: capitalize;border-radius: 5px;border: 1px solid grey;">
+      <fieldset class="col-grow row  q-pa-sm q-gutter-xs" style="text-transform: capitalize;border-radius: 5px;border: 0px solid grey;">
   
-        <legend @click="_formsMeta.pricing = !_formsMeta.pricing">
-            type
+        <legend @click="_formsMeta.pricing = !_formsMeta.pricing" class=" text-weight-bolder">
+            catagory
         </legend>
   
-        <template v-if="_formsMeta.pricing" >
-          <q-select :dense="true"  class="col-md col-xs q-pa-sm"  color="purple-12" v-model="onplayRowItem['catagory']" :options="saleitSchema['catagory']['enum']" label="catagory" />
-          <q-select :dense="true"  class="col-md col-xs q-pa-sm"  color="purple-12" v-model="onplayRowItem['usage']" :options="saleitSchema['usage']['enum']" label="usage" />
+        <template v-if="_formsMeta.pricing ?? false" >
+          <q-select outlined :dense="true"  class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  color="purple-12" v-model="onplayRowItem['catagory']" :options="saleitSchema['catagory']['enum']" label="catagory" />
+          <q-select outlined :dense="true"  class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  color="purple-12" v-model="onplayRowItem['usage']" :options="saleitSchema['usage']['enum']" label="usage" />
           </template>
         
         </fieldset>
   
         <q-separator inset />
   
-          <fieldset class="col-grow row q-pa-sm " style="text-transform: capitalize;border-radius: 5px;border: 1px solid grey;">
+          <fieldset class="col-grow row q-pa-sm " style="text-transform: capitalize;border-radius: 5px;border: 0px solid grey;">
   
-            <legend @click="_formsMeta.address = !_formsMeta.address">
+            <legend @click="_formsMeta.address = !_formsMeta.address" class=" text-weight-bolder">
                 Address
             </legend>
-            <template v-if="_formsMeta.address" >
-            <q-input class="col-md-auto col-xs-12 q-px-sm"  outlined v-model="onplayRowItem['location']['city']" label="City" stack-label :dense="true" />
+            <template v-if="_formsMeta.address ?? false" >
+              <q-input class="col-md-auto col-xs-12 q-px-sm text-weight-bold"  outlined v-model="onplayRowItem['location']['country']" label="Country" stack-label :dense="true" />
+            <q-input class="col-md-auto col-xs-12 q-px-sm text-weight-bold"  outlined v-model="onplayRowItem['location']['city']" label="City" stack-label :dense="true" />
             <q-input class="col-md-auto col-xs-12"  outlined v-model="onplayRowItem['location']['street']" label="Street" stack-label :dense="true" />
            </template>
            
@@ -164,11 +191,12 @@
   
       <fieldset class="col-grow   q-gutter-xs" style="text-transform: capitalize;border-radius: 05px;border: 0.01px solid grey;">
   
-          <legend>
+          <legend class=" text-weight-bolder">
               Set Price
           </legend>
           
-            <q-input type="Number" class="col-md-auto col-xs-12"  outlined v-model="onplayRowItem['price']" label="Pricing" stack-label :dense="true" />
+            <q-input type="Number" class="col-md-auto col-xs-12" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['price']" label="Normal" stack-label :dense="true" />
+            <q-input type="Number" class="col-md-auto col-xs-12" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['discount']" label="discount" stack-label :dense="true" />
               
           </fieldset>
   
@@ -177,7 +205,8 @@
         </q-card>
   
   </q-dialog>
-  <q-dialog v-model="popGraphicBox" class="column overlay-Glass rounded-borders" >
+
+  <q-dialog v-model="_cameraBox" class="column overlay-Glass rounded-borders" >
       <!--CameraFeeds  @Picture-taken="imageSrc = $event" / -->
       <div class="column" style="background-color:orange;
         border: 1px dashed #d6d6d6;
@@ -185,24 +214,24 @@
         padding: 2px; 
       " > 
      
-
-       <div v-if="_graphicSource == 'folder'"> 
-
-
-       </div>
-        <div v-else-if="_graphicSource == 'camera'">
+        <div v-if="_fileSourceFoCam == 'camera'">
               <div  class="col bg-white row fit" >
-                  <video  clas="col-2" ref="liveFeedStreaming"  autoplay  playsinline style="width:100%"></video>
-                  <canvas id="graphicCanvas" ref="graphicCanvas"  width="200px" height="200px" style="display:none">                                 
+                  <video  clas="col-2" ref="_liveFeedRawStreaming"  autoplay  playsinline style="width:100%"></video>
+                  <canvas id="_liveFeedSRC" ref="_liveFeedSRC"  width="200px" height="200px" style="display:none">                                 
                   </canvas>
-                  <q-img :src="_fileSRC"  style="width:100px; height: 100px" />  
+                
+                  <q-list  class="row q-gutter-xs" >                  
+                      <q-item v-for="_src in _fileAsSRC" :key="_src" >                        
+                          <q-img :src="_src"  style="width:100px; height: 100px" />  
+                      </q-item>
+                  </q-list>
               </div>
 
               <div class="q-pa-sm q-gutter-sm row justify-between"> 
                 <div>
-                  <q-btn rounded  color="negative" size="sm" label="close" @click="_cameraModule._stopCamera()" />
-                  <q-btn rounded  color="green" size="sm" label="save" @click="_cameraModule._saveScreenShoots()" />
-                  <q-btn rounded  color="primary" size="sm" label="capture" icon="camera" @click="_cameraModule._screenShoot()"/>
+                  <q-btn rounded  color="negative" size="sm" label="close" @click="_cameraInstance._stopCamera()" />
+                  <q-btn rounded  color="green" size="sm" label="save" @click="_cameraInstance._saveScreenShoots()" />
+                  <q-btn rounded  color="primary" size="sm" label="capture" icon="camera" @click="_cameraInstance._screenShoot()"/>
                 </div>
                
                 <div size="col-auto row">
@@ -213,8 +242,8 @@
         icon="camera" size="xs"
       >
               <q-item v-for="camera in _listCameraSource" :key=camera class="row q-gutter-sm">  
-                              <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedCameraById == camera.deviceId ? 'blue':'black'" :label="camera.label.split('_')[1]" @click="_cameraModule._setCameraParam(camera.deviceId,false)" />
-                              <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedCameraById == camera.deviceId ? 'orange':'black'" :label="_selectedCameraByface ? 'Front Cam':'Back Cam'" @click="_cameraModule._setCameraParam(camera.deviceId,!_selectedCameraByface)" />
+                              <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedCameraById == camera.deviceId ? 'blue':'black'" :label="camera.label.split('_')[1]" @click="_cameraInstance._setCameraParam(camera.deviceId,false)" />
+                              <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedCameraById == camera.deviceId ? 'orange':'black'" :label="_selectedCameraByface ? 'Front Cam':'Back Cam'" @click="_cameraInstance._setCameraParam(camera.deviceId,!_selectedCameraByface)" />
                            
                             </q-item>
               </q-expansion-item>
@@ -231,19 +260,18 @@
 </q-dialog>
 
 
- 
-  <q-page class="column q-pa-none" >
+  <q-page class="col column" style="" >
   
           <!------------------------------ ioio ----->
-        <div class="col q-pa-none column" style="max-height:90vh;">
+        <div class="col q-pa-none column " v-if="rows?.length ?? false"    style="height:70vh">
+      
               <q-table 
-  
+              flat bordered
+
               :rows="rows"
               :columns="columns"
   
               virtual-scroll
-
-              flat bordered
 
               :filterMethod="filterMethod"
               :filter="filter"
@@ -252,75 +280,193 @@
               row-key="id" 
               rowIndex="true"
 
-              class="col column  q-gutter-sm"
+              :inFullscreen="true"
+              class="col column  q-gutter-sm fit"
 
               hide-pagination
-              hide-header
+              hide-top
               hide-bottom
+              style="height:70vh"
               >
+            
+                <template v-slot:top="props" v-if="false">
+                    <q-btn class="hidden"  style="height:0px;width:0px"   ref="togflscreen" :set="enableflscreen = props.inFullscreen" @click="props.toggleFullscreen()" />
+                </template>
+               
+                <template v-slot:header="props">
+                  <q-tr :props="props" style="position:absolute;z-index:2;width:100vw;"  class="no-wrap col-1 transparent column " >
+                    <q-scroll-area style="max-width:100vw;" class="col column transparent q-pa-xs">
+                      <div class="col flex flex-center q-gutter-sm  q-py-xs  transparent no-wrap" style="max-width:100%;max-height: 100%;"> 
+                                            <q-btn rounded no-caps size="sm"  @click="_itServiceSE('_trend','')" :key="_qgroup1" class="col-auto"  >
+                                             Show All          
+                                            </q-btn>
+                                            <q-btn rounded no-caps size="sm"  v-for="_qgroup1 in ['New','Used']" @click="_itServiceSE('usage',_qgroup1)" :key="_qgroup1" class="col-auto"  >
+                                              {{  _qgroup1 }}   
+                                            </q-btn>  
+                                            <q-separator inset vertical class='q-py-sm'  />
 
-              <template v-slot:body="props"  v-if="rows.length">
+                                            <q-btn rounded no-caps size="sm" v-for="_qgroup0 in _thisSchema['catagory']['enum']" @click="_itServiceSE('catagory',_qgroup0)" :key="_qgroup0" class="col-auto q-py-xs"  >
+                                              {{  _qgroup0 }}            
+                                            </q-btn> 
+                    
+                                           
+                                            <q-space />
+                                                        
+                                            <q-btn
+                                                flat round dense
+                                                :icon="enableflscreen ? 'fullscreen_exit' : 'fullscreen'"
+                                                @click="$refs.togflscreen.click()"
+                                                class="q-ml-md"
+                                              />
+                      </div>
+
+                      
+                  </q-scroll-area>             
+
+                  </q-tr>
+              </template>
+
+              <template v-slot:body="props"   >
+
                   <!--row Object [key(id=?)],row,_trClass,cols,sort,rowIndex,color,dark,dense,expand]-->
                   <q-tr
                     :props="props" :class="$q.screen.gt.sm ? 'row' : 'column'"
-                    class="cursor-pointer text-bold text-weight-bolder  q-gutter-sm"  
-                     style="height: 85vh"
+                    class="col-11 cursor-pointer text-bold text-weight-bolder q-gutter-sm"  
+                    style="height:80vh;width:99vw;"                   
                   >
-             
+                              
                     <!------------------ iterating _ body cell-->
                     <q-td  auto-width class="col-2" v-if="$q.screen.gt.md">
-                      
+                     
                     </q-td>
-  
-                    <q-td  class="column col-6  "   >
+ 
+                    <q-td  :class="$q.screen.gt.md ? 'column col-6' :'col-grow column'  " v-if="props.row.saleitgr ?? false"  >
 
-                  
                           <div class="col row ">
   
-                              <div class="col column fit" >
+                              <div class="col column" >
                               
-                                  <q-img
-                                              :src="props.row.saleitgr"
+                                  <q-img                                  
+                                              loading="lazy"
+                                              :src=" (_onplayRowIndex == props.rowIndex) && _fileAsStringIndex ? props.row.saleitgr[_fileAsStringIndex] : props.row.saleitgr[0]"
                                               spinner-color="white"
-                                              class="rounded-borders col column" style="height:100%;border-radius: 20px;"
-                                            
+                                              class="column" style="max-width:100%;border-radius:20px;aspect-ratio: 2/1;"                                            
                                               >
                                      
                                         <q-list class="column col fit " :class="props.row.userName ? 'transparent': 'transparent'">
-                                          <q-item class=" col-auto row">                                          
+                                          <q-item class=" col-auto row items-top"> 
+
                                            <q-item-section class="col-auto " style="">
-                                            <q-itel-label style=""  v-if="props.row.userName">
-                                              <q-item-label class="q-pa-xs saleitHeader-Glass"> Creator :                                                 
+                                            <q-itel-label style=""  v-if="props.row.userName ?? false">
+                                              <q-item-label class="q-pa-xs saleitHeader-Glass fit"> 
+                                              
+                                                <q-avatar size="xs">
+                                                    <img src="/icons/itsVerified.png">
+                                                  </q-avatar>                                              
                                                 <q-badge >{{props.row.userName}}   </q-badge>
-                                               </q-item-label>                                              
-                                              <q-item-label caption> {{  props.row.updatedAt }}</q-item-label>
-
+                                               </q-item-label>                                          
+                                              
                                             </q-itel-label>
-                                            <q-itel-label style="" v-else>  #saleit Service </q-itel-label>
+                                            <q-itel-label style="" v-else> 
+                                               #saleit Service
+                                             </q-itel-label>
+                                             <div v-if="props.row.fupdatedAt?.hours ?? false" class="flex row q-gutter-sm"> 
+                                                
+                                                <div> Since </div>
+                                                <div v-if="props.row.fupdatedAt?.days != 0 ?? false"> {{  props.row.fupdatedAt.days }} Days </div>
+                                                <div v-if="props.row.fupdatedAt?.hours != 0 ?? false"> {{ props.row.fupdatedAt.hours}} Hours</div> 
+                                             </div>
+                                              <q-item-label v-else> Just Now  </q-item-label>
+
+                                          
 
                                            </q-item-section>
-                                           <q-item-section class="col  columns" >
 
+                                           <q-item-section class="col columns row items-end" >
+                                                  <q-item-label> {{ props.row.queryWeight}} </q-item-label>
+                                                  <q-item-label> {{ Objprops._profile.queryWeight}} </q-item-label>
+                                                  <q-item-label> {{ props.row['clients'].length }} / {{ props.row['tPrice'] }}</q-item-label>
                                            </q-item-section>
                                           </q-item>
-                                          <q-item  v-if="$q.screen.lt.lg" class="q-px-none">
-                                            <q-sticky expand position="left" >
+                                          <q-item class="col-auto row justify-between content-start q-px-none q-mx-none">
+                                            <div class="col-auto column">
+                                              <q-btn outline v-for="item,fileIndx in props.row.saleitgr" @click="_fileAsStringOpsCall(fileIndx,props.rowIndex)" :key="fileIndx" class="col-auto q-gutter-xs">   
+                                                                                                   
+                                                  <q-avatar square >
+                                                    <img :src="item">
+                                                  </q-avatar>
+
+                                              </q-btn>
+                                            </div>
+
+                                            <div class="col-auto q-px-none q-mx-none" v-if="$q.screen.lt.lg">
+
+                                              <q-item  class="q-px-none">
+                                                      <q-sticky expand position="right" class="q-px-none" >
+                                                           <!--inseide_side_actions-->
+                                                  <q-card class="q-px-none column" style="background-color: rgba(6, 93, 255, 0.212);" >
   
-                                                  <q-card class="q-pa-none column" style="background-color: rgba(6, 93, 255, 0.212);" >
+                                                      <q-btn round flat color="white" text-color="primary" label="Buy" @click="_onplayRowItemsideBoxcall(props.rowIndex,'clients')"
 
-                                                        <q-btn round flat icon="message" />
+                                                        >
+                                                        <q-badge color="orange"  floating v-if="props.row.clients?.length ?? false">                                                                     
+                                                                  <q-item-label v-if="props.row.quantity == 0">sold </q-item-label>   
+                                                                  <q-item-label v-else>Selling </q-item-label>   
+                                                        </q-badge>                                          
 
-                                                        <q-btn round flat icon="more_vert">
-                                                      
+                                                      </q-btn>
 
-                                                        </q-btn>
+                                                      <q-btn round flat icon="message" @mouseover="message" @click="_onplayRowItemsideBoxcall(props.rowIndex,'comments')">
+                                                        <q-tooltip anchor="top end" self="top middle">comments</q-tooltip>    
+                                                      </q-btn>
+
+                                                      <q-btn round flat color="white" @mouseover="message" text-color="primary" label="like" @click="_activeRowOperation._likes(props.rowIndex)">
+                                                        <q-badge color="orange" floating v-if="props.row.likes ?? false">{{  props.row.likes.like }}</q-badge>
+                                                      </q-btn>
+
+                                                      <q-btn round flat icon="gps" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
+                                                        <q-tooltip anchor="top end" self="top middle">   map </q-tooltip>  
+                                                      </q-btn>
+
+                                                      <q-btn round flat icon="edit" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
+                                                        <q-tooltip anchor="top end" self="top middle">   edit </q-tooltip>  
+                                                      </q-btn>
+
+                                                      <q-btn round flat icon="delete" @mouseover="message"  @click="_activeRowOperation._delRow(props.rowIndex,props.key)"> 
+                                                        <q-tooltip anchor="top end" self="top middle"> delete </q-tooltip>  
+                                                      </q-btn>
+
+                                                      <q-btn round flat icon="more_vert">
+
+                                                            <q-menu anchor="top right" self="top left" flat  stack no-caps  class="row q-gutter-none" >
+                                                                  <q-list style="min-width: 100px">
+                                                                  <q-item clickable>
+                                                                    <q-input  filled  type="textarea" :label="cinfo" stack-label :dense="true"  />
+
+                                                                  </q-item>
+
+                                                                  <q-item >
+                                                                              more infos
+                                                                  </q-item>
+
+                                                                  </q-list>
+                                                                </q-menu>
+
+                                                      </q-btn>
+
+                                                      </q-card>
 
 
-                                                  </q-card>
+                                                            
+                                                          </q-sticky>
+                                                    </q-item>
+                                            </div>
+                                             
 
-                                                  
-                                                </q-sticky>
+                                            
                                           </q-item>
+
+                                         
                                         
 
                                           <q-item class="absolute-bottom text-subtitle2 text-end q-gutter-sm row items-end">
@@ -343,7 +489,7 @@
                                                 </q-item-section>                                                
   
                                                 <q-item-section class="row col-auto q-px-none text-sm">
-                                                      <div v-if="!nul.includes(props.row.timer)"> 
+                                                      <div v-if="typeof props.row.timer ?? false "> 
                                                          Price: {{  props.row.price  }}   
                                                         <q-item>
                                                           <q-item-section v-if="$q.screen.gt.sm" >                                                             
@@ -353,19 +499,29 @@
                                                           </q-item-section>
 
                                                           <q-item-section>
-                                                            {{ onplayRowItem.timer.actions }}
+                                                            
                                                           </q-item-section>
                                                         </q-item>
                                                       </div> 
-                                                      <q-separator inset />
-                                                      <div v-if="!nul.includes(props.row.clients)">Buyers : {{ props.row.clients.length}}</div>
-                                                      <q-separator inset />
-                                                      <div v-if="!nul.includes(props.row.clients)">Quantity : {{ props.row.quantity}}</div>
-                                                      <q-badge class="q-pa-sm text-bold" >Price: {{  props.row.price }}</q-badge>                                                      
-                                                      <div class="text-orange"> 
-                                                         R <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_activeRowOperation._rating(props.rowIndex,props.key)"/>                                                       
-                                                     </div>
                                                       
+                                                      <q-separator inset />
+                                                      <div v-if="props.row.clients ?? false">Buyers : {{ props.row.clients.length}}</div>
+                                                      <q-separator inset />
+                                                      <div v-if="props.row.clients ?? false">Quantity : {{ props.row.quantity}}</div>
+
+                                                      <q-badge class="q-pa-sm text-bold" v-if="props.row.discount ?? false" color="pink">
+                                                        
+                                                          Happy-Hour Price : <q-item-label class="text-strike text-orange">{{ props.row.price  }}</q-item-label>{{  props.row.discount }}
+                                                                                                              
+                                                      </q-badge>  
+                                                      <q-badge class="q-pa-sm text-bold" v-else>                                                  
+                                                      
+                                                          Price: {{  props.row.price }}
+                                                      </q-badge>  
+
+                                                      <div class="text-orange"> 
+                                                         <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_activeRowOperation._rating(props.rowIndex)"/>                                                       
+                                                     </div>                                                     
                                                         
                                                 </q-item-section>
                                                 
@@ -374,41 +530,44 @@
 
                                         </q-list>
                                               
+                                        
+
+
                                   </q-img>
   
                               </div>
-  
+                           
                               <div class="col-auto">
-                                  
+                                   <!--outside _side_actions-->
                                   <q-sticky v-if="$q.screen.gt.sm" expand position="left" class="q-px-xs">
   
                                         <q-card class="q-pa-none column" style="background-color: rgba(6, 93, 255, 0.212);" >
   
-                                          <q-btn round flat color="white" text-color="primary" label="Buy" @click="_popSideBox(props.rowIndex,props.key,'clients',false)"
+                                          <q-btn round flat color="white" text-color="primary" label="Buy" @click="_onplayRowItemsideBoxcall(props.rowIndex,'clients')"
                                         
                                             >
-                                            <q-badge color="orange"  floating v-if="!nul.includes(props.row.clients)">
-                                             sold      
-                                            </q-badge>                                          
+                                            <q-badge color="orange"  floating v-if="props.row.clients?.length ?? false">                                                                     
+                                                                  <q-item-label v-if="props.row.quantity == 0">sold </q-item-label>   
+                                                                  <q-item-label v-else>Selling </q-item-label>   
+                                                        </q-badge>                                           
 
                                           </q-btn>
 
-                                          <q-btn round flat icon="message" @mouseover="message" @click="_popSideBox(props.rowIndex,props.key,'comments',false)">
+                                          <q-btn round flat icon="message" @mouseover="message" @click="_onplayRowItemsideBoxcall(props.rowIndex,'comments')">
                                             <q-tooltip anchor="top end" self="top middle">comments</q-tooltip>    
                                           </q-btn>
 
-                                          <q-btn round flat color="white" @mouseover="message" text-color="primary" label="like" @click="_activeRowOperation._likes(props.rowIndex,props.key)">
-                                            <q-badge color="orange" floating v-if="!nul.includes(props.row.likes)">{{  props.row.likes.like }}</q-badge>
+                                          <q-btn round flat color="white" @mouseover="message" text-color="primary" label="like" @click="_activeRowOperation._likes(props.rowIndex)">
+                                            <q-badge color="orange" floating v-if="props.row.likes ?? false">{{  props.row.likes.like }}</q-badge>
                                           </q-btn>
 
-                                          <q-btn round flat icon="gps" @mouseover="message" @click="_popUpdateDialogBox(props.rowIndex,props.key)"> 
+                                          <q-btn round flat icon="gps" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
                                             <q-tooltip anchor="top end" self="top middle">   map </q-tooltip>  
                                           </q-btn>
 
-                                          <q-btn round flat icon="edit" @mouseover="message" @click="_popUpdateDialogBox(props.rowIndex,props.key)"> 
+                                          <q-btn round flat icon="edit" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
                                             <q-tooltip anchor="top end" self="top middle">   edit </q-tooltip>  
-                                          </q-btn>
-
+                                          </q-btn>                                         
                                           <q-btn round flat icon="delete" @mouseover="message"  @click="_activeRowOperation._delRow(props.rowIndex,props.key)"> 
                                             <q-tooltip anchor="top end" self="top middle"> delete </q-tooltip>  
                                           </q-btn>
@@ -432,9 +591,6 @@
                                           </q-btn>
 
                                           </q-card>
-
-
-
                                   </q-sticky>
                                  
                               </div>
@@ -443,15 +599,20 @@
      
                     </q-td>
 
-                    <q-td  auto-width class="col column" style="height:100%;width:100%" v-if="onplayRowIndex == props.rowIndex">
-                    
-                      <div class="col row" v-if="_popSideBoxOps == 'comments'">                             
-                                
-                                <q-list v-if="nul.includes(props.row.comments)">
-                                  No Comments ( New)
-                                </q-list>  
+                    <q-td :class="$q.screen.gt.md ? 'column col-6 q-ma-md q-pa-lg' :'col-6 column q-ma-md'" style="padding-top:8vh" v-else>
+                  
+                      <q-card  class="col row q-gutter-sm" >
+                          <q-skeleton class="col" square />
+                      </q-card>
+                    </q-td>
 
-                                <q-list v-else class="column" style="height:100%;width:100%">  
+                    <q-td  auto-width class="col column full-height q-pa-md"  v-if=" $q.screen.gt.md && _onplayRowIndex == props.rowIndex">
+                    
+                      <div class="col row" v-if="_onplayRowItemsideBoxOps == 'comments' && props.row.comments != null">                             
+                                
+                              
+
+                                <q-list class="column" style="height:100%;width:100%">  
 
                                   <q-item class="col-auto column">
                                     <q-item-label> 
@@ -459,7 +620,7 @@
                                       <q-btn style="background-color:white;" color="primary" :dense="true" size="sm" rounded flat @click="_passiveColumnOperation._add()"> add Comment</q-btn>                      
                                     </q-item-label>     
 
-                                    <q-item-section v-if="_popSideBoxsubIndex == -1" class="column q-pa-xs">
+                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == null" class="column q-pa-xs">
                                         <q-badge> New Comment</q-badge>
                                         <q-item-label style="text-transform: capitalize;" >
                                           <q-input  filled autogrow
@@ -475,12 +636,13 @@
                                  
                                   <q-separator spaced inset />
 
-                                  <q-scroll-area class="col column" >
+          
+                                  <q-scroll-area class="col column" v-if="props.row.comments?.length ?? false" >
                                     
                                   <q-item v-for="item,index in props.row.comments" :key="index"  class="col column">
                       
-                                    <q-item-section v-if="_popSideBoxsubIndex == index">                                        
-                                        <div class="justify-end  row "> <div color="blue"> Commenting..</div> </div>
+                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == index">                                        
+                                        <div class="justify-end  row "> <div  style="color:cyan"> Commenting..</div> </div>
                                         <q-item-label style="text-transform: capitalize;" >
                                           <q-input  filled autogrow
                                                 type="textarea"  v-model="onplayRowItem['comments'][index]['comment']" 
@@ -492,7 +654,7 @@
     
                                      <q-item-section v-else>
                                         <q-item-label style="text-transform: capitalize;" >
-                                          {{props.row.comments[index].userID}}
+                                          {{props.row.comments[index].userName}}
                                        </q-item-label>      
 
                                         <q-item-label style="text-transform: capitalize;">
@@ -509,9 +671,9 @@
                                         <q-icon name="star" />
                                         <q-icon name="star" />
                                         <q-icon name="star" />
-                                        <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray('comments',index)"> </q-btn>
-                                        <q-btn round flat icon="done" @click="_updateRow()" v-if="_popSideBoxsubIndex == index"> </q-btn>
-                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove('comments',index)" v-if="_popSideBoxsubIndex ==index "> </q-btn>
+                                        <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray(_onplayRowItemsideBoxIndex)"> </q-btn>
+                                        <q-btn round flat icon="done" @click="_updateRow()" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn>
+                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(_onplayRowItemsideBoxIndex)" v-if="_onplayRowItemsideBoxIndex ==index "> </q-btn>
                                       
                                       </div>
 
@@ -524,20 +686,20 @@
     
                                 </q-scroll-area>
     
+                                  <q-list v-else>
+                                    No Comments ( New)
+                                  </q-list>  
+
                                 </q-list>                                           
                               
                               
                               
                           </div> 
 
-                          <div class="col" v-else-if="_popSideBoxOps == 'clients'">
-
+                          <div class="col" v-else-if="_onplayRowItemsideBoxOps == 'clients' && (props.row.clients ?? false)">
                         
-                                <q-list v-if="nul.includes(props.row.clients)">
-                                  No Clients ( Buyers)
-                                </q-list>  
-
-                                <q-list v-else class="column col" style="height:100%">   
+                            
+                                <q-list class="column col" style="height:100%">   
                                   <q-item class="col-auto row">
                                     <q-list bordered class="col rounded-borders">
                                       <q-expansion-item
@@ -573,29 +735,34 @@
                                           
                                           <q-card class="items-center" style="background-color:white;">     
                                             <q-card-section>                                              
-                                              <div  v-if="_orderStep == 0">
+                                              <div  v-if="(_orderStep == 0) &&  (defaultItem['clients']?.length ?? false)">
                                                 <q-item-label class="absolute-right q-px-sm">Step - 1</q-item-label>                                            
 
                                                 Your OrderID : {{ defaultItem['clients'][0]['orderID'] }}
-                                                <div class="q-gutter-md row items-start q-pa-sm">
-                                                    <q-input filled v-model="defaultItem['clients'][0]['orderID']" class="col-grow" label="OrderID" stack-label :dense="true" />
-                                                    <q-input filled v-model="defaultItem['clients'][0]['phone']" class="col-6" label="Phone_#" stack-label :dense="true" />
-                                                <q-btn color="indigo" no-caps  glossy unelevated  @click="_activeColumnOperation._sendMeConfirmation('clients',0)" label="Confirmation Request" :dense="true"/>
+                                                <div class="q-gutter-sm row items-start q-pa-sm">
+                                                    <q-input filled v-model="defaultItem['clients'][0]['orderID']" class="col-grow" label="OrderID" stack-label :dense="true" readonly />
+                                                    <q-input type='Number'  outlined bottom-slots v-model="defaultItem['clients'][0]['quantity']" class="col-4" label="Quantity" default="1" min='1' :prefix="'+'" :dense='true' >
+                                                      <template v-slot:hint>
+                                                      </template>
+                                                    </q-input>
+                                                    <q-input filled v-model="defaultItem['clients'][0]['phone']" class="col-7" label="Phone_#" stack-label :dense="true" />                                 
+                                                   
+
+                                                    <q-btn color="indigo" no-caps  glossy unelevated  @click="_activeColumnOperation._confirmOrder()" label="Sent Order" :dense="true"/>
                                                 
                                                 </div>                                            
                                               
                                               </div>                                              
                                               
                                               <fieldset class="q-gutter-md row items-center q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
-                                                <q-item-label class="absolute-top-right q-px-sm ">Step - 2 </q-item-label>                                             
-                                                <legend class="flex justify-start q-py-none">Code Sent to # :<q-item-label caption> <q-badge>{{ _orderIntiatedPhone  }}  </q-badge>  </q-item-label> </legend>
-                                                <q-item-label caption class="col-12 q-my-none">  OrderID : {{ _orderIntiatedID }} </q-item-label> 
-                                                <q-input filled v-model="_orderConfirmationQuantity" class="col-12" :dense="true" type="Number" stack-label label="Order Quantity" />
-                                                <q-input filled v-model="_orderConfirmationID" class="col" :dense="true" type="string" prefix="itS" />
-                                                <q-btn color="green" no-caps  glossy unelevated @click="_activeColumnOperation._confirmBuyer('clients',0)" label="Confirm" :dense="true"/>
-                                                <q-btn color="blue" no-caps  glossy unelevated @click="_activeColumnOperation._reIntiatOrder('clients',-1)" label="ReOrder" :dense="true"/>
+
+                                                <q-item-label class="absolute-top-right q-px-sm ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_activeColumnOperation._initiateOrder()"/>
+                                                                                  
+                                                </q-item-label>                                             
+                                                <legend class="flex justify-start q-py-none">OrderID :<q-item-label caption> <q-badge>{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
+                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
+                                         
                                               </fieldset> 
-                                              <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                             
                                             </q-card-section>
                                           </q-card>
                                         </q-expansion-item>
@@ -606,74 +773,388 @@
                                   </q-item>
 
                                   <q-separator spaced inset />
-                                  <q-scroll-area class="col column" >
-                                    <q-item v-for="item,index in props.row.clients" :key="index"  class="col column">
-                                   
-                                     <q-item-section >
-                                      <div class="row justify-between q-gutter-sm">
-                                          <div>
-                                                  <div v-if="onplayRowItem['clients'][index]['quantity'] == 0 && _orderStep == 0" ><q-badge color="red" size="sm">Unconfirmed,</q-badge></div> 
-                                              
-                                                  <q-item-label style="text-transform: capitalize;" >
-                                                    {{props.row.clients[index].userName}} #{{props.row.clients[index].orderID}}
-                                                  </q-item-label>                                                   
-                                          </div>
-
-                                          <div>
-                                            <div class="text-orange" v-if="onplayRowItem['clients'][index]['userID'] == Objprops.userID" >
-                                                <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray('clients',index)" v-if="onplayRowItem['clients'][index]['quantity'] == 0"> </q-btn>
-                                                <!--q-btn round flat icon="done" @click="_updateRow(false)" v-if="_popSideBoxsubIndex == index"> </q-btn-->
-                                                <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove('clients',index)" v-if="_popSideBoxsubIndex == index "> </q-btn>
-          
-                                            </div> {{  Objprops.userName }} {{  Objprops.userID }}
-                                            <div class="text-orange" v-if="onplayRowItem['userID'] == Objprops.userID" >
-                                                <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray('clients',index)"> </q-btn>
-                                                <q-btn round flat icon="done" @click="_updateRow(false)" v-if="_popSideBoxsubIndex == index"> </q-btn>
-                                                <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove('clients',index)" v-if="_popSideBoxsubIndex == index "> </q-btn>
-          
-                                            </div>   
-
-                                          </div>
-
-                                      </div>  
                                      
 
-                                        <div class="flex flex-center q-gutter-sm">
-                                           <q-item-label style="text-transform: capitalize;">
-                                          <q-input  autogrow filled 
-                                                type="Number"  v-model="props.row.clients[index].quantity" 
-                                                label="Quantity" stack-label :dense="true" readonly />
-                                               
-                                       </q-item-label>
-                                       
-                                       <q-item-label style="text-transform: capitalize;">
-                                          <q-input  autogrow filled
-                                                type="Number"  v-model="props.row.clients[index].paymentMethod" 
-                                                label="Payment" stack-label :dense="true" readonly />
-                                               
-                                       </q-item-label>   
-                                        </div>                                       
+                                      <q-scroll-area class="col column" v-if="props.row.clients?.length ?? false">                                
+                                        <q-item v-for="item,index in props.row.clients" :key="index"  class="col column">  
+                                                                            
+                                              <q-item-section v-if="props.row.clients[index] ?? false">
 
-                                     </q-item-section>
-    
-                                    <q-item-section >
-                                      <q-item-label caption> {{  props.row.clients[index].time }}</q-item-label>
-                                      <div class="text-orange"> 
-                                        <q-itm-label class="row justify-start items-center " > Delivery Remark: <q-item-label class="text-black q-px-sm" caption> {{props.row.clients[index]['description']   }} </q-item-label> </q-itm-label>
+                                                <div class="row justify-between items-end q-gutter-sm ">
+                                                  <div class="q-py-sm" v-if="props.row.clients[index]['served'] ?? false">
 
-                                      </div>                                                                     
-                                             
-                                    </q-item-section>
+                                                          <div v-if="props.row.clients[index]?.['served'] == 'Requested' ?? false " >
+                                                            <q-badge color="red" size="sm">Pending..</q-badge></div> 
+                                                      
+                                                          <q-item-label style="text-transform: capitalize;" >
+                                                            <q-avatar size="14px"  :color="props.row.clients[index]['served'] != 'Queed' ? 'orange' : 'green'"></q-avatar>
+                                                              {{props.row.clients[index].phone}} #{{props.row.clients[index].orderID}}
+                                                          </q-item-label>                                                   
+                                                  </div>
+                                                    <!---- is current loged user/client--> 
+                                                    <div  v-if="props.row?.['userID'] == Objprops.userID"> 
+                                                          <q-btn round color='blue' flat icon="edit" @click="_passiveColumnOperation._selectArray(index)"> </q-btn>
+                                                          <q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex  == index"> apply </q-btn>
+                                                          <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" v-if="_onplayRowItemsideBoxIndex == index "> </q-btn>
+                                                    </div>
+                                                    <div v-else-if="props.row.clients[index]?.['userID'] == Objprops.userID">
+                                                      <q-btn round flat color='orange' icon="edit" @click="_passiveColumnOperation._selectArray(index)" > </q-btn>
+                                                        <!--q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn-->
+                                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" > </q-btn>                
+                                              
+                                                      </div>
+                                                                                       
 
-                                      </q-item>
+                                              </div>                                       
+                                              
+                                              <div class="row q-gutter-sm" v-if="_onplayRowItemsideBoxIndex == index " >
+                                                        <q-item-label style="text-transform: capitalize;">
+                                                            <q-input  autogrow filled clearable
+                                                            :shadow-text="textareaShadowText"
+                                                                  @keydown="processTextareaFill"
+                                                                  @focus="processTextareaFill"
+                                                                  type="Number"  v-model="props.row.clients[index]['description']" 
+                                                                  label="Delivery Remark" stack-label :dense="true"  />
+                                                                
+                                                        </q-item-label>                                                
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                          
+                                                          <q-select
+                                                          :dense="true"
+                                                                filled
+                                                                v-model="props.row.clients[index]['served']"
+                                                                :options="['Requested','Queed','Served']"
+                                                                use-chips
+                                                                stack-label
+                                                                label="Served Status"
+                                                              />        
+                                                              
+                                                              
+                                                        </q-item-label>   
+                                                </div> 
+                                                <div class="flex flex-center  q-gutter-sm" v-else >
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled 
+                                                                  type="Number"  v-model="props.row.clients[index].quantity" 
+                                                                  label="Quantity" stack-label :dense="true" readonly />
+                                                                
+                                                        </q-item-label>
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled
+                                                                  type="Number"  v-model="props.row.clients[index].price" 
+                                                                  label="Price" stack-label :dense="true" readonly />
+                                                                
+                                                        </q-item-label>   
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled
+                                                                  type="Number"  v-model="props.row.clients[index].paymentMethod" 
+                                                                  label="Payment" stack-label :dense="true" readonly />                                                        
+                                                        </q-item-label>                                                
 
-                   
+                                                </div>    
+                                              </q-item-section>
+            
+                                              <q-item-section v-if="props.row.clients?.length ?? false">                                     
+                                                    <div class="text-orange"> 
+                                                      <q-item-label caption> {{  props.row.clients[index].time.split(',')[0] ?? ' ' + props.row.clients[index].time.split(',')[1] ?? ' ' }}</q-item-label>
+                                                      
+                                                          <q-itm-label class="row justify-start items-center " > Delivery Remarkk: <q-item-label class="text-black q-px-sm" caption> {{props.row.clients[index]['description']   }} </q-item-label> </q-itm-label>
 
-                                    </q-scroll-area>
+                                                        </div>                                                                     
+                                                      
+                                              </q-item-section>
+
+                                          </q-item>
+
+                      
+
+                                        </q-scroll-area>
+                                   
+                                        <q-list v-else>
+                                        No Clients ( Buyers)
+                                      </q-list>  
 
                                     </q-list>
 
                           </div>
+                    </q-td>
+
+                    <div class="bg-red" style="position:absolute;width:100%;height:50%;bottom:0;z-index: 1;"  v-if=" $q.screen.lt.md && _onplayRowIndex == props.rowIndex">
+
+                      <div class="col row" v-if="_onplayRowItemsideBoxOps == 'comments' && props.row.comments != null">                             
+                                
+                              
+
+                                <q-list class="column" style="height:100%;width:100%">  
+
+                                  <q-item class="col-auto column">
+                                    <q-item-label> 
+                                      Comments:    
+                                      <q-btn style="background-color:white;" color="primary" :dense="true" size="sm" rounded flat @click="_passiveColumnOperation._add()"> add Comment</q-btn>                      
+                                    </q-item-label>     
+
+                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == null" class="column q-pa-xs">
+                                        <q-badge> New Comment</q-badge>
+                                        <q-item-label style="text-transform: capitalize;" >
+                                          <q-input  filled autogrow
+                                                type="textarea"  v-model="defaultItem.comments[0].comment" 
+                                                :label="cinfo" stack-label :dense="true"  />                                        
+                                        </q-item-label> 
+                                        <div class="col-auto q-pa-xs">
+                                          <q-btn label="Add Comment" :dense="true" @click="_passiveColumnOperation._submitArray('comments')"  size="md"/>
+                                        </div>     
+                                     </q-item-section>
+
+                                  </q-item> 
+                                 
+                                  <q-separator spaced inset />
+
+          
+                                  <q-scroll-area class="col column" v-if="props.row.comments?.length ?? false" >
+                                    
+                                  <q-item v-for="item,index in props.row.comments" :key="index"  class="col column">
+                      
+                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == index">                                        
+                                        <div class="justify-end  row "> <div  style="color:cyan"> Commenting..</div> </div>
+                                        <q-item-label style="text-transform: capitalize;" >
+                                          <q-input  filled autogrow
+                                                type="textarea"  v-model="onplayRowItem['comments'][index]['comment']" 
+                                                :label="cinfo" stack-label :dense="true"  />
+                                        
+                                        </q-item-label>      
+                                        
+                                     </q-item-section>
+    
+                                     <q-item-section v-else>
+                                        <q-item-label style="text-transform: capitalize;" >
+                                          {{props.row.comments[index].userName}}
+                                       </q-item-label>      
+
+                                        <q-item-label style="text-transform: capitalize;">
+                                          <q-input  autogrow filled
+                                                type="textarea"  v-model="props.row.comments[index].comment" 
+                                                :label="cinfo" stack-label :dense="true" readonly />
+
+                                       </q-item-label>    
+                                     </q-item-section>
+    
+                                    <q-item-section >
+                                      <q-item-label caption> {{  props.row.comments[index].time }}</q-item-label>
+                                      <div class="text-orange">
+                                        <q-icon name="star" />
+                                        <q-icon name="star" />
+                                        <q-icon name="star" />
+                                        <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray(_onplayRowItemsideBoxIndex)"> </q-btn>
+                                        <q-btn round flat icon="done" @click="_updateRow()" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn>
+                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(_onplayRowItemsideBoxIndex)" v-if="_onplayRowItemsideBoxIndex ==index "> </q-btn>
+                                      
+                                      </div>
+
+                                    
+                                    
+                                    </q-item-section>
+                                  </q-item>
+    
+                               
+    
+                                </q-scroll-area>
+    
+                                  <q-list v-else>
+                                    No Comments ( New)
+                                  </q-list>  
+
+                                </q-list>                                           
+                              
+                              
+                              
+                          </div> 
+
+                          <div class="col" v-else-if="_onplayRowItemsideBoxOps == 'clients' && (props.row.clients ?? false)">                       
+                            
+                                <q-list class="column col" style="height:100%">   
+                                  <q-item class="col-auto row">
+                                    <q-list bordered class="col rounded-borders">
+                                      <q-expansion-item
+                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
+                                        >
+                                          <template v-slot:header>
+                                         <q-item-section>
+                                          payIt Service
+                                        </q-item-section>
+
+                                            <q-item-section>
+                                             pay using telebirr                                          
+                                          </q-item-section>
+                                          </template>
+                                          
+                                          
+                                         
+                                        </q-expansion-item>
+                                          <q-separator  inset />
+                                        <q-expansion-item
+                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
+                                        >
+                                          <template v-slot:header>
+                                         <q-item-section>
+                                          Easy-pay
+                                        </q-item-section>
+
+                                            <q-item-section>
+                                              #buyers ; Add to your Cart                                           
+                                          </q-item-section>
+                                          </template>
+                                          
+                                          
+                                          <q-card class="items-center" style="background-color:white;">     
+                                            <q-card-section>                                              
+                                              <div  v-if="(_orderStep == 0) &&  (defaultItem['clients']?.length ?? false)">
+                                                <q-item-label class="absolute-right q-px-sm">Step - 1</q-item-label>                                            
+
+                                                Your OrderID : {{ defaultItem['clients'][0]['orderID'] }}
+                                                <div class="q-gutter-sm row items-start q-pa-sm">
+                                                    <q-input filled v-model="defaultItem['clients'][0]['orderID']" class="col-grow" label="OrderID" stack-label :dense="true" readonly />
+                                                    <q-input type='Number'  outlined bottom-slots v-model="defaultItem['clients'][0]['quantity']" class="col-4" label="Quantity" min='1' :prefix="'+'" :dense='true' >
+                                                      <template v-slot:hint>
+                                                      </template>
+                                                    </q-input>
+                                                    <q-input filled v-model="defaultItem['clients'][0]['phone']" class="col-7" label="Phone_#" stack-label :dense="true" />                                 
+                                                   
+
+                                                    <q-btn color="indigo" no-caps  glossy unelevated  @click="_activeColumnOperation._confirmOrder()" label="Sent Order" :dense="true"/>
+                                                
+                                                </div>                                            
+                                              
+                                              </div>                                              
+                                              
+                                              <fieldset class="q-gutter-md row items-center q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
+
+                                                <q-item-label class="absolute-top-right q-px-sm ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_activeColumnOperation._initiateOrder()"/>
+                                                                                  
+                                                </q-item-label>                                             
+                                                <legend class="flex justify-start q-py-none">OrderID :<q-item-label caption> <q-badge>{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
+                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
+                                         
+                                              </fieldset> 
+                                            </q-card-section>
+                                          </q-card>
+                                        </q-expansion-item>
+                                        </q-list>
+                                  </q-item> 
+                                  <q-item  class="col-auto q-pa-xs " >
+                                    <q-badge outline color='green' > {{  _orderDebuger }}</q-badge>
+                                  </q-item>
+
+                                  <q-separator spaced inset />
+                                     
+
+                                      <q-scroll-area class="col column" v-if="props.row.clients?.length ?? false">                                
+                                        <q-item v-for="item,index in props.row.clients" :key="index"  class="col column">  
+                                                                            
+                                              <q-item-section v-if="props.row.clients[index] ?? false">
+
+                                                <div class="row justify-between items-end q-gutter-sm ">
+                                                  <div class="q-py-sm" v-if="props.row.clients[index]['served'] ?? false">
+
+                                                          <div v-if="props.row.clients[index]?.['served'] == 'Requested' ?? false " >
+                                                            <q-badge color="red" size="sm">Pending..</q-badge></div> 
+                                                      
+                                                          <q-item-label style="text-transform: capitalize;" >
+                                                            <q-avatar size="14px"  :color="props.row.clients[index]['served'] != 'Queed' ? 'orange' : 'green'"></q-avatar>
+                                                              {{props.row.clients[index].phone}} #{{props.row.clients[index].orderID}}
+                                                          </q-item-label>                                                   
+                                                  </div>
+                                                    <!---- is current loged user/client--> 
+                                                    <div  v-if="props.row?.['userID'] == Objprops.userID"> 
+                                                          <q-btn round color='blue' flat icon="edit" @click="_passiveColumnOperation._selectArray(index)"> </q-btn>
+                                                          <q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex  == index"> apply </q-btn>
+                                                          <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" v-if="_onplayRowItemsideBoxIndex == index "> </q-btn>
+                                                    </div>
+                                                    <div v-else-if="props.row.clients[index]?.['userID'] == Objprops.userID">
+                                                      <q-btn round flat color='orange' icon="edit" @click="_passiveColumnOperation._selectArray(index)" > </q-btn>
+                                                        <!--q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn-->
+                                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" > </q-btn>                
+                                              
+                                                      </div>
+                                                                                       
+
+                                              </div>                                       
+                                              
+                                              <div class="row q-gutter-sm" v-if="_onplayRowItemsideBoxIndex == index " >
+                                                        <q-item-label style="text-transform: capitalize;">
+                                                            <q-input  autogrow filled clearable
+                                                            :shadow-text="textareaShadowText"
+                                                                  @keydown="processTextareaFill"
+                                                                  @focus="processTextareaFill"
+                                                                  type="Number"  v-model="props.row.clients[index]['description']" 
+                                                                  label="Delivery Remark" stack-label :dense="true"  />
+                                                                
+                                                        </q-item-label>                                                
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                          
+                                                          <q-select
+                                                          :dense="true"
+                                                                filled
+                                                                v-model="props.row.clients[index]['served']"
+                                                                :options="['Requested','Queed','Served']"
+                                                                use-chips
+                                                                stack-label
+                                                                label="Served Status"
+                                                              />                                                                                                      
+                                                        </q-item-label>   
+                                                </div> 
+                                                <div class="flex flex-center  q-gutter-sm" v-else >
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled 
+                                                                  type="Number"  v-model="props.row.clients[index].quantity" 
+                                                                  label="Quantity" stack-label :dense="true" readonly />
+                                                                
+                                                        </q-item-label>
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled
+                                                                  type="Number"  v-model="props.row.clients[index].price" 
+                                                                  label="Price" stack-label :dense="true" readonly />
+                                                                
+                                                        </q-item-label>   
+                                                        <q-item-label style="text-transform: capitalize;" class="col">
+                                                            <q-input  autogrow filled
+                                                                  type="Number"  v-model="props.row.clients[index].paymentMethod" 
+                                                                  label="Payment" stack-label :dense="true" readonly />                                                        
+                                                        </q-item-label>                                                
+
+                                                </div>    
+                                              </q-item-section>
+            
+                                              <q-item-section v-if="props.row.clients?.length ?? false">                                     
+                                                    <div class="text-orange"> 
+                                                      <q-item-label caption> {{  props.row.clients[index].time.split(',')[0] ?? ' ' + props.row.clients[index].time.split(',')[1] ?? ' ' }}</q-item-label>
+                                                      
+                                                          <q-itm-label class="row justify-start items-center " > Delivery Remarkk: <q-item-label class="text-black q-px-sm" caption> {{props.row.clients[index]['description']   }} </q-item-label> </q-itm-label>
+
+                                                        </div>                                                                     
+                                                      
+                                              </q-item-section>
+
+                                          </q-item>
+
+                      
+
+                                        </q-scroll-area>
+                                   
+                                        <q-list v-else>
+                                        No Clients ( Buyers)
+                                      </q-list>  
+
+                                    </q-list>
+
+                          </div>
+
+                      </div>
+
+                    <q-td v-else-if="props.row.saleitgr == null" auto-width class="col column  full-height" >
+                        <q-card  class="col row q-gutter-sm" >
+                          <q-skeleton class="col" square />
+                        </q-card>
+
                     </q-td>
 
                     </q-tr>
@@ -683,35 +1164,31 @@
   
         </div>
    
-      <!----------------------LiveDATA Banner-->
-      
-      <div class="col-auto q-gutter-none justify-center items-center bg-red row fit">
+<!-- sckelton of single_content-->
+        <div class="col q-pa-md flex flex-center" style="height:90vh;" v-else>
+
+          <q-card  style="height: 80vh;width:40%">
+
+            <q-skeleton class="fit" square />
+
+            </q-card>
+
+            <q-separator inset />
          
-          <div class="col content-center text-weight-bolder text-h6 bg-dark text-blue">
-          <marquee behavior="scroll" scrollamount="2" direction="left">
-              <span class="marquee">
-               <div class="row flex flex-center "  style="border: 1px solid white;border-radius:10px;">
-               
-                  <q-item-label class="triShape triShapeU" > </q-item-label> %5
-                  <q-item-label class="triShape triShapeD " /> %0.1 
-                 Toguamino 
-               
-               </div>
-              </span>
-          </marquee>
-          </div>
+        </div>
+      <!----------------------LiveDATA Banner-->
   
-  
-      </div>
+     
   
           <!------------Zooming Level Adjuster Sticky-------------------------->
   
         
   
-      </q-page>
+  
+</q-page>
+
     </template>
     
-  
     <script setup>
   //_____________________________________________Modules Definitions
   //-------------------------------------------------------------Importing System Modules
@@ -727,15 +1204,11 @@
   
   import { saleitSchema } from "src/composables/schemas/saleitSchemas";
   import schemaSklt from "src/composables/schemaSklts";
-  
+  import { _wiseDating } from "src/composables/utilServices/datePeriod"
   //----componenents..
   //------------------Global Variables [ uTILITIES..]
-  import { ssrAPI } from "../srcenv";
-import { Tooltip } from "chart.js";
-  
   const $q = useQuasar();
-  //const $m = useMeta();
-  
+  //const $m = useMeta();  
   const router = useRouter();
   
   const metaData = {
@@ -744,7 +1217,7 @@ import { Tooltip } from "chart.js";
     // optional; sets final title as "Index Page - My Website", useful for multiple level meta
     titleTemplate: (title) => `${title} - DashBoard`,
     // JS tags
-    icon:"/public/icons/favicon-32x32.jpg", 
+    icon:"icons/favicon-32x32.png", 
   
     script: {
       printJs: {
@@ -762,13 +1235,15 @@ import { Tooltip } from "chart.js";
   //-------------------------------------------------------------Importing System Modules--------------END
   //-------------------------------------------------------------Importing Defined Modules
   const saleitService = saleitStore();
+
+
   const genapsaleitContentOps = genapiStore(); //import { genapiStore } from "src/stores/jstStores/genapiStore";
-  
   //-------
-  let nul = ref([undefined, "", null, false, "false",0,[],{},NaN]);
+  let _thisDate=ref(new Date().toLocaleDateString())
+  let nul = ref([undefined, "", null, false,"false",0,[],{},NaN]);
   function ArrayHaseem (base,items)  { //checking arrays within arrays
     return items.some(value => base.includes(value)) ? true : false };
-  var keyhasValue = (key) => !nul.value.includes(reqData[key]) && Object.keys(reqData[key]).length != 0 ? true : false;
+  //let keyhasValue = (key) => reqData[key] != null && Object.keys(reqData[key]).length != 0 ? true : false;
   
   ////////////////////////
   const months = Array.from({ length: 12 }, (e, i) => {
@@ -777,57 +1252,46 @@ import { Tooltip } from "chart.js";
     }); //short || long
   });
   
-  var todday = () => new Date("12/26/2023, 11:47:20 PM"); //.split('T')[0];
-  
-  const _thisDate = new Date();
-  
-  const _thisYear = _thisDate.getFullYear(); //current_year_number
-  var _startofthisYear = new Date(_thisYear, 0, 1); //01,01 (Year(startMonth=01(_in_js:0),startDate=01(_in_js:1)))
-  var _endofthisYear = new Date(_thisYear, 11, 31); //12,31 (Year(endMonth=12(_in_js:11),endDate=31(_in_js:31)))
-  var _previouseYear = _thisYear - 1; //previouse_yearnumber
-  const _thisMonth = _thisDate.getMonth(); //current_month_number
-  const _startofthisMonth = new Date(_thisYear, _thisMonth, 1);
-  const _endofthisMonth = new Date(_thisYear, _thisMonth + 1, 0);
-  
-  const monthDataFilter = ref({
-    updatedAt: {$gte: _startofthisMonth,$lt: _endofthisMonth},
-  });
-  const yearDataFilter = ref({
-    updatedAt: {$gte: _startofthisYear,$lt: _endofthisYear},
-  });
-  
+
   //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
   //-------------USER PROFILE_Variables..
   
-  var Objprops = defineProps({
+  let Objprops = defineProps({
     //----General Informations
     _profile: { type: Object, default: () => ({}) }, //user Datas all there is...
     //----User Credentials and Unique ID.
-    id: { type: String, default: "" }, //
+    //id: { type: String, default: "" }, //
     userID: { type: String, default: "" }, //
     userName: { type: String, default: "" }, //
+    phone: { type: String, default: "" }, //phoneCode
+    phoneCode: { type: String, default: "" }, //phoneCode
+    location:{ type: Object, default: () => ({}) },
+    geolocation:{ type: Object, default: () => ({}) },
     
     //-----------access Parameters
-    _anyAccess: { type: Object, default: () => ({})  },
+    //_anyAccess: { type: Object, default: () => ({})  },
     _isupgraded : { type: Boolean, default: false },
     _ispremium : { type: Boolean, default: false },
     _iss: { type: Object, default: () => ({}) }, //is the loged_user has privileged_routes...defintions
 
-    _priviledgedFor: { type: Object, default: () => {}},  
+    _accessPackage: { type: Object, default: () => {}},  
     //----------------------empy model total privileges....
     _modalPriviledges: { type: Object, default: () => ({}) }, //user's privileges on general....with object of privileges =>{'empy':'regAdmin'}
   
     //-------------------(layout tunnel for command datas(signal))
     lytCreatRow : { type: Boolean, default: false },
-    //--------Search Button Signal
+    //--------Search Button Signal  
     lytSearchRow : { type: String, default: '' },
+    _onPlayNavMedia : { type: String, default: '' },
   });
   //Objprops.lytCreatRow
   //===-----_--------THE MODEL/ MAIN_DATA....
   let _thisModel = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)
-  var _thisModelHeader = ref(_thisModel+" Managment"); // the Vue_Page_Data_Headers(Descriptions...)
+  let _thisSchema=saleitSchema
+
+  let _thisModelHeader = ref(_thisModel+" Managment"); // the Vue_Page_Data_Headers(Descriptions...)
   
-  var acctypeStage = ref({
+  let acctypeStage = ref({
 
     'creator':[1,3,4,5], //who can create only & manage data with in ....the statu of not bought(chcked)
     //-----
@@ -840,27 +1304,27 @@ import { Tooltip } from "chart.js";
     })
 
 //---current Modal Specific_privileges_analysis
-let modalpriviledges = nul.value.includes(Objprops._modalPriviledges[_thisModel]['enum']) ? Objprops._modalPriviledges[_thisModel]['enum'] : Objprops._modalPriviledges[_thisModel]['venum']
+let modalpriviledges = Objprops._modalPriviledges[_thisModel]['enum'] ?? Objprops._modalPriviledges[_thisModel]['venum']
 let _thisModelPriviledges = ref(modalpriviledges); //current model's possible privileges list....objects ( .enum=[1,2,3])
-let _thispriviledgedFor = ref(Objprops._priviledgedFor[_thisModel]); //user's priviledges on current model....string
+let _thispriviledgedFor = ref(Objprops._accessPackage[_thisModel]); //user's priviledges on current model....string
 
-var __isCreator =ref(false) //has it, creator(admin) [Group] or just_Columnist_access
+let __isCreator =ref(false) //has it, creator(admin) [Group] or just_Columnist_access
 try{
-__isCreator =  computed(() => nul.value.includes(_thispriviledgedFor.value[2]) ? false : _thispriviledgedFor.value[2] ) //is admin/creator...
+__isCreator =  computed(() => _thispriviledgedFor.value[2] ?? false ) //is admin/creator...
 }catch{}
 
-var __iss =ref([]) ;//is not admin/registrat.. but isstore,isfinance
+let __iss =ref([]) ;//is not admin/registrat.. but isstore,isfinance
 try{
-__iss =  computed(() => nul.value.includes(Objprops._iss[_thisModel]) ? false : Objprops._iss[_thisModel]) // ['isgm','issale']...take index_0 default
+__iss =  computed(() => Objprops._iss[_thisModel] ?? false ) // ['isgm','issale']...take index_0 default
 }catch{}
 
-var __isStage = ref([])
+let __isStage = ref([])
 try{
    __isStage = computed(()=>
   {
-    var isStage = []
+    let isStage = []
     for(let i in __iss.value){
-    var sStage = nul.value.includes(acctypeStage.value[__iss.value[i]]) ? false : __iss.value[i] 
+    let sStage = acctypeStage.value[__iss.value[i]] == null ? false : __iss.value[i] 
     isStage =isStage.concat(acctypeStage.value[sStage])
     }
     return isStage;
@@ -870,17 +1334,20 @@ try{
 
     //-----------------------  
   //------------------------------------------------------------COLUMNs----------------
-    //==============================================------------------------------------
-  
-  
-  var columns = ref([]); //Actual Table_Columns ++Descriptions
-  var topLayerColumns = ref([]); //Actual OuterMost Table_Column_Names [Top(Layer_1] _Columns _Name_List]
+//==============================================------------------------------------
+let enableflscreen =ref(true)
+async function _toggleflscreen (){ 
+  enableflscreen.value = enableflscreen.value ? false : true;
+  return true }
+  //--------------
+  let columns = ref([]); //Actual Table_Columns ++Descriptions
+  let topLayerColumns = ref([]); //Actual OuterMost Table_Column_Names [Top(Layer_1] _Columns _Name_List]
   let authorizedColumns = ref([]); //Filtered/Authorized_Table_Columns ++Descriptions for Editing/Adding.... but not Viewing
   //------column invisiblity on table_
   const pagination = ref({ rowsPerPage: 50 });
 
   //columns_filter()-------- which to displayOn REgisterations form
-  let lockedColumns = ref([ "userID",]); //are blacklist of columns tobe not shown during the Registerations..form submitting
+  let lockedColumns = ref([ "userID","userName"]); //are blacklist of columns tobe not shown during the Registerations..form submitting
   let tableZooming =ref(1)
   //------column invisiblity on table_
   let visibleColumns = ref([]); //Hold List of In
@@ -899,38 +1366,45 @@ try{
 
   //===============================================-----------------------------------
   //-----------------------DATAs ROWs--------------
-  var rows = ref([{}]); //Data's projected with the Columns variable [ calling function.....Crud_.readDatas(top_100)]
-  
+  let rows = ref([{}]); //Data's projected with the Columns variable [ calling function.....Crud_.readDatas(top_100)]
+  let rowsCount = ref(0);
+    
   //===============================================-----------------------------------------
   //------------- MODAL ROWs_ MANAGMENT
   let defaultItem = ref({});
   let onplayRowItem = ref({}); //the selected row_actual_Data..as object
-  let onplayRowIndex = ref(-1); //_row_item_index..0/1/2
 
   //------- Original/_UpdateRowItem:CreateRowItem _Commands
-  let onplayRowItemOps = ref(false); //_is UpdateRowItem/Creating_New
-  let _setpopDialogBox = ref(false); //true...
+  let _onplayRowItemBox = ref(false); //true...
+  let _onplayRowIndex = ref(null); //_row_item_index..0/1/2
+  let _onplayRowItemOps = ref(false); //_is UpdateRowItem/Creating_New
+  let _onplayRowItemOpsStatus =ref(false)
   
   //==-----tabular side_box ( Pop_by_Id and tell the Operation)
   //let _setpopSideBox = ref(false); //true,..
-  let _popSideBoxOps = ref(false); //clients,...
-
   //---Editing/_....arrays manupulating
-  let _popSideBoxsubOps = ref(false); //editing,deleting,creating
-  let _popSideBoxsubIndex = ref(-1); //array_index_0/1/2/3
+  let _onplayRowItemsideBox = ref(false); //clients,...
+  let _onplayRowItemsideBoxOps = ref(false); //editing,deleting,creating
+  let _onplayRowItemsideBoxIndex = ref(null); //array_index_0/1/2/3
 
-let rowsCount = ref(0);
+  //inject filtering mechanism into store
+
 rows = computed(() => {
-  let data = saleitService.getDatas;
-  let dataCount = data.length;
+  //let data = saleitService.getDatas;
+  //let data = saleitService.Datas;
+  //console.log(saleitService.Datas,'watching')
+  //rows.value=data
+  notifyit.info(('')+"New "+_thisModel + " Item Loaded..!");
+  return saleitService.getDatas;
 
+  let dataCount = data.length;
   if (data.length === 0) {
     setDLoading(true);
     return [{}];
   } else{
     notifyit.info((rowsCount.value - dataCount)+"New "+_thisModel + " Item Loaded..!");
     setCounter(dataCount);
-    return data;
+    return saleitService.getDatas;
   }
 });
 
@@ -940,20 +1414,11 @@ function setCounter(num) {
 
   //===============================================-----------------------
   //-------------Syncing Columns
-  async function _resetOnPlayColumnItem() {
-    authorizedColumns.value = [];
-    visibleColumns.value = [];
-    topLayerColumns.value = [];
-  }
-
 columns = computed(() => { 
   
     if (Object.values(Objprops).length === 0) {
       return [{}];
     } else {
-
-      _resetOnPlayColumnItem();
-
       let tempColumns = []; //HOLDING_  all the Columns of the Data_model ( TOTAL Columns)
       let tempviewColumns = [];  ////--HOLDING_ all the "Visible" Columns of the Data_model ( TOTAL Columns)
   
@@ -961,16 +1426,8 @@ columns = computed(() => {
         let _col = { 
           name: schemaColumn,
           schema: saleitSchema[schemaColumn],
-          //label: schemaColumn,
-          //sortable: true,
-          //align: "left",
-          //sort: (a, b) => a - b,
         };
-  
-        //topLayerColumn(schemaColumn); //---List Out topLayerColumns_NAME in ARRAY ( TOTAL topNames)
         tempColumns.push(_col);
-        //invisibleColumns.includes(schemaColumn) ? "" : tempviewColumns.push(schemaColumn);
-  
         if (schemaColumn === "extraColumn" || lockedColumns.value.includes(schemaColumn)) {
           continue;
         } else {
@@ -987,14 +1444,12 @@ columns = computed(() => {
               //authorizedColumn(_col); //
             }
           }
-          }catch{}
-  
+          }catch{}  
           authorizedColumn(_col); //
-  
         }
       }
   
-      _buildSchemaForm();
+      _buildDataModel();
       visibleColumn(tempviewColumns);
       return tempColumns;
     }
@@ -1004,59 +1459,92 @@ columns = computed(() => {
   const authorizedColumn = async (_col) =>  authorizedColumns.value.push(_col);  //( Object List of author_columns Details)
   const visibleColumn = async (visibleCols) =>  visibleColumns.value = visibleCols; //.slice[0,topLayerColumns.value.length]
 
-  async function _buildSchemaForm() {
+  async function _buildDataModel() {
     if (!authorizedColumns.value.length) {
-      //return null;
-    }
-    
-    onplayRowItem.value = await schemaSklt(authorizedColumns.value);
-    logUser(); //
-    return true;
+      defaultItem.value={}
+      logUser(); //
+      return false;
+    }    
+     return await schemaSklt(authorizedColumns.value).then((_modelSkelton)=>{
+      console.log('model Return',_modelSkelton)
+      defaultItem.value=_modelSkelton
+      logUser(); //
+      return true
+    }).catch((error)=>{
+      defaultItem.value={}
+      logUser(); //
+    })
   }
 
-var _onplayDefaultColumn = ["userID",'phone',"userName"]
-  async function logUser() {
-    for (let kkey in _onplayDefaultColumn) {
-      var _columnName=_onplayDefaultColumn[kkey]
+let _defaultArray =ref({})
+let _onplayDefaultColumn = ['phone',"userName","geolocation",'location','phoneCode']
+async function logUser() { //should excute once on boot or on changing location(geolocation)
+    for (let kkey of _onplayDefaultColumn) {
       try {
-        onplayRowItem.value[kkey] = Objprops._profile[_columnName];
+        defaultItem.value[kkey] = Objprops._profile[kkey];
       } catch {}
     }
-    //populate arrayed_value_columns
-    //setted Buy(basic) information_
-    onplayRowItem.value['clients'][0]['userID']=Objprops.userID;
-    onplayRowItem.value['clients'][0]['userName']=Objprops.userName;
-    onplayRowItem.value['clients'][0]['phone']= Objprops._profile.phone;
-    onplayRowItem.value['clients'][0]['orderID']= getRandomInt(0,9);
-    onplayRowItem.value['clients'][0]['confirmID']='';
-    //setted Comment (basic) information_
-    onplayRowItem.value['comments'][0]['userID']=Objprops.userID;
 
-    defaultItem.value =onplayRowItem.value;
+    //defaultItem.value['comments']=[]
+    defaultItem.value['userID']= Objprops.userID
+    //defaultItem.value['clients']=[]
+    let _thisDate=new Date().toLocaleString()
+    
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    var result = ''
+    for (let i = 0; i < 7; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    //defaultItem.value['clients'][0]={}
+    defaultItem.value['clients'][0]['orderID']=result
 
-    return true;
+    defaultItem.value['clients'][0]['userID'] = Objprops.userID ;//Object.assign(defaultItem.value['clients'][0],_client)
+    defaultItem.value['clients'][0]['userName'] = Objprops.userName ;
+    defaultItem.value['clients'][0]['phone'] = Objprops.phone ;
+    defaultItem.value['clients'][0]['phoneCode'] = Objprops.phoneCode ;
+    defaultItem.value['clients'][0]['confirmID'] = null ;
+    defaultItem.value['clients'][0]['time'] = _thisDate ;
+
+    defaultItem.value['clients'][0]['geolocation'] = Objprops.geolocation ;
+    defaultItem.value['clients'][0]['location'] = Objprops.location ;
+    //-----------
+    //setted Comment (basic) information_ new Date().toLocaleString();
+    defaultItem.value['comments'][0]['userID']=Objprops.userID;
+    defaultItem.value['comments'][0]['time']=_thisDate;
+    defaultItem.value['comments'][0]['userName']=Objprops.userName;
+    //------------then re_assign to default too
+    onplayRowItem.value = Object.assign({},defaultItem.value)
+    console.log('logUser Out',onplayRowItem.value['clients'])
+    return true
   }
   
-function getRandomInt(min, max) {
+async function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   let _genNumber='st'//.append()
-  for(let ii in [1,2,3,4,5,6,7]){
+  for(let ii in [0,1,2,3,4,5,6,7,8]){
     _genNumber=_genNumber + String(Math.floor(Math.random() * (max - min + 1)) + min)
   }
   return _genNumber;
 }
 
+async function generateRandomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  console.log(result,'result')
+  return result;
+}
+
 
 //-------------filtering and Searching Methodss
 //-----searaching on/off
-var lockFilter=ref(false)
-//-----seraching attributes
-//---1
-//var search = ref(""); //sarchBar From Lyt
-//search = computed(() => { return Objprops.lytSearchRow}) //Layout_listening for pop_creator
-//--2
-
+let _enableRowFilter=ref(false)
 //------------Setting up all the search attributes
 const filter = computed(() => {
   return {
@@ -1066,13 +1554,13 @@ const filter = computed(() => {
   //-------------the search Engine..
 function filterMethod(rows, terms) {
 
-if(lockFilter.value){
-  return rows
-}
+    if(_enableRowFilter.value){
+      return rows
+    }
 
-// rows contain the entire data
-let lowerSearch = terms.search ? terms.search.toLowerCase() : ""; //holding search bar...value
-const filteredRows = rows.filter((row, i) => {
+    // rows contain the entire data
+    let lowerSearch = terms.search ? terms.search.toLowerCase() : ""; //holding search bar...value
+    const filteredRows = rows.filter((row, i) => {
 
       let _group0 = true;
       let _group2 = false;
@@ -1116,8 +1604,30 @@ const filteredRows = rows.filter((row, i) => {
 return filteredRows;
 }
 
+var _querySE=ref({_trend:'', catagory:'',usage:'New',content:''})
+//saleitService.set_syncQuery(_querySE.value)   
+let syncInt = setInterval(saleitService.asyncDatas, 60000);
+var _intSpeed=ref(300)
+async function _itServiceSE(_queKey='usage',_value=''){
 
-  //------------------------------------------SYNCING DATA With Store
+  _querySE.value={}
+  _querySE.value[_queKey]=_value
+  console.log(_querySE.value,_queKey,_value,'querrring..')
+  saleitService.set_syncQuery(_querySE.value)   
+
+   rows.value=[]
+  _resetOnPlayRowItem()
+  clearInterval(syncInt)
+  syncInt = setInterval(saleitService.asyncDatas, 60000)
+  return true
+}
+_itServiceSE()
+//beforeDestroy() {
+    // Clear the interval when the component is destroyed to avoid memory leaks
+ //   clearInterval(this.intervalId);
+ // },
+
+//------------------------------------------SYNCING DATA With Store
 
   //---------------------Syncing.....DATA---controlle syncing (on || off)
   //-------forms
@@ -1126,230 +1636,306 @@ return filteredRows;
     //-----------------forms collapsing/show commands
     'pricing':true,
     'description':true,
-    'address':true
+    'location':true
     //------------------
   })
-  
+
 //---------------
-let popGraphicBox =ref(false)
-let imageSrc =ref(null)
-  //lytCreatRow
+let _cameraBox =ref(false)
 
-//----------
-var _graphicSource =ref()//
-//var _fileSRC =ref('')//_fileSRC
-var graphicColumn =ref(["",""]) //does give _image_attribute has single/multiple values of images ( sends it as 'file':name_attr, or 'files':name_attr)
+let _fileAttributeName =ref(null) //does give _image_attribute has single/multiple values of images ( sends it as 'file':name_attr, or 'files':name_attr)
 
-var _file =ref()
-var _fileSRC =ref()
-//var _cov=document.getElementById('_fileSRC') 
-function _folderProfiling(e,_graphicName,_graphicNameisArray) {
-      _graphicSource.value='folder'   
+let _fileSourceFoCam =ref()//is folder or camera file source
 
-       graphicColumn.value=['','']
+let _fileAsRaw =ref([]) //_file in Upload_Mode
+let _fileAsSRC =ref([])//_file in Show_Mode (Non_String / As_SRC)
+let _fileAsSRCIndex =ref(0)///_fileAsSRC_Array_index
+let _fileAsSRCOps = ref(false)
+
+let _fileAsString =ref(0)//_file in Show_Mode (As_String)  
+let _fileAsStringIndex =ref(0)//_fileAsString_Array_index
+
+//let _cov=document.getElementById('_fileAsSRC') 
+function _fileSourceFolder(e,_attributeName) {
       // Check if file is selected
-      _file.value= nul.value.includes(e.target.files) && e.target.files.length ==0 ? false : e.target.files;
-      if (_file.value) {
-        graphicColumn.value[_graphicNameisArray]=_graphicName
-        var file = e.target.files[0]
-        if (e.target.files[0]) {
-          _fileSRC.value = URL.createObjectURL(file)
-        } else {
-          console.log("Invalid file");
-        }
+      let _isthereFile = e.target.files == null || e.target.files.length == 0 ? false : e.target.files;
+      ///--------------
+      //_file.value[_attributeName]=[]
+      if (_isthereFile) {
+        _resetFileSource()
+      //---------reset _file_setting(params)   
+       _fileAttributeName.value=_attributeName
+       //--------
+       _fileSourceFoCam.value='folder'
+      //console.log(_file.value[_attributeName],'foldering0000')      
+      for(let i = 0; i < _isthereFile.length; i++){
+        _fileAsRaw.value.push(_isthereFile[i])
+        _fileAsSRC.value.push(URL.createObjectURL(_isthereFile[i])) 
+      }
       }
     }
 
 
-var liveFeedStreaming =ref({})
-var liveFeed =ref('')
+    ///-----------------------File Operations and setting  UP(Folder) vs Down(Camera)
+async function _fileAsSRCOpsCall(SRCIndex){
+  //_onplayRowIndex.value=index
+  if(_fileAsSRCOps.value){
+    _SRCDelOps(SRCIndex)
+  }else{
+  _fileAsSRCIndex.value=SRCIndex
+  }
+  return true
+}
+async function _SRCDelOps(SRCIndex){
+  _fileAsSRC.value.splice(SRCIndex,1)
+  _fileAsRaw.value.splice(SRCIndex,1)
+  return true
+}
 
-var _listDevices =ref({})
+async function _fileAsStringOpsCall(StrIndex,index = null){
+  _onplayRowIndex.value=index
+  _fileAsStringIndex.value=StrIndex
+  return true
+}
 
-var _selectedCameraById =ref('')
-var _selectedCameraByface =ref(true)
+//-----------------
+async function _resetFileSource(){
+  _fileAttributeName.value=null
+  _fileSourceFoCam.value=null  
+  _cameraBox.value=false
 
-var _listCameraSource =ref([])
+  _fileAsSRC.value = []
+  _fileAsRaw.value=[]
 
-var _selectedMicById =ref('')
-var _listMicSource =ref([])
+return true
+}
+async function _saveFileSource(){
+  //_fileAttributeName.value=null
+  //_fileSourceFoCam.value=null  
+  _cameraBox.value=false
 
-var _liveFeedStreamingHeight =ref('')
-var _liveFeedStreamingWidth =ref('')
-//
-const audioConstraints = ref(false)
-const videoConstraints = ref({
-    facingMode: 'user',
-    aspectRatio: { min: 1, max: 1.7777777778 },
-    width: {
-      min: 1280,
-    },
-    height: {
-      min: 720,
-    }
-  });
+  //_fileAsSRC.value = []
+  //_fileAsRaw.value=[]
 
+return true
+}
+    ///-----------------------File Operations and setting  UP(Folder) vs Down(Camera)
 
-var graphicCanvas =ref({})
-graphicCanvas.value['width']= 100;//window.innerWidth;
-graphicCanvas.value['height']=100;//window.innerHeight;
-//graphicCanvas.getContext('2d');
-var graphicCanvasCtx =ref('')
+//-------------------------------------------
+let _listNavDevices =ref({})
 
-//var graphicCanvasCtx =ref({})
+let _listCameraSource =ref([])
+let _listMicSource =ref([])
 
-//----------
+let _selectedCameraById =ref('')
+let _selectedCameraByface =ref(true)
 
-var SCALAR=0.6
-var SIZE = reactive({x:0,y:0,width:0,height:0})
+let _selectedMicById =ref('')
 
-var _cameraModule ={
+let _liveFeedRaw =ref('')
+let _liveFeedRawStreaming =ref({})
 
-    _init:async ()=>{
+let __liveFeedRawStreamingHeight =ref('')
+let __liveFeedRawStreamingWidth =ref('')
+const _liveFeedRawAudAttribute = ref(false)
+const _liveFeedRawVidAttribute = ref({ facingMode: 'user', aspectRatio: { min: 1, max: 1.7777777778 },
+                                        width: { min: 1280, },
+                                        height: { min: 720,  }
+                                      });
 
-      try {
-        _listDevices.value['getUserMedia'] = nul.value.includes(navigator.mediaDevices.getUserMedia) ? false : navigator.mediaDevices.getUserMedia         
-        for(let mediaDevice of ['webkitGetUserMedia','mozGetUserMedia','msGetUserMedia']){
-          var _doesCamera = nul.value.includes(navigator[mediaDevice]) ? false : navigator[mediaDevice]
-          if(_doesCamera){
-            _listDevices.value[mediaDevice] = _doesCamera
-          }
-        }
-        
-      } catch (error) {
-        console.log('Error No Camera Detected...Know this');
-      }       
+let _liveFeedSRC =ref({})
+let _liveFeedSRCStreaming =ref('')
 
-      return true
-    },
+_liveFeedSRC.value['width']= 100;//window.innerWidth;
+_liveFeedSRC.value['height']=100;//window.innerHeight;
 
-    _openCamera:async (_graphicName='',_graphicNameisArray=0)=>{
+//---------------------------------------------
+class _cameraDevice{
+  //this._navigateDevice();
 
-          _graphicSource.value='camera'   
-          popGraphicBox.value=true
-          _fileSRC.value = ''
-          if(_graphicName){
-            graphicColumn.value[_graphicNameisArray]=_graphicName
-          }
+    constructor() { //_init_onPlayNavigator class
+        console.error("ffffffffGeolocation is  supported by this browser.");
+        try{      // Check if geolocation is supported by the browser
 
-          //------------------
-          //--------
-          if(_selectedCameraById.value == ''){//if 'user'
-            videoConstraints.value['facingMode']=_selectedCameraByface.value ? 'user':'environment'
-          }
-          else{
-            videoConstraints.value['deviceId'] = { exact: _selectedCameraById.value };
-            videoConstraints.value['facingMode'] = _selectedCameraByface.value ? 'user':'environment'
-          }
-        
-        if (_listDevices.value['getUserMedia']) {  //in priority use ( this device_ for media_sources)
-        //booting the feed ( for streaming...)
-        liveFeed.value = await navigator.mediaDevices.getUserMedia({video:videoConstraints.value,audio:audioConstraints.value})                                                        
-                                                          
-        //initialize the video streaming                                                                                                  
-        liveFeedStreaming.value['srcObject']= liveFeed.value
-        //liveFeedStreaming.value.play()
-        liveFeedStreaming.value.onloadedmetadata = () => {  liveFeedStreaming.value.play(); };
+        }catch{    }   
       }
-      navigator.mediaDevices.enumerateDevices().then((camList)=>{
-        _listCameraSource.value = []
-        for(let index in camList){
-          let graphicDevice = camList[index]
-          console.log('graphic device',graphicDevice)
-          if (graphicDevice.kind === 'videoinput') {
-              _selectedCameraById.value = graphicDevice['deviceId'] //default camera_id
-              _listCameraSource.value.push(graphicDevice) //listing all available_camera media_device
-          } 
-          else{//for audio input
-            _selectedMicById.value=graphicDevice['deviceId']  //default mic_id
-            _listMicSource.value.push(graphicDevice) //listing all available_mic media_device
+    async _navigateDevice  ()  {  //navigate_phone_function
+        console.error("Navigating mediaDevice.");
+              if (Objprops._onPlayNavMedia ?? false) {
+                    _listNavDevices.value['getUserMedia'] = Objprops._onPlayNavMedia.getUserMedia ?? {}      
+                    for(let mediaDevice of ['getUserMedia','webkitGetUserMedia','mozGetUserMedia','msGetUserMedia']){
+                        var _doesCamera = navigator[mediaDevice] ?? false
+                        if(_doesCamera){
+                        _listNavDevices.value[mediaDevice] = _doesCamera
+                        }
+                    } //this._onPlayMediaDevice= _onPlayNavMedia.value.mediaDevices['getUserMedia']
+                    console.error("Navigating mediaDevice.00000000",_listNavDevices.value);
+                
+                  } else { // Geolocation is not supported by the browser
+                            console.error("MediaDevice is not supported by this browser.");
+                            }    
+            return true   
           }
-        }
-        })
+
+        async _enumNavigateDevice  (){
+            try {
+            return await Objprops._onPlayNavMedia.enumerateDevices().then((_camDevices)=>{
+                  _listCameraSource.value = []
+                  for(let index in _camDevices){
+                    let _camDevice = _camDevices[index]
+                    //console.log('graphic device',_camDevice)
+                    if (_camDevice.kind === 'videoinput') {
+                        _selectedCameraById.value = _camDevice['deviceId'] //default camera_id
+                        _listCameraSource.value.push(_camDevice) //listing all available_camera media_device
+                    } 
+                    else{//for audio input
+                      _selectedMicById.value=_camDevice['deviceId']  //default mic_id
+                      _listMicSource.value.push(_camDevice) //listing all available_mic media_device
+                    }
+                  }
+                return true
+                })
+              } catch (error) {
+              console.log('Error No Camera Detected...Know this');
+            }  
+          return true
+    }
+
+    async _openCamera (_attributeName=''){
+
+          if (_listNavDevices.value['getUserMedia'] ?? false) {  //in priority use ( this device_ for media_sources)
+              await this._enumNavigateDevice()
+              _resetFileSource()
+              //------------
+              _cameraBox.value=true
+              //-------
+              _fileAttributeName.value=_attributeName
+              //------------------
+              _fileSourceFoCam.value='camera'   
+              //--------
+              if(_selectedCameraById.value == ''){//if 'user'
+                _liveFeedRawVidAttribute.value['facingMode']=_selectedCameraByface.value ? 'user':'environment'
+              }
+              else{
+                _liveFeedRawVidAttribute.value['deviceId'] = { exact: _selectedCameraById.value };
+                _liveFeedRawVidAttribute.value['facingMode'] = _selectedCameraByface.value ? 'user':'environment'
+              }
+            //booting the feed ( for streaming...)
+            _liveFeedRaw.value = await Objprops._onPlayNavMedia.getUserMedia({video:_liveFeedRawVidAttribute.value,audio:_liveFeedRawAudAttribute.value})                                                             
+            //initialize the video streaming                                                                                                  
+            _liveFeedRawStreaming.value['srcObject']= _liveFeedRaw.value
+            //_liveFeedRawStreaming.value.play()
+            _liveFeedRawStreaming.value.onloadedmetadata = () => {  _liveFeedRawStreaming.value.play(); };
+          }
         return true;
-    },
-    _stopCamera:async ()=>{
-      liveFeed.value.getTracks().forEach(_streamTrack => {  
+    }
+    async _stopCamera (){
+          //----shutdown camera RawFeed_& displaying
+          _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
               _streamTrack.stop();
+              _streamTrack=false
+
             })
-      //------
-      graphicColumn.value['','']
-      liveFeedStreaming.value.src=null
-      _fileSRC.value = ''
-      popGraphicBox.value=false
+          _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
+                _streamTrack.stop();
+                _streamTrack=false
+          })
+          _liveFeedRawStreaming.value.src=null
+          //------
+          _resetFileSource()
       return true
-    },
-    _pauseCamera:async ()=>{liveFeedStreaming.value.pause()},
-    _playCamera:async ()=>{liveFeedStreaming.value.play()},
-    //liveFeedStreaming.value.pause();
-    _saveScreenShoots:async ()=>{
-      _file.value=graphicCanvas.value //uploadable content
-      liveFeed.value.getTracks().forEach(_streamTrack => {  
+    }
+    async _operateDevice  (cmd) {
+
+            if(cmd == 'pause'){ _liveFeedRawStreaming.value.pause()    }
+            else if(cmd =='play'){_liveFeedRawStreaming.value.play()   }
+            return true
+          }
+    async _saveScreenShoots (){
+      //----shutdown camera RawFeed_& displaying
+      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
               _streamTrack.stop();
+              _streamTrack=false
+
             })
-      
-     graphicCanvas.value.toBlob((blob) => {
-          _file.value = new File([blob], "fileName.jpg"+String(new Date()), { type: "image/jpeg" },0.9)
-        
-        }, 'image/jpeg')
-
-      liveFeedStreaming.value.src=null
-      popGraphicBox.value=false
+      _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
+            _streamTrack.stop();
+            _streamTrack=false
+      })
+      _liveFeedRawStreaming.value.src=null
+      //--------
+      _saveFileSource()
       return true
-    },
-    _screenShoot:async ()=>{
-     graphicCanvasCtx.value= graphicCanvas.value.getContext('2d');
-     graphicCanvasCtx.value.drawImage(liveFeedStreaming.value, 0,0, graphicCanvas.value.width, graphicCanvas.value.height);
-     //graphicColumn.value[0] =='profile'
-     var photoDataUrl = ''
-     try{
-      photoDataUrl = graphicCanvas.value.toDataURL('image/png'); //jpeg
-     }catch{
-      photoDataUrl = graphicCanvas.value.toDataURL('image/jpeg'); //jpeg
-     }
+    }
+    async _screenShoot (_remove=false){
 
-     _file.value=photoDataUrl;
-     _fileSRC.value = photoDataUrl; //viewable content
-      return true
-    },
+        if(_remove && _fileAsSRC.value.length){
+            _fileAsRaw.value.pop();
+            _fileAsSRC.value.pop(); //viewable content
+          return true
+        }
+              //_save screenshoots _for_canvas_display(if needed ? )
+              _liveFeedSRCStreaming.value= _liveFeedSRC.value.getContext('2d');
+              _liveFeedSRCStreaming.value.drawImage(_liveFeedRawStreaming.value, 0,0, _liveFeedSRC.value.width, _liveFeedSRC.value.height);
+              try{
+              //_save screenshoots _for_SRC_display ( being used method__now!) as [PNG]____as primary choice
+                _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/png')); //_save as jpeg
+                //_save screeshots _As_Raw_for_uploading
+              _liveFeedSRC.value.toBlob((blob) => {
+                  _fileAsRaw.value.push( new File([blob], "fileName.png"+String(new Date()), { type: "image/png" },0.9))        
+                  }, 'image/png')
+              }catch{
+              //_save screenshoots _for_SRC_display ( being used method__now!) as [JPEG]__if Not
+                _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/jpeg')); //or _save as jpeg
+                //_save screeshots _As_Raw_for_uploading
+              _liveFeedSRC.value.toBlob((blob) => {
+                _fileAsRaw.value.push( new File([blob], "fileName.jpeg"+String(new Date()), { type: "image/jpeg" },0.9))        
+                  }, 'image/jpeg')
+              }
+          return true
+    }
     //--------------setting camera_view & Mic
-    _setCameraParam:async (cameraID='',_facetoggler=false)=>{  //switching camera
+    async _setCameraParam (cameraID='',_facetoggler=false){  //switching camera
       _selectedCameraByface.value=_facetoggler     
       _selectedCameraById.value =cameraID      
-      return await _cameraModule._openCamera()    
-    },
-    _setMicParam:async (audioID='')=>{
-      _selectedMicById.value = _listMicSource.value['deviceId'][audioID]
-      return await _cameraModule._openCamera()
-    },
-}
-_cameraModule._init(); //initialize camera for listing_Device discoverable
+      return await this._openCamera()    
+    }
 
+    async _setMicParam (audioID=''){
+      _selectedMicById.value = _listMicSource.value['deviceId'][audioID]
+      return await this._openCamera()
+    }
+
+
+}
+var _cameraInstance = new _cameraDevice()
+_cameraInstance._navigateDevice()
 //--------------------------------ROWS_SCHEMATIC FORMS
+
 //-------------- POPUP_Box Controller functions
-var _popRegisterDialogBox = computed(() => { return Objprops.lytCreatRow}) //Layout_listening for pop_creator
+let _popRegisterDialogBox = computed(() => { return Objprops.lytCreatRow}) //Layout_listening for pop_creator
 watch(_popRegisterDialogBox, async (cv, ov) => {
     onplayRowItem.value = Object.assign({}, defaultItem.value); //deep copy item_objects with deep reactivity ( reactivity could lost... after multiple copying b/n or due depth increasing)
-    onplayRowIndex.value = 0;//rows.value.indexOf(item); 
-   return await _closeDialog('CreateRowItem');
+    _onplayRowIndex.value = 0;//rows.value.indexOf(item); 
+   return await _onplayRowItemBoxset('CreateRowItem');
   });  //POP_Controller From Parent Layout_For New Registration of RowItem
 
 //POP_Controller From With (Side_Bar)_For UpdateRowItem_RowItem
-  async function _popUpdateDialogBox(_rowIndex,itemkey){
-    onplayRowItem.value = Object.assign({},rows.value[_rowIndex])
-    onplayRowIndex.value = _rowIndex;
-    return await _closeDialog('UpdateRowItem');
+async function _onplayRowItemBoxcall(_onplayrowIndex){
+    onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])
+    _onplayRowIndex.value = _onplayrowIndex;
+    return await _onplayRowItemBoxset('UpdateRowItem');
   }
 //-----POP_UP Box Controller Room
-  async function _closeDialog(_rowOps='') {
-     //await _resetOnPlayRowColumns()
-     onplayRowItemOps.value=_rowOps
-    _setpopDialogBox.value = !_setpopDialogBox.value;
+  async function _onplayRowItemBoxset(_rowOps='') {
+     //await _resetOnPlayRowItem()
+    _onplayRowItemOps.value=_rowOps
+    _onplayRowItemBox.value = !_onplayRowItemBox.value;
     return true;
   }
 
 //------SIDE_Wise Operations and Applications
-var saleitContentOps = ref();
+let saleitContentOps = ref();
 saleitContentOps.value={
  'Buy':["Buying Options","market","buy",0],
  'Comment':["Comments","collections_bookmark","comment",0],
@@ -1361,305 +1947,230 @@ saleitContentOps.value={
 }
 
 //-------Listening for SideBox Operations & Visualizing
-async function _popSideBox(_rowIndex='',itemkey='',Ops=''){
+async function _onplayRowItemsideBoxcall(_onplayrowIndex='',Ops=''){
 
-    if(onplayRowIndex.value == _rowIndex && Ops == _popSideBoxOps.value){
-      onplayRowIndex.value = -1;//rows.value.indexOf(item); 
+    if(_onplayRowIndex.value == _onplayrowIndex && Ops == _onplayRowItemsideBoxOps.value){
+      _onplayRowIndex.value = null;//rows.value.indexOf(item); 
     }else{
-      await _resetOnPlayRowColumns()
+      await _resetOnPlayRowItem()
       //----------SET_ROW
-      onplayRowItem.value = Object.assign({},rows.value[_rowIndex])//reactive(rows.value.id[_rowIndex])//Object.assign({}, item));
-      onplayRowIndex.value = _rowIndex;//rows.value.indexOf(item); 
-
-      //-------
-
+      onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
+      _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item); 
       //----------SET Columns
    //_setpopSideBox.value  = false; //true,..
-      _popSideBoxOps.value= Ops //default(main operations of pop_side box)
-      //------
-      _popSideBoxsubOps.value = false; //editing,deleting,creating
-      _popSideBoxsubIndex.value= -2; //Nothing Will Activated as SideBox Ops
-
+      _onplayRowItemsideBox.value= true //default(main operations of pop_side box)
+      _onplayRowItemsideBoxOps.value=Ops
     }
     return true;
   }
 
-async function _resetOnPlayRowColumns(){
-   
-   onplayRowItem.value = Object.assign({},defaultItem.value)
-   onplayRowIndex.value = -1; //_row_item_index..0/1/2
+async function _resetOnPlayRowItem(){
 
-  //------- Original/_UpdateRowItem:CreateRowItem _Commands
-   onplayRowItemOps.value  = false; //_is UpdateRowItem/Creating_New
-   _setpopDialogBox.value  = false; //true...
-  
-  //==-----tabular side_box ( Pop_by_Id and tell the Operation)
-   //_setpopSideBox.value  = false; //true,..
-   _popSideBoxOps.value  = false; //clients,...
-
-  //---Editing/_....arrays manupulating
-   _popSideBoxsubOps.value = false; //editing,deleting,creating
-   _popSideBoxsubIndex.value = -1; //array_index_0/1/2/3
-  return true
+      console.log('reseting onplayRow')
+        //--------reset _onplayRowItem ( Big_Fish)
+      _onplayRowItemOps.value  = null; //_is UpdateRowItem/Creating_New
+      _onplayRowIndex.value = null; //_row_item_index..0/1/2
+      
+      _onplayRowItemBox.value  = false; //true...
+      
+      //--------reset _onplayRowItem-SideBox ( Little_Fish)
+      _onplayRowItemsideBox.value  = false; //clients,...
+      _onplayRowItemsideBoxOps.value = null; //editing,deleting,creating
+      _onplayRowItemsideBoxIndex.value = null; //array_index_0/1/2/3
+    return true
 }
 
 //------operations OVer POP_Up_Box
-  var _passiveColumnOperation ={
+  let _passiveColumnOperation ={
     //---Enabling Array_Index_For Operations (Select_Index)_For ---Editing:Deleting--Applying--
-  _selectArray:async(arrayCols,arrayIndex)=>{ // activate give array for operations of below options
-    _popSideBoxsubIndex.value=arrayIndex
+  _selectArray:async(arrayIndex=null)=>{ // activate give array for operations of below options
+    _onplayRowItemsideBoxIndex.value = (_onplayRowItemsideBoxIndex.value == arrayIndex) ? null : arrayIndex
     return true;
   },
   //-----------Operations on selected array
-  _remove:async (arrayCols,arrayIndex='') =>{
-      _popSideBoxsubIndex.value= -1; //which is -1;;;
-      //if(onplayRowItem.value[arrayCols].length != 1){    onplayRowItem.value[arrayCols].splice(arrayIndex, 1);     }
-      onplayRowItem.value[arrayCols].splice(arrayIndex, 1);
+  _remove:async (arrayIndex=null) =>{
+      _onplayRowItemsideBoxIndex.value= null; //which is null;;;
+       onplayRowItem.value[_onplayRowItemsideBoxOps.value].splice(arrayIndex, 1);
     return await _updateRow().then((response)=>{
       return true
     })
   },
-  _submitArray:async (arrayCols)=>{
-    onplayRowItem.value[arrayCols].unshift(defaultItem.value[arrayCols][0]);
-    return await _updateRow().then((response)=>{
-      return true
-    })
-  },
+  
   //--------------------------
-  _add:async ()=>{
-      //---------set custom value
-      _popSideBoxsubIndex.value= -1; //it would Create Default_Form(like )
+  _add:async ()=>{ //default_value for sideBox
+      _onplayRowItemsideBoxIndex.value= null; //it would Create Default_Form(like )
       return true;
   },
+
+  _submitArray:async ()=>{
+    onplayRowItem.value[_onplayRowItemsideBoxOps.value].unshift(defaultItem.value[_onplayRowItemsideBoxOps.value][0]);
+    return await _updateRow().then((response)=>{
+      return true
+    })
+  },
+
 }
 
 //---------------------Byuers and related Data Schema
-var _orderStep =ref(0)
+let _orderStep =ref(0)
 
 ///--------Order_Intiations Stage
-var _orderDebuger=ref('Orders List..')//
-var _orderIntiatedID=ref('')
-var _orderIntiatedPhone=ref('')
-
+let _orderDebuger=ref('Orders List..')//
+let _orderIntiatedID=ref('')
+let _orderIntiatedPhone=ref('')
 
 //-----
-var _orderConfirmationRespID=ref('')//
+let _orderConfirmationRespID=ref('')//
 
 //---------Order_Confirmations Stage
-var _orderConfirmDebuger=ref(false)//
-var _orderConfirmationID=ref('')//
-var _orderConfirmationQuantity=ref('')//
+let _orderConfirmDebuger=ref(false)//
+let _orderConfirmationID=ref('')//
+let _orderConfirmationQuantity=ref('')//
 
 //--
-var  _activeColumnOperation = { 
-  _reIntiatOrder:async (arrayCols,arrayIndex=0) =>{
-     //onplayRowItem.value[arrayCols].shift()
-     defaultItem.value[arrayCols][0]['orderID']=  getRandomInt(0,100) //Set_New OrderID ___For__DefaultRowItem
-    _orderIntiatedID.value=''
-    _orderIntiatedPhone.value=''
+let  _activeColumnOperation = { 
+  _initiateOrder:async (arrayIndex=0) =>{ //Set_New OrderID ___For__DefaultRowItem
+  
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const charactersLength = characters.length;
+      var result = ''
+      for (let i = 0; i < 7; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      defaultItem.value['clients'][0]['orderID']=result
 
     _orderDebuger.value= 'Personal Orders'
     _orderStep.value=0
-    return true
+    ///-----------------------------
+    //set New_orderID for defaultItem
+    _onplayRowItemsideBoxIndex.value= null; //it would Create Default_Form(like )
+    console.log(defaultItem.value['clients'],'reintiate order')
+      return true
+    
   },
-
-  _reSetOrder:async (arrayCols,arrayIndex=0) =>{
-     onplayRowItem.value[arrayCols].shift()
-
-    _orderIntiatedID.value=''
-    _orderIntiatedPhone.value=''
-
-    _orderDebuger.value=''
-    return true
-  },
-  _sendMeConfirmation:async (arrayCols,arrayIndex=0) =>{
+  
+  _confirmOrder:async () =>{
        _orderDebuger.value='Processing'
        _orderStep.value = 0
-      //---------set custom value
-      if(_orderIntiatedID.value == defaultItem.value[arrayCols][0]['orderID']){ //Check if Similar OrderID is Submitted_ & tell Then to Generate New or Refresh..
-        notify.info('Confirmation is Already Sent'+ defaultItem.value[arrayCols][0]['phone'])
-        return true
-      } else{
-        onplayRowItem.value[arrayCols].unshift(defaultItem.value[arrayCols][0]); //Inject the Data into_ OnplayRowItem & to be sented.
-      }
-      //console.log(onplayRowItem.value[arrayCols][0],'UUUUUUUUUU')
-      return await _updateRow().then(async (done)=>{
-        if(done){
-        //------hold the sent code(Secretlly)
-         _orderConfirmationRespID.value= onplayRowItem.value[arrayCols][0]['confirmID']
-          if(_orderConfirmationRespID.value){
-         //Set_Flag The Has Been Confirmed
-         _orderIntiatedID.value= defaultItem.value[arrayCols][0]['orderID']; //Hold _Sent_OrderID & Whic is Confirmed
-         _orderIntiatedPhone.value= defaultItem.value[arrayCols][0]['phone'] //Confirmations message to wait for sms & re-enter
+      //---------set custom value ( & wait as step_one)
+      onplayRowItem.value[_onplayRowItemsideBoxOps.value].unshift(defaultItem.value[_onplayRowItemsideBoxOps.value][0]); //Inject the Data into_ OnplayRowItem & to be sented.
+      console.log(defaultItem.value[_onplayRowItemsideBoxOps.value],'adding buyer')
+   
+      return await _updateRow().then(async (_confirmResult)=>{
+          if(_confirmResult){
+            _orderDebuger.value= 'Order Succeded.' //Confirmations message to wait for sms & re-enter
+            _orderStep.value = 1
+            //-------------grab Order_confirm Information (& enter into step_two)
+            _orderIntiatedID.value= defaultItem.value[_onplayRowItemsideBoxOps.value][0]['orderID']; //Hold _Sent_OrderID & Whic is Confirmed
+            _orderIntiatedPhone.value= defaultItem.value[_onplayRowItemsideBoxOps.value][0]['phone'] //Confirmations message to wait for sms & re-enter
+            //------Ready for New Order
+            return true          
 
-         _orderDebuger.value='Enter SMS-Code to Confirm ?'
-         _orderStep.value = 1
-         return true
-          }
-          else{ }
-        }else{}
-        onplayRowItem.value[arrayCols].shift()
-        _orderDebuger.value='Request Failed, Try New Order'
-        return false
-      }).catch(()=>{ 
-         onplayRowItem.value[arrayCols].shift()
-        _orderDebuger.value='Try New'
-         return false
+          }else{}
+            onplayRowItem.value[_onplayRowItemsideBoxOps.value].shift()
+            _orderDebuger.value='Request Failed, Try New Order'
+            //------Try with New Order
+            return true         
+      }).catch(async ()=>{ 
+            onplayRowItem.value[_onplayRowItemsideBoxOps.value].shift()
+            _orderDebuger.value='Try New'
+            _orderStep.value = 1
+            //------Try with New Order
+            //defaultItem.value[_onplayRowItemsideBoxOps.value][0]['orderID']= _newID
+            return true          
         })
-  },
-
-  _confirmBuyer:async (arrayCols,arrayIndex=0)=>{ //xyxy
-    
-      _orderDebuger.value='Confirming..., wait sec.'
-    
-      if(nul.value.includes(_orderConfirmationID.value) || _orderConfirmationID.value != _orderConfirmationRespID.value){
-        return false
-      }   
-      //onplayRowItem.value[arrayCols][arrayIndex]['locked'] = 'Yes'     //
-      onplayRowItem.value[arrayCols][arrayIndex]['quantity'] = _orderConfirmationQuantity.value   //_orderConfirmationQuantity
-      //---------------
-      return await _updateRow().then(async (done)=>{
-        //console.log(_orderConfirmationRespID.value,_orderConfirmationID.value,'Responserrrrrrrrrrr22')
-
-        if(done){
-        defaultItem.value[arrayCols][0]['orderID']=  getRandomInt(0,100) //Set_New OrderID ___For__DefaultRowItem
-        //------------
-        _orderConfirmationID.value=''
-        //------
-        _orderIntiatedID.value =''
-        //_orderConfirmDebuger.value='Succe ! , Delivery time ; sunday afternoon'
-        _orderDebuger.value= 'Order Succeded.' //Confirmations message to wait for sms & re-enter
-        _orderStep.value = 0
-
-        }else{
-
-        }
-        //console.log(_orderDebuger.value,_orderIntiatedID.value,_orderConfirmationID.value,_orderConfirmationRespID.value,'conf')
-      return true
-      }).catch(()=>{ return true })
-  }
-
-}
-
-async function _resetOrders(){
-  _orderDebuger.value=false
-  return true
-}
+  }}
 //---------------Operating on Row
  //Operating without setting onplayrowItem ( directlly calling for effect) === active _operations
- var  _activeRowOperation = {
+ let  _activeRowOperation = {
 
-_rating : async (_rowIndex,key) =>{
-  onplayRowItem.value = Object.assign({},rows.value[_rowIndex])//reactive(rows.value.id[_rowIndex])//Object.assign({}, item));
-  onplayRowIndex.value = _rowIndex;//rows.value.indexOf(item); 
+      _rating : async (_onplayrowIndex) =>{
+        onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
+        _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item);
+        _onplayRowItemOps.value='UpdateRowItem'
+        return await _updateRow()
+      },
 
-  onplayRowItemOps.value='UpdateRowItem'
+      _likes : async (_onplayrowIndex) =>{
+        onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
+        _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item); 
+        _onplayRowItemOps.value='UpdateRowItem'
+        //---------set Value
+        if(onplayRowItem.value['likes'] == null){
+          onplayRowItem.value['likes']={'like':1}
+        }
+        onplayRowItem.value['likes']['like'] =onplayRowItem.value['likes']['like']+1
 
-  return await _updateRow()
-},
+        return await _updateRow()
+      },
 
- _likes : async (_rowIndex,key) =>{
-  onplayRowItem.value = Object.assign({},rows.value[_rowIndex])//reactive(rows.value.id[_rowIndex])//Object.assign({}, item));
-  onplayRowIndex.value = _rowIndex;//rows.value.indexOf(item); 
-  onplayRowItemOps.value='UpdateRowItem'
-  if(nul.value.includes(onplayRowItem.value['likes'])){
-    onplayRowItem.value['likes']={'like':1}
-  }
-  onplayRowItem.value['likes']['like'] =onplayRowItem.value['likes']['like']+1
+      _delRow : async (_onplayrowIndex,itemId) =>{
 
-  return await _updateRow()
-},
-
-_delRow : async (_rowIndex,itemId) =>{
-
-  return await Crud_.deleteData(itemId)
-  .then((response) => {
-    if (response) {
-      notifyit.warn("Deleted...", "bottom-left", null, 10000);
-      rows.value.splice(_rowIndex, 1);
-    } else {   }
-    return true;
-  })
-  .catch((error) => { return false; });
-} 
-}
-  //--------------------------------------METHODS & PROCESS
-var _rowOpsLoadingStatus =ref(false)
-async function _createRow(_isFileCapsulated = false) {  //UpdateRowItem User DAta with no graphic to update
-  //---set--loading row operation
-  _rowOpsLoadingStatus.value=true
-  onplayRowItem.value['clients']=[]
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  var __fileAttrName =nul.value.includes(graphicColumn.value[0]) ? false : graphicColumn.value[0]
-  var __filesAttrName =nul.value.includes(graphicColumn.value[1]) ? false : graphicColumn.value[1]
-  graphicColumn.value=[false,false]
-
-  if(__fileAttrName || __filesAttrName){
-      onplayRowItem.value['upload']={'file':__fileAttrName,'files':__filesAttrName}
-      //onplayRowItem.value[__fileAttrName]=_file.value[0]
-
-      if(_graphicSource.value =='camera'){
-        onplayRowItem.value[__fileAttrName]=_file.value
-      }else{
-       onplayRowItem.value[__fileAttrName]=_file.value[0]       
-      }
-    }
-  //---------Encapsulated file Extraction Completed...
-
-  //---Creat the Content... which is with/out of file encapsulations
-return await Crud_.createData()
-    .then((response) => {
-  _rowOpsLoadingStatus.value=false
-      if (response) { 
-        //---right after the content has been created change the mode from creating to UpdateRowItem
-        //onplayRowItemOps.value='UpdateRowItem'
-        //rows.value[arrayCols].unshift(response); //Inject the Data into_ OnplayRowItem & to be sented.
-        onplayRowItem.value =response
-        notifyit.succes("Content Created.", null, null, 7000);
-        return true
-      } else { }
-      //--unset--loading row operation
-      return false;
-    })
-    .catch((error) => {//_popUpgrader.value = false;
-      //--unset--loading row operation
-  _rowOpsLoadingStatus.value=false
-      return false;
-    });
-}
-
-async function _updateRow(_isFileCapsulated = false) { //UpdateRowItem User DAta with graphic to update or not
-  //---set--loading  row operation
-  _rowOpsLoadingStatus.value=true
-
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  var __fileAttrName =nul.value.includes(graphicColumn.value[0]) ? false : graphicColumn.value[0]
-  var __filesAttrName =nul.value.includes(graphicColumn.value[1]) ? false : graphicColumn.value[1]
-  graphicColumn.value=[false,false]
-
-  if(__fileAttrName || __filesAttrName){
-      onplayRowItem.value['upload']={'file':__fileAttrName,'files':__filesAttrName}
-      //onplayRowItem.value[__fileAttrName]=_file.value[0]
-
-      if(_graphicSource.value =='camera'){
-        onplayRowItem.value[__fileAttrName]=_file.value
-      }else{
-       onplayRowItem.value[__fileAttrName]=_file.value[0]       
-      }
-    }
-  //---------Encapsulated file Extraction Completed...
-
-  //---uploading the Content... which is with/out of file encapsulations
-  onplayRowItem.value['phone']=Objprops._profile.phone;//always send the _loged phone along all content
-    return await Crud_.updateData()
+        return await Crud_.deleteData(itemId)
         .then((response) => {
-          _rowOpsLoadingStatus.value=false
+          if (response) {
+            notifyit.warn("", "bottom-left", null, 10000);
+            rows.value.splice(_onplayrowIndex, 1);
+          } else {   }
+          return true;
+        })
+        .catch((error) => { return false; });
+      } 
+}
+//--------------------------------------METHODS & PROCESS
+async function _createRow(_isthereFileCapsulated = false) {  //UpdateRowItem User DAta with no graphic to update
+      //---set--loading row operation
+      _onplayRowItemOpsStatus.value=true
+      //--------even defaultRowItem has clients & comments default_array_value ( ignore it while creating new)
+      onplayRowItem.value['clients']=[]
+      onplayRowItem.value['comments']=[]
+      //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
+      if(_fileAttributeName.value != null){
+          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
+          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
+          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
+        }
+      _fileAttributeName.value=null
+      //---Creat the Content... which is with/out of file encapsulations
+    return await Crud_.createData()
+        .then(async (response) => {
+        _onplayRowItemOpsStatus.value=false
+          if (response) { 
+            //---right after the content has been created change the mode from creating to UpdateRowItem
+            onplayRowItem.value = response
+            notifyit.succes("", null, null, 7000);
+            _resetOnPlayRowItem()
+            return true
+          } else { }
+          //--unset--loading row operation
+          return false
+        })
+        .catch((error) => {//_popUpgrader.value = false;
+          //--unset--loading row operation
+          _onplayRowItemOpsStatus.value=false
+          return false;
+        });
+}
+
+async function _updateRow(_isthereFileCapsulated = false) { //UpdateRowItem User DAta with graphic to update or not
+  //---set--loading row operation
+  _onplayRowItemOpsStatus.value=true
+  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
+  if(_fileAttributeName.value != null){
+          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
+          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
+          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
+        }
+      _fileAttributeName.value=null    
+    //onplayRowItem.value['phone']=Objprops._profile.phone;//always send the _loged phone along all content
+    return await Crud_.updateData()
+        .then(async (response) => {
+          _onplayRowItemOpsStatus.value=false
 
           if (response) { 
-            rows.value[onplayRowIndex.value] = response; 
+            rows.value[_onplayRowIndex.value] = response; 
             onplayRowItem.value =response
-            notifyit.succes("Content Updated.", null, null, 7000);
-            //_resetRowItem()
+            notifyit.succes("", null, null, 7000);
             return true
           } else { }
            //--unset--loading row operation
@@ -1667,52 +2178,11 @@ async function _updateRow(_isFileCapsulated = false) { //UpdateRowItem User DAta
         })
         .catch((error) => {//_popUpgrader.value = false;
               //--unset--loading row operation
-  _rowOpsLoadingStatus.value=false
+          _onplayRowItemOpsStatus.value=false
           return false;
         });
 }
 
-
-  //--Perform_Delete Operations
-  //-------------------------------------------------------------------------------------[3] [ Delete Crud_INIT]
-  //----------------------------------------------------------SEARCHING
-
-  /////////////////////////////////////========================== DATA Reporting & Visualize
-  //---------------SELECTED---------- Displaying & Recording Table Data
-  //---------------SELECTED---------- Displaying & Recording Table Data
-  var selected = ref([]); // it Holds rows LIst as they get selected....
-  var onselected = ref([onplayRowItem.value]); // it Holds rows LIst as they get selected....
-  var rowSelected = reactive({}); //customezed_row Selected...
-  //-------Selected---------- Displaying & Recording Table Data
-  var showForm =ref(false)
-  function getSelectedString() {
-    //---listen to selected rows & listed in Objects array.
-    if (Object.keys(selected.value[0]).length == 0 && selected.value[0] == onplayRowItem.value) {
-      selected.value.shift();
-    }
-  
-    rowSelected = selected.value.length === 0 ? rows.value[0] : selected.value[0];
-    return selected.value.length === 0
-      ? ""
-      : `# ${
-          selected.value.length > 1 ? selected.value.length : ""
-        } ,selected of ${rows.value.length}`;
-  }
-  
-  function updateSelected() {
-    // second ways of listing to selected_rows
-    //////consol.log(selected, "Table Selection Happen...&Listening..");
-  }
-  
-  //------EXPORT---SELECTED----Reporting Optionss
-  //=---------------------------------------------------------------------
-  
-  //------------- Filtered_Request (PAGINATION)
-  /////////////////////////////////////========================== DATA Visualization
-  
-  //------Global Analysis Data
-  //-------------view Port One
-  
   //----=========================================================================---DATA ---/// ---ROW----CRUD
 //----------------
 let createKey = "";
@@ -1739,8 +2209,8 @@ const Crud_ = {
     
   return await _theService
     .createData(onplayRowItem.value, objParam)
-      .then((response) => { //returning as [false,response]
-        if (response[0]) {
+      .then((response) => { //returning as [false,response_obj]
+        if (response[0]) { //
           return response[1];
         } else {
           notifyit.warn("Error ! .." + response[1]);
@@ -1767,13 +2237,14 @@ const Crud_ = {
       return false;
     }
 
+    console.log('crud_',onplayRowItem.value)
     return await _theService
       .updateData(onplayRowItem.value, objParam)
-      .then((response) => {
+      .then((response) => { //returning as [false,response_obj]
         if (response[0]) {
           return response[1];
         } else {
-          notifyit.warn("Error ! .." + response[1]);
+          notifyit.warn("" + response[1]);
           return false;
         }
       })
@@ -1844,7 +2315,7 @@ const Crud_ = {
       .readData(modelUrl,objParam)
       .then((response) => { //returning as ['data'][{},{},{data..}]
       if (response) {return response;
-        } else {
+        } else {f
           notifyit.warn("Error ! .." + response);
           return false;
         }
@@ -1954,6 +2425,7 @@ const Crud_ = {
     warn: (notes = "", position = "bottom-right", actions = "", period = 700) => {
       $q.notify({
         type: "negative",
+        icon:'dislike',
         message: notes,
         position,
         actions: actions
@@ -1980,6 +2452,7 @@ const Crud_ = {
     ) => {
       $q.notify({
         type: "positive",
+        icon:'like',
         message: notes,
         position,
         actions: actions
@@ -2027,6 +2500,7 @@ const Crud_ = {
       });
     },
   };
+
   //------DIALOGS
   let dialogAlert = ref(false);
   let confirmationRequire = ref(false);
@@ -2100,6 +2574,7 @@ const Crud_ = {
         });
     },
   };
+
   //----- & Loading (InnerLoading)
   let loaditwellcometimer = 50;
   const loadit = {
@@ -2158,41 +2633,29 @@ const Crud_ = {
   }
 
 
-var showDate = ref("")// curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
-var showTime = "" //
-var showDay = ref("") //
-var breakTime = ref(false) //
+let showDate = ref("")// curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
+let showTime = "" //
+let showDay = ref("") //
+let breakTime = ref(false) //
 
- function startTime() {
-    var today = new Date();
-    var hr = today.getHours();
-    var min = today.getMinutes();
-    var sec = today.getSeconds();
-    var ap = (hr < 12) ? "AM" : "PM";
-    hr = (hr == 0) ? 12 : hr;
-    hr = (hr > 12) ? hr - 12 : hr;
-    //Add a zero in front of numbers<10
-    hr = hr < 10  ? '0'+ hr : hr
-    min = min < 10  ? '0'+ min : min
-    sec = sec < 10  ? '0'+ sec : sec
-
-    //document.getElementById("clock").innerHTML = hr + ":" + min + ":" + sec + " " + ap;
-    showDate.value = hr + ":" + min + ":" + sec + " " + ap;
-    if(hr == 12 && min > 30 && min < 31 ){breakTime.value=true}
-
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    var curWeekDay = days[today.getDay()];
-    var curDay = today.getDate();
-    var curMonth = months[today.getMonth()];
-    var curYear = today.getFullYear();
-
-    showDay.value = curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
-
-    showTime = setTimeout(function(){ startTime() }, 500);
+var days =ref(0)
+var hours =ref(0)
+function _dateCounter(startDate) {
+  var timeDifference = new Date() - new Date(startDate)
+  // Calculate days and hours from milliseconds
+  days.value = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  hours.value = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    //var minutes = Math.floor(((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  return true;
 }
-startTime();
+
+function _igniteDCounter(delay,startDate){
+  setTimeout(function() {
+  _dateCounter(startDate);
+}, delay);
+}
+
+
 
   //----color_Plate
   const cp =  ['red','black',"blue",'green','orange','yellow']

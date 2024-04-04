@@ -172,10 +172,11 @@ async function create_record(reqData,isxFile=true){
 router.post(modelIName, async (req, res) => {
       // await User.findByIdAndUpdate(req.params.id, req.body, {new:true});
       let reqParams = req.query ? req.query : req.params;
-      if (!(reqParams ?? false) && Object.keys(reqParams).length) {
-        return res.status(404).send({ message: "Form Filling Required." });
+
+      if (!((reqParams ?? false) && Object.keys(reqParams).length === 0)) {
+        return res.status(404).send({ message: "_FindBy_Nul" });
       }
-      
+
       var ErrorDepth="Prameters and Data_incoming is checking"
       //var uploadfs_ = false
       var uploadfs_ = false
@@ -185,8 +186,6 @@ router.post(modelIName, async (req, res) => {
         //uploadfs_ =nul.includes(_uploading['file']) ? false : _uploading['file'];
         uploadfs_ =_uploading['files'] ?? false
       }
-
-      let [findBy, returnWat, limits] = await _postputParams(reqParams);
 
       ErrorDepth="(Srv);- FindBy_Passed..withFiling_"+ uploadfs_
       console.log('incoming',uploadfs_)
@@ -207,9 +206,9 @@ router.post(modelIName, async (req, res) => {
         }
         
       //Extracting requestResource...
-      let reqData= req.body
+      let [reqData, reqParams] = [req.body, req.query ? req.query : req.params];
       //Extracting requestResource...
-      if (!(reqData ?? false) && Object.keys(reqData).length) {
+      if (!((reqData ?? false) && Object.keys(reqData).length === 0)) {
         return res.status(404).send({ message: "Form Filling Required." });
       }
 
@@ -230,7 +229,6 @@ router.post(modelIName, async (req, res) => {
 
       //let [findBy,returnWat, limits] = await _postputParams(reqParams);
       ErrorDepth="(Srv);- Multer_Processing _incomingData..withFiling_"+ uploadfs_
-
       return await create_record(reqData,findBy,false).then((modelData) => {
         if (modelData.status == 200) {
           res.set(setmodalHeader);
@@ -247,12 +245,13 @@ router.post(modelIName, async (req, res) => {
    
    else{
     //Extracting requestResource...
-    let reqData= req.body
+    let [reqData, reqParams] = [req.body, req.query ? req.query : req.params];
     //Extracting requestResource...
-    if (!(reqData ?? false) && Object.keys(reqData).length) {
+    if ((reqData ?? false) || Object.keys(reqData).length === 0) {
       return res.status(404).send({ message: "Form Filling Required." });
     }
     
+    //let [findBy, returnWat, limits] = await _postputParams(reqParams);
 
    return await create_record(reqData,findBy).then((modelData) => {
         //console.log('update employee returned with....',modelData)
@@ -319,105 +318,101 @@ async function update_record(reqData,findBy,isxFile=true){
 
 // return res.status(404).json("(Srv):- _del202;but, "+modelData["data"]);//return res.status(505).json("(Srv);- _del505");
 router.put(modelIName, async (req, res) => {
-         // await User.findByIdAndUpdate(req.params.id, req.body, {new:true});
-         let reqParams = req.query ? req.query : req.params;
-         if (!(reqParams ?? false) || Object.keys(reqParams).length == 0) {
-           return res.status(404).send({ message: "_FindBy_Nul" });
-         }
-   
-         var ErrorDepth="Prameters and Data_incoming is checking"
-         //var uploadfs_ = false
-         var uploadfs_ = false
-   
-         const _uploading = reqParams['upload'] ?? false
-         if(_uploading){
-           //uploadfs_ =nul.includes(_uploading['file']) ? false : _uploading['file'];
-           uploadfs_ =_uploading['files'] ?? false
-         }
-   
-        let [findBy, returnWat, limits] = await _postputParams(reqParams);
+    // await User.findByIdAndUpdate(req.params.id, req.body, {new:true});
+    let reqParams = req.query ? req.query : req.params;
 
-         ErrorDepth="(Srv);- FindBy_Passed..withFiling_"+ uploadfs_
-         console.log('incoming',uploadfs_)
-         //------------request meta data_analysiss
-         if(uploadfs_){//upload_['files']
-           //multer(getFileOptions()).single(uploadfs_)(req, res, async (err) => {
-           multer(getFileOptions()).fields([{name:uploadfs_,maxCount:4}])(req, res, async (err) => {
-           //check for file_requirements first
+    if (nul.includes(reqParams)) {
+      return res.status(404).send({ message: "_FindBy_Nul" });
+    }
+    var ErrorDepth="Prameters and Data_incoming is checking"
+    //var uploadfs_ = false
+    var uploadfs_ = false
+
+    const _uploading = nul.includes(reqParams['upload']) ? false : reqParams['upload']
+    if(_uploading){
+      //uploadfs_ =nul.includes(_uploading['file']) ? false : _uploading['file'];
+      uploadfs_ =nul.includes(_uploading['files']) ? false : _uploading['files'];
+    }
+
+    ErrorDepth="(Srv);- FindBy_Passed..withFiling_"+ uploadfs_
+console.log('incoming',uploadfs_)
+  //------------request meta data_analysiss
+  if(uploadfs_){//upload_['files']
+      //multer(getFileOptions()).single(uploadfs_)(req, res, async (err) => {
+      multer(getFileOptions()).fields([{name:uploadfs_,maxCount:4}])(req, res, async (err) => {
+      //check for file_requirements first
    
-           if (req.fileValidationError) {
-             return res.status(404).json("validation_Erro :-"+ req.fileValidationError);
-           } 
-           //else if (!req.files) {
-          // return res.status(404).json("req.file is null."+ req.headers);
-          // } else if (err instanceof multer.MulterError) {
-         //    return res.status(404).json("Error 01;"+err);
-        //   } else if (err) {
-        //     return res.status(404).json("Error 02;"+err);
-       //    }
-           
-         //Extracting requestResource...
-         let reqData= req.body
-         //Extracting requestResource...
-         if (!(reqData ?? false) && Object.keys(reqData).length) {
-          return res.status(404).send({ message: "Form Filling Required." });
-        }
-   
-         //Extracting requestResource (Date)...
-         let filetoUpload = req.files ?? false
-         //Extracting requestResource (File)...
-         let filesMeta ={}
-         filesMeta = filetoUpload ? await extractFilesMeta(filetoUpload) : false
-         //console.log('files list fffinside',fileMeta)
-   
-         reqData[uploadfs_] = reqData[uploadfs_] ?? []
-         reqData[uploadfs_+'Meta'] = reqData[uploadfs_+'Meta']  ?? []
-         if(filesMeta){ 
-             reqData[uploadfs_].push(...filesMeta[uploadfs_])
-             reqData[uploadfs_+'Meta'].push(...filesMeta[uploadfs_+'Meta'])
-             //reqData=Object.assign(reqData,filesMeta)
-           }
-   
-         //let [findBy,returnWat, limits] = await _postputParams(reqParams);
-         ErrorDepth="(Srv);- Multer_Processing _incomingData..withFiling_"+ uploadfs_
-         return await update_record(reqData,findBy,false).then((modelData) => {
-           if (modelData.status == 200) {
-             res.set(setmodalHeader);
-             //res.cookie("access_token", "sessionsID", { httpOnly: true });
-             return res.status(200).json(modelData['data']);
-           } else {
-             return res.status(404).json(modelData['data']);
-           }
-         }).catch((imodelData) =>{return res.status(404).json("Srv) ;- File Uploading and Data ambigiouse"+ imodelData)
-         }); //wait for returning or let it modelData it'self
-   
-       })
-     }
-      
-      else{
-       //Extracting requestResource...
-         //Extracting requestResource...
-         let reqData= req.body
-         //Extracting requestResource...
-         if (!(reqData ?? false) && Object.keys(reqData).length) {
-          return res.status(404).send({ message: "Form Filling Required." });
-        }
+      if (req.fileValidationError) {
+        return res.status(404).json("validation_Erro :-"+ req.fileValidationError);
+       } else if (!req.files) {
+       return res.status(404).json("req.file is null."+ req.headers);
+       } else if (err instanceof multer.MulterError) {
+        return res.status(404).json("Error 01;"+err);
+       } else if (err) {
+        return res.status(404).json("Error 02;"+err);
+       }
        
-       //let [findBy, returnWat, limits] = await _postputParams(reqParams);
-   
+       let [reqData, reqParams] = [req.body, req.query ? req.query : req.params];
+       //Extracting requestResource...
+       if (typeof reqData == 'object' && Object.keys(reqData).length == 0) {
+         return res.status(404).send({ message: "Form Filling Required." });
+       }
+
+     //Extracting requestResource (Date)...
+     let filetoUpload = nul.includes(req.files) ? false : req.files
+     //Extracting requestResource (File)...
+
+     let filesMeta ={}
+     filesMeta = await extractFilesMeta(filetoUpload)
+     //console.log('files list fffinside',fileMeta)
+     reqData[uploadfs_] = reqData[uploadfs_]?.[0] ?? []
+     reqData[uploadfs_+'Meta'] = reqData[uploadfs_+'Meta']?.[0] ?? []
+     if(filesMeta){ 
+         reqData[uploadfs_].push(...filesMeta[uploadfs_])
+         reqData[uploadfs_+'Meta'].push(...filesMeta[uploadfs_+'Meta'])
+         //reqData=Object.assign(reqData,filesMeta)
+       }
+
+      
+       let [findBy,returnWat, limits] = await _postputParams(reqParams);
+
+      //ErrorDepth="(Srv);- Multer_Processing _incomingData..withFiling_"+ uploadfs_
       return await update_record(reqData,findBy).then((modelData) => {
-           //console.log('update employee returned with....',modelData)
-           if (modelData.status == 200) {
-             res.set(setmodalHeader);
-             //res.cookie("access_token", "sessionsID", { httpOnly: true });
-             return res.status(200).json(modelData['data']);
-           } else {
-             return res.status(404).json(modelData['data']);
-           }
-         }).catch((imodelData) =>{return res.status(404).json("Srv) ;- File Uploading and Data ambigiouse"+ imodelData)
-         }); //wait for returning or let it modelData it'self
-      }}
-   );
+        //console.log('update employee returned with....',modelData)
+        if (modelData.status == 200) {
+          res.set(setmodalHeader);
+          //res.cookie("access_token", "sessionsID", { httpOnly: true });
+          return res.status(200).json(modelData['data']);
+        } else {
+          return res.status(404).json(modelData['data']);
+        }
+      }).catch((imodelData) =>{return res.status(404).json("Srv) ;-No File Uploading and Data ambigiouse"+ imodelData)
+      }); //wait for returning or let it modelData it'self
+  
+        })}
+
+   else{
+    //Extracting requestResource...
+    let [reqData, reqParams] = [req.body, req.query ? req.query : req.params];
+    //Extracting requestResource...
+    if (typeof reqData == 'object' && Object.keys(reqData).length == 0) {
+      return res.status(404).send({ message: "Form Filling Required." });
+    }
+    let [findBy,returnWat, limits] = await _postputParams(reqParams);
+
+   return await update_record(reqData,findBy).then((modelData) => {
+        //console.log('update employee returned with....',modelData)
+        if (modelData.status == 200) {
+          res.set(setmodalHeader);
+          //res.cookie("access_token", "sessionsID", { httpOnly: true });
+          return res.status(200).json(modelData['data']);
+        } else {
+          return res.status(404).json(modelData['data']);
+        }
+      }).catch((imodelData) =>{return res.status(404).json("Srv) ;-No File Uploading and Data ambigiouse"+ imodelData)
+      }); //wait for returning or let it modelData it'self
+   }}
+);
 
 
 // Get all products
@@ -441,7 +436,6 @@ router.get(modelIName+"s", async (req, res) => {
 // Get a single product by ID                           
 router.get(modelIName, async (req, res) => {
   let reqParams = req.query ? req.query : req.params;
-  
   let [findBy, returnWat, limits] = await _getdeleteParams(reqParams);
 
   try {
@@ -479,9 +473,9 @@ router.delete(modelIName, async (req, res) => {
 //----------------------------------Query Builder
 // API
 
-async function _postputParams(reqParams ={}) {
-  if (!reqParams) {
-    return [false,false,false];
+async function _postputParams(reqParams = {}) {
+  if (Object.keys(reqParams).length === 0) {
+    return [false];
   }
   var _blackArray=['returnWat','limits','upload','timestamp']
   var _newParam ={}
@@ -499,14 +493,14 @@ async function _postputParams(reqParams ={}) {
       }
     }
   } catch {}
-  let findBy = Object.keys(_newParam).length  ? await _queryParams(_newParam,0) : [{}];
+  let findBy = Object.keys(_newParam).length  ? await _queryParams(_newParam,) : [{}];
   
   return [findBy, returnWat, limits];
 }
 
 async function _getdeleteParams(reqParams = {}) {
-  if (!reqParams) {
-    return [false,false,false];
+  if (Object.keys(reqParams).length === 0) {
+    //return [false];
   }
   var _blackArray=['returnWat','limits','upload','timestamp']
   var _newParam ={}
@@ -539,26 +533,27 @@ async function _queryParams(params = {},isget=0) {
   let theQuery = []; //the last query is return_filter & the other is filter
   //$or: [   { age: 28 }, { age: 1 } ]
   for (let paramKey in parseQuery) {
-    var _val = parseQuery[paramKey] ?? ''
     //it(param)
     let obj = {};
     let keyTranslating = paramKey;
     if (["id", "Id", "ID"].includes(keyTranslating)) {
       keyTranslating = "_id";
     } //if param_key ..is id ( it'would reassing into _id(which mongoose use_ to identifie_id(column))
-    if(isget && !['object','number'].includes(typeof _val) ){
-       obj[keyTranslating] = {$regex : _val.toString(), "$options": "i" }
+    if(isget && !['object','number'].includes(typeof parseQuery[paramKey]) ){
+       obj[keyTranslating] = {$regex : parseQuery[paramKey].toString(), "$options": "i" }
       //N:B:- this filtering won't work with id_filtering parametrs or with complex queries
     }else{
-        obj[keyTranslating] = _val; //if  param_key != id , use as it's.... & resolve the incoming :key:value
+        obj[keyTranslating] = parseQuery[paramKey]; //if  param_key != id , use as it's.... & resolve the incoming :key:value
     }
+
     theQuery.push(obj);
   }
-  if (theQuery.length) { 
+  if (!theQuery.length) {
+    theQuery = [{}];
+  } else {
     theQuery = theQuery.filter(
-      (obj) => (Object.keys(obj).length)
+      (obj) => !(obj && Object.keys(obj).length === 0)
     );
-  } else {theQuery = [{}];
   }
   //////console.log("Quering Parsing Service..", theQuery);
   return theQuery;
@@ -577,11 +572,11 @@ const rOps = async function (
   try {
     return await dbModel
       .find({ $or: findBy }, returnWat)
-      .sort({updatedAt:-1 })
+      .sort({ _id: -1,updatedAt:1 })
       .limit(limits) //return the latest of 100
       .then((modelData) => {  
-        //console.log(modelData.length+'_Read(s)_Data')
-        console.log("Rops")
+        console.log(modelData.length+'_Read(s)_Data')
+        console.log("Reading(S) Record_DBs(Shared_)")
         if (modelData.length) {return { status: 200, data: JSON.stringify(modelData) };
         } else { return { status: 404, data: "(DBs)_read303:- " +modelData }; //not found Error
       } }).catch((modelError) => {
@@ -601,10 +596,11 @@ const rOp = async function (
     limits = 1 + limits //   updateShaker = updateShaker ?  0 : 2
     return await dbModel
       .find({ $or: findBy }, returnWat) //match findBy....if not find return "null"
-      .sort({updatedAt:-1 }) //{_id:-1} (sort by created_date///or id_#)
+      .sort({ _id: -1,updatedAt:1 })
       .limit(limits)
       .then((modelData) => {       
-        console.log("Rop")
+        console.log("Reading Record_DBs(Shared_)")
+
         if (modelData.length) {return { status: 200, data:modelData };
         } else { return { status: 404, data: "(DBs)_readf303:- " +modelData }; //not found Error
       } }).catch((modelError) => {

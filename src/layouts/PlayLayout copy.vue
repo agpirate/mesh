@@ -1,20 +1,19 @@
 <template>
 
-
 <q-dialog
-    v-model="_askforNavigator" >
+    v-model="popUpgrader"
+    transition-show="scale"
+    transition-hide="scale"
 
-        <div class="popup-content">
-        <h2>Allow Access</h2>
-        <p>We need your permission to access your location.</p>
-        <button @click="allowNavigator()">Allow</button>
-        <button id="denyNavigator()">Deny</button>
-      </div>
+    :style="{ 'background-image': 'url(' + onplayRowItem['graphicContent'] + ')' }"
+  >
 
-</q-dialog>
+      <q-card>
 
 
+      </q-card>
 
+  </q-dialog>
 <q-dialog
     v-model="popUpgrader"
     transition-show="scale"
@@ -126,7 +125,8 @@
     </q-stepper>
 
 
-  </q-card>
+      </q-card>
+
 
 </q-dialog>
 
@@ -144,13 +144,9 @@
         <div v-else-if="_fileSourceFoCam == 'camera'">
               <div  class="col bg-white row fit" >
                   <video  clas="col-2" ref="_liveFeedRawStreaming"  autoplay  playsinline style="width:100%"></video>
-                  <canvas id="_liveFeedSRC" ref="_liveFeedSRC"  width="200px" height="200px" style="display:none">                                 
+                  <canvas id="graphicCanvas" ref="graphicCanvas"  width="200px" height="200px" style="display:none">                                 
                   </canvas>
-                  <q-list  class="row q-gutter-xs" >                  
-                      <q-item v-for="_src in _fileAsSRC" :key="_src" >                        
-                          <q-img :src="_src"  style="width:100px; height: 100px" />  
-                      </q-item>
-                  </q-list>
+                  <q-img :src="_fileSRC"  style="width:100px; height: 100px" />  
               </div>
 
               <div class="q-pa-sm q-gutter-sm row justify-between"> 
@@ -158,8 +154,7 @@
                   <q-btn rounded  color="negative" size="sm" label="close" @click="_navClass._stopCamera()" />
                   <q-btn rounded  color="green" size="sm" label="save" @click="_navClass._saveScreenShoots()" />
                   <q-btn rounded  color="primary" size="sm" label="capture" icon="camera" @click="_navClass._screenShoot()"/>
-                </div>
-               
+                </div>               
                 <div size="col-auto row">
                  
                   <q-expansion-item 
@@ -193,10 +188,10 @@
 
 <!--walls-->
 <!--layOuts-->
-<q-layout view="hHh lpr lFF" container  class=" shadow-10 no-padding no-margine rounded-borders " style="max-width:100vw;max-height:100vh" :class="$q.dark.mode ? 'body--dark' : 'body--light'" >
+   <q-layout view="hHh lpr fff"  class="shadow-3 " container="fit" :class="$q.dark.mode ? 'body--dark' : 'body--light'" >
 
-  <!--Headers-->
-    <q-header :dense="true"  elevated class="col-auto text-grey-3 q-py-sm transparent" style="min-height:100px;"  >
+     <!--Headers-->
+     <q-header :dense="true"  elevated class="text-grey-8 q-py-xs bg-orange" height-hint="3" >
        <!--toolBars-->
      <q-toolbar>
        <q-btn
@@ -279,7 +274,6 @@
      </q-toolbar>
 
    </q-header>
-
 <!--drawer-Left-->
 
       <q-drawer
@@ -287,14 +281,13 @@
             bordered
             :breakpoint="0"
             side="left" overlay elevated
-            class="column"
           >
          
-          <q-scroll-area class="col column" >
+          <q-scroll-area class="fit column" >
             <!----profile graphics/imaging-->
-            <q-card class="my-card" flat bordered >             
- 
-            <q-img :src="_fileAttributeName =='cover' ? _fileAsSRC[_fileAsSRCIndex] : (onplayRowItem['cover']?.[_fileAsSRCIndex] ?? '')"  class="column"  style="width: 100%;aspect-ratio: 2/1;">
+            <q-card class="my-card" flat bordered>             
+        
+            <q-img :src="_fileAttributeName == 'cover' ? _fileAsSRC[_fileAsSRCIndex] : onplayRowItem['cover'][_fileAsSRCIndex]"  class="column"  style="width: 100%;aspect-ratio: 2/1;">
 
               <div class="absolute-top transparent column items-start">
                     <div class=" transparent row">
@@ -309,14 +302,13 @@
                     </div>
               </div>
              
-              <div class="absolute-center rounder-borders" style="width:5em;height: 5em;" v-if="onplayRowItem?.profile ?? false">
-                <q-img :src="_fileAttributeName =='profile' ? _fileAsSRC[_fileAsSRCIndex] : (onplayRowItem.profile[_fileAsSRCIndex] ?? '')"   class="absolute-center fit" style="border: 1px solid white;"  />    
+              <div class="absolute-center rounder-borders" style="width:5em;height: 5em;">
+                <q-img :src="_fileAttributeName == 'profile' ? _fileAsSRC[_fileAsSRCIndex] : onplayRowItem['profile'][_fileAsSRCIndex]"   class="absolute-center fit" style="border: 1px solid white;"  />    
               </div>
               </q-img>
               <!---- for_Name -- -->
               </q-card>
-            
-             <q-card class="row justify-between items-center q-px-sm"> 
+              <q-card class="row justify-between items-center q-px-sm"> 
                 <!---profile_update-->
             <div>            
             <input type="file" multiple ref="filep" style="display: none" @change="_fileSourceFolder($event,'profile')" /> 
@@ -329,9 +321,8 @@
               (p)</div>
           
               </q-card>
-              
             <!----profile basic informations-->
-            <q-list padding class="col-2">
+          <q-list padding class="col-2">
             <q-item-label class="row justify-between" header>
               
               <q-btn size="12px" flat dense  label="My Services"/>                        
@@ -403,14 +394,13 @@
             </q-list>
 
             <q-separator spaced inset="item" />
-            
-              <q-badge v-if="_isupgraded" class="justify-between q-pa-xs q-mx-md"> Upgraded</q-badge>
-              <q-badge v-else class="justify-between q-ma-sm bg-red"> upgrade. to unleash our service!</q-badge>
-           
+
+            <q-badge v-if="_isupgraded" class="justify-between q-pa-xs q-mx-md"> Upgraded</q-badge>
+            <q-badge v-else class="justify-between q-ma-sm bg-red"> upgrade. to unleash our service!</q-badge>
 
           </q-scroll-area>
 
-          <q-item-label class="col-auto q-py-sm row justify-between bg-grey-5 text-dark">
+          <q-item-label header class="absolute-bottom row justify-between bg-grey-5 text-dark">
             itService V0.1   
             <q-btn :dense="true" no-caps  class="q-pa-none" flat size="sm" :label="_languages[preferedLang]" @click="_setLanguages()" />
             <q-item-label>&copy;2023 </q-item-label> 
@@ -421,7 +411,7 @@
 
 <!---drawer-Left-->
 
-   <q-page-container style="" class="col bg-orange ">
+   <q-page-container style="" class="col">
      <router-view 
             :_profile="onplayRowItem"
           
@@ -437,13 +427,12 @@
             :_ispremium="_ispremium"
             :_iss="_iss"
 
-            :_accessPackage="_accessPackage"
+            :_priviledgedFor="_priviledgedFor"
           
             :_modalPriviledges="_modalPriviledges"
           
             :lytCreatRow = "lytCreatRow" 
             :lytSearchRow = "lytSearchRow" 
-            :_onPlayNavMedia="_onPlayNavMedia"
             />
      <!--sticky_icons---inside-containers-->
 
@@ -501,6 +490,7 @@ q
                    @click="$q.dark.toggle()"
                  />
       
+
                </q-item>
              </q-list>
            </q-menu>
@@ -509,35 +499,13 @@ q
        </q-card>
      </q-page-sticky>
 
+
      <!--sticky-ends-->
 
    </q-page-container>
 
-
-    <!----Footers _null-->
-
-  <q-footer class="col-auto transparent">
-
-    <div class="col-auto q-gutter-none justify-center items-center row bg-red" style="">
-          
-          <div class="col content-center text-overline"  style="background-color:transparent;">
-          <marquee behavior="scroll" scrollamount="2" direction="left" style="background-color:transparent;" >
-              <span class="marquee transparent">
-                <div class="row flex flex-center"  style="border: 1px solid white;border-radius:10px;">
-                
-                  <q-item-label class="triShape triShapeU" > </q-item-label> %5
-                  <q-item-label class="triShape triShapeD " /> %0.1 
-                  Toguamino 
-                
-                </div>
-              </span>
-          </marquee>
-          </div>
-  
-  
-      </div>
-  </q-footer>
  </q-layout>
+
 
 </template>
 
@@ -560,6 +528,7 @@ import { genapiStore } from "src/stores/jstStores/genapiStore";
 //--------------
 const $q = useQuasar();
 //------
+
 
 //-----------Store & Service
 
@@ -592,6 +561,7 @@ const metaData = {
 };
 
 useMeta(metaData);
+
 //--------------------
 
 let nul = ref([undefined, "", null, false, "false", 0,[],{},NaN]);
@@ -622,11 +592,6 @@ function NewContent() {
   lytCreatRow.value = !lytCreatRow.value
   return;}
 
-
-  //import CameraFeeds from "components/CameraFeeds.vue"
-let _cameraBox =ref(false)
-let imageSrc =ref(null)
-  //lytCreatRow
 //-----------------------Local Varialbles
 var iservicei_Menu = ref();
 iservicei_Menu.value={
@@ -659,21 +624,27 @@ var _modalPriviledges = reactive(modals);
 //------------- MODAL ROWs_ MANAGMENT
 //---
 let defaultItem = ref({});
-let onplayRowIndex = ref(-1); //the selected row_index_data...HOlding the lastIndex+1 ---temp index_value
-let onplayRowItem = ref({}); //the selected row_actual_Data..as object
-let onplayRowItemOps = ref(''); //the selected row_actual_Data..as object
+  let onplayRowItem = ref({}); //the selected row_actual_Data..as object
 
-const _buildDataModel = () =>{
-  onplayRowItem.value.geolocation={}
-  onplayRowItem.value.geolocation={'lat':'','long':''}
+  //------- Original/_UpdateRowItem:CreateRowItem _Commands
+  let _onplayRowItemBox = ref(false); //true...
+  let _onplayRowIndex = ref(null); //_row_item_index..0/1/2
+  let _onplayRowItemOps = ref(false); //_is UpdateRowItem/Creating_New
+  let _onplayRowItemOpsStatus =ref(false)
+  
+  //==-----tabular side_box ( Pop_by_Id and tell the Operation)
+  //let _setpopSideBox = ref(false); //true,..
+  //---Editing/_....arrays manupulating
+  let _onplayRowItemsideBox = ref(false); //clients,...
+  let _onplayRowItemsideBoxOps = ref(false); //editing,deleting,creating
+  let _onplayRowItemsideBoxIndex = ref(null); //array_index_0/1/2/3
 
-  onplayRowItem.value.location={}
-  onplayRowItem.value.location ={'country':'','city':'','street':''};
-
-  return true
-}
-_buildDataModel()
 //===============================================-----------------------
+//-------------Syncing Columns
+//columns()
+
+//--------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------USER PRofile and Privileges
+
 //-------------USER PROFILE_Variables..
 //--
 let id = ref("");
@@ -681,12 +652,12 @@ let _phone = ref("");
 let _Modals = ref("");
 
 //--------
-let _hasAccess = ref({});//_isRegistered
+let _anyAccess = ref({});//_isRegistered
 let _isupgraded = ref({});
 let _ispremium = ref({});
 let _iss = ref({});
 
-let _accessPackage = ref({});
+let _priviledgedFor = ref({});
 
 //----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22-------Operating with USER
 //---------upgrading /creting account pop
@@ -702,9 +673,8 @@ function _closeDialog() {
 }
 
 //----------
+let _cameraBox =ref(false)
 
-
-//---------------
 let _fileAttributeName =ref(null) //does give _image_attribute has single/multiple values of images ( sends it as 'file':name_attr, or 'files':name_attr)
 
 let _fileSourceFoCam =ref()//is folder or camera file source
@@ -720,43 +690,73 @@ let _fileAsStringIndex =ref(0)//_fileAsString_Array_index
 //let _cov=document.getElementById('_fileAsSRC') 
 function _fileSourceFolder(e,_attributeName) {
       // Check if file is selected
-      let _isthereFile = (e.target.files?.length) ?? false ? e.target.files : true ;
+      let _isthereFile = e.target.files == null || e.target.files.length == 0 ? false : e.target.files;
       ///--------------
       //_file.value[_attributeName]=[]
       if (_isthereFile) {
         _resetFileSource()
-        //---------reset _file_setting(params)   
-        _fileAttributeName.value=_attributeName
-        //--------
-        _fileSourceFoCam.value='folder'
-        //console.log(_file.value[_attributeName],'foldering0000')      
-        for(let i = 0; i < _isthereFile.length; i++){
-          _fileAsRaw.value.push(_isthereFile[i])
-          _fileAsSRC.value.push(URL.createObjectURL(_isthereFile[i])) 
-        }
+      //---------reset _file_setting(params)   
+       _fileAttributeName.value=_attributeName
+       //--------
+       _fileSourceFoCam.value='folder'
+      //console.log(_file.value[_attributeName],'foldering0000')      
+      for(let i = 0; i < _isthereFile.length; i++){
+        _fileAsRaw.value.push(_isthereFile[i])
+        _fileAsSRC.value.push(URL.createObjectURL(_isthereFile[i])) 
+      }
       }
     }
 
-///-----------------------File Operations and setting  UP(Folder) vs Down(Camera)
-async function _fileAsSRCOpsCall(SRCIndex){
-  //_onplayRowIndex.value=index
-  if(_fileAsSRCOps.value){
-    _SRCDelOps(SRCIndex)
-  }else{
-  _fileAsSRCIndex.value=SRCIndex
-  }
-  return true
-}
-async function _SRCDelOps(SRCIndex){
-  _fileAsSRC.value.splice(SRCIndex,1)
-  _fileAsRaw.value.splice(SRCIndex,1)
-  return true
+//_cameraProfiling()
+//---------------Automatically register all visitors (Basic Infor...Phone_)
+async function upgradeMe(what = "") {  //updating User DAta with no graphic to update
+  onplayRowItem.value['acctype'] = {'profileMeta':'creator_rwx','profile':'creator_rwx','saleit':'upgraded'}
+
+  return await Crud_.updateData()
+    .then((response) => {
+      if (response) { 
+          onplayRowItem.value =response
+        _isupgraded.value=true
+        _ispremium.value=true
+        notifyit.succes("Registered Succefully", null, null, 7000);
+      } else { }
+      return true;
+    })
+    .catch((error) => {//_popUpgrader.value = false;
+      _isupgraded.value=false
+      return false;
+    });
 }
 
-async function _fileAsStringOpsCall(StrIndex,index = null){
-  _onplayRowIndex.value=index
-  _fileAsStringIndex.value=StrIndex
-  return true
+async function updateUser(_isthereFileCapsulated = false) { //UpdateRowItem User DAta with graphic to update or not
+  //---set--loading row operation
+  _onplayRowItemOpsStatus.value=true
+  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
+  if(_fileAttributeName.value != null){
+          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
+          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
+          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
+        }
+      _fileAttributeName.value=null    
+    //onplayRowItem.value['phone']=Objprops._profile.phone;//always send the _loged phone along all content
+    return await Crud_.updateData()
+        .then(async (response) => {
+          _onplayRowItemOpsStatus.value=false
+
+          if (response) { 
+            rows.value[_onplayRowIndex.value] = response; 
+            onplayRowItem.value =response
+            notifyit.succes("", null, null, 7000);
+            return true
+          } else { }
+           //--unset--loading row operation
+          return false;
+        })
+        .catch((error) => {//_popUpgrader.value = false;
+              //--unset--loading row operation
+          _onplayRowItemOpsStatus.value=false
+          return false;
+        });
 }
 
 //-----------------
@@ -775,13 +775,12 @@ async function _saveFileSource(){
   //_fileSourceFoCam.value=null  
   _cameraBox.value=false
 
-  //_fileAsSRC.value = []
+  _fileAsSRC.value = []
   //_fileAsRaw.value=[]
 
 return true
 }
-
-
+//-------------------------------------------
 //-------------------------------------------
 let _listNavDevices =ref({})
 
@@ -810,133 +809,76 @@ let _liveFeedSRCStreaming =ref('')
 _liveFeedSRC.value['width']= 100;//window.innerWidth;
 _liveFeedSRC.value['height']=100;//window.innerHeight;
 
-//_cameraProfiling()
-//---------------Automatically register all visitors (Basic Infor...Phone_)
-async function upgradeMe(what = "") {  //updating User DAta with no graphic to update
-  onplayRowItem.value['acctype'] = {'profileMeta':'creator_rwx','profile':'creator_rwx','saleit':'upgraded'}
-
-  return await Crud_.updateData()
-    .then((response) => {
-      if (response) { 
-          onplayRowItem.value =response
-        _isupgraded.value=true
-        _ispremium.value=true
-        notifyit.succes("Registered Succefully", null, null, 7000);
-      } else { }
-      return true;
-    })
-    .catch((error) => {//_popUpgrader.value = false;
-      _isupgraded.value=false
-      return false;
-    });
-}
-
-async function updateUser(_isFileCapsulated = false) { //updating User DAta with graphic to update
-  //_onplayRowItemOpsStatus.value=false
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  if(_fileAttributeName.value ?? false){
-          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
-          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
-          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
-        }
-      _fileAttributeName.value=null   
-
-    //---uploading graphic content
-    return await Crud_.updateData()
-        .then((response) => {
-          if (response) { 
-            onplayRowItem.value =response
-            notifyit.succes("Profile/Cover Updated Succefully", null, null, 7000);
-          } else { }
-          return true;
-        })
-        .catch((error) => {//_popUpgrader.value = false;
-         // _onplayRowItemOpsStatus.value=false
-          //
-          return false;
-        });
-}
-
 //----------
-let _onPlayNavMedia=ref(null)
-let _onPlayNavGeo=ref(null)
-
 class _navgatorMeta{
-      constructor() { //_init_onPlayNavigator class
+
+       constructor() { //_init_onPlayNavigator class
+        let _priVar=''
+        this._onPlayNavigator=''
+        this._onPlaygeoNavigator=''
+        //-----------
         console.error("ffffffffGeolocation is  supported by this browser.");
-        try{      // Check if geolocation is supported by the browser
-            if (navigator?.mediaDevices ?? false) {
-                console.error("Geolocation is  by this browser.");
-                _onPlayNavMedia.value = navigator.mediaDevices
-              }
-
-        }catch{    }    
-
         try{
-            if(navigator?.geolocation ?? false){     
-                  _onPlayNavGeo.value = navigator.geolocation  
-                  console.log(_onPlayNavGeo.value,'navigat....')       
-              }
-            }catch{  }
+          // Check if geolocation is supported by the browser
+          if ("mediaDevices" in navigator) {
+              console.error("Geolocation is  supported by this browser.");
+              this._onPlayNavigator = navigator.mediaDevices
+              //this._enumNavigateDevice()
+              //this._navigateDevice()
+            }
+            else { // Geolocation is not supported by the browser
+            console.error("Geolocation is not supported by this browser.");
+            }
+            if('geolocation' in navigator){
+              this._onPlaygeoNavigator = navigator.mediaDevices
+            }else { // Geolocation is not supported by the browser
+            console.error("Geolocation is not supported by this browser.");
+            }
 
-        return false
+        }catch{
+          return false
+        }    
         //this._navigatePhone()
-      }
+  }
 
 //----------------Geo
-    async _navigateGeo(params) {
-              if(_onPlayNavGeo.value ?? false){
-                        _onPlayNavGeo.value.watchPosition((geodata)=>{  
-                        if(geodata.coords.latitude != onplayRowItem.value.geolocation.lat){
-                          onplayRowItem.value.geolocation['lat'] = geodata.coords.latitude// this._clientGeolocation
-                          onplayRowItem.value.geolocation['long'] = geodata.coords.longitude// this._clientGeolocatio
-                        }
-                        console.error("Error getting user location:", geodata);
-                        return this
-                      },(error) => {  // Handle errors, e.g. user denied location sharing permissions
-                        console.error("Error getting user location:", error);
-                        return this    
-                    },{ enableHighAccuracy: true, timeout: 1000*60*24, maximumAge: 60000 })
-              }else{  
-                navigator.geolocation.value.watchPosition((geodata)=>{   
-                        if(geodata.coords.latitude != onplayRowItem.value.geolocation.lat){
-                          
-                          onplayRowItem.value.geolocation['lat'] = geodata.coords.latitude// this._clientGeolocation
-                          onplayRowItem.value.geolocation['long'] = geodata.coords.longitude// this._clientGeolocatio
-                        }
-                        console.error("Error getting user location:", geodata);
-                        return this
-                      },(error) => {  // Handle errors, e.g. user denied location sharing permissions
-                        console.error("Error getting user location:", error);
-                        return this    
-                    },{ enableHighAccuracy: true, timeout: 1000*60*24, maximumAge: 60000 })
+    async _navigateGeo() {
+      console.error("getting Fine????:");
+      navigator.geolocation.watchPosition((geodata)=>{
+        if(geodata.coords.latitude != onplayRowItem.value.geolocation['lat'] )
+          {
+            onplayRowItem.value.geolocation['lat'] =geodata.coords.latitude
+            onplayRowItem.value.geolocation['long'] =geodata.coords.longitude
+          }
+          console.error("getting Fine:");
 
-                  }
-
+      },(error) => {  // Handle errors, e.g. user denied location sharing permissions
+        console.error("getting Error:", error);
+        // Handle errors, if any
+    },{ enableHighAccuracy: true, timeout: 600000, maximumAge: 600000 })
     return this    
     }
-
   //---------navigate Device
     async _navigateDevice() {  //navigate_phone_function
-          if (_onPlayNavMedia.value ?? false) {
-              _listNavDevices.value['getUserMedia'] = _onPlayNavMedia.value.getUserMedia ?? {}      
+          if ("mediaDevices" in navigator) {
+              _listNavDevices.value['getUserMedia'] = navigator.mediaDevices.getUserMedia ?? null                 
               for(let mediaDevice of ['getUserMedia','webkitGetUserMedia','mozGetUserMedia','msGetUserMedia']){
                   var _doesCamera = navigator[mediaDevice] ?? false
                   if(_doesCamera){
                   _listNavDevices.value[mediaDevice] = _doesCamera
                   }
               }
-              //this._onPlayMediaDevice= _onPlayNavMedia.value.mediaDevices['getUserMedia']
+              //this._onPlayMediaDevice= navigator.mediaDevices['getUserMedia']
           } else { // Geolocation is not supported by the browser
                       console.error("MediaDevice is not supported by this browser.");
                       }
+
           return this   
           }
     //------------------------
     async _enumNavigateDevice() {  
-      if (_onPlayNavMedia.value ?? false) {
-            _onPlayNavMedia.value.enumerateDevices().then((camList)=>{
+            if ("mediaDevices" in navigator) {
+                navigator.mediaDevices.enumerateDevices().then((camList)=>{
                   //console.log('enumbera',camList)
                 _listCameraSource.value = []
                 for(let index in camList){
@@ -957,95 +899,79 @@ class _navgatorMeta{
               }
             return this    
         }
-
-    async _openCamera(_graphicName){
+    //----------
+    async _openCamera(_attributeName){
           await this._enumNavigateDevice()
           _resetFileSource()
-          //--------
+          //------------
           _cameraBox.value=true
-          _liveFeedSRC.value = null
-          ///----------
-          _fileAttributeName.value=_graphicName
+          //-------
+          _fileAttributeName.value=_attributeName
           //------------------
-          _fileSourceFoCam.value='camera' 
-          //-----------
-          if(_selectedCameraById.value ?? true){//if 'user'
+          _fileSourceFoCam.value='camera'  
+          //------------------
+          //--------
+          if(_selectedCameraById.value == ''){//if 'user'
             _liveFeedRawVidAttribute.value['facingMode']=_selectedCameraByface.value ? 'user':'environment'
           }
           else{
             _liveFeedRawVidAttribute.value['deviceId'] = { exact: _selectedCameraById.value };
             _liveFeedRawVidAttribute.value['facingMode'] = _selectedCameraByface.value ? 'user':'environment'
           }
-        
-        if (_listNavDevices.value['getUserMedia']) {  //in priority use ( this device_ for media_sources)
-          var _onplayDevice = _listNavDevices.value['getUserMedia'] ?? false 
-         _liveFeedRaw.value = await _onPlayNavMedia.value.getUserMedia({video:_liveFeedRawVidAttribute.value,audio:_liveFeedRawAudAttribute.value})                                                             
+        //booting the feed ( for streaming...)
+        _liveFeedRaw.value = await navigator.mediaDevices.getUserMedia({video:_liveFeedRawVidAttribute.value,audio:_liveFeedRawAudAttribute.value})                                                             
         //initialize the video streaming                                                                                                  
         _liveFeedRawStreaming.value['srcObject']= _liveFeedRaw.value
         //_liveFeedRawStreaming.value.play()
         _liveFeedRawStreaming.value.onloadedmetadata = () => {  _liveFeedRawStreaming.value.play(); };
-      }
+      
+        return true;
+    }
+     _pauseCamera () {_liveFeedRawStreaming.value.pause()}
+     _playCameraa  () {_liveFeedRawStreaming.value.play()}
+    //_liveFeedRawStreaming.value.pause();
+    _saveScreenShoots (){
+      //----shutdown camera RawFeed_& displaying
+      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
+              _streamTrack.stop();
+            })
+      _liveFeedRawStreaming.value.src=null
+      //--------
+      _saveFileSource()
       return true
     }
 
-
-    async _screenShoot (_remove=false){
-
+    _screenShoot  (_remove=false){
       if(_remove && _fileAsSRC.value.length){
           _fileAsRaw.value.pop();
           _fileAsSRC.value.pop(); //viewable content
         return true
       }
-     _liveFeedSRCStreaming.value= _liveFeedSRC.value.getContext('2d');
-     _liveFeedSRCStreaming.value.drawImage(_liveFeedRawStreaming.value, 0,0, _liveFeedSRC.value.width, _liveFeedSRC.value.height);
-     //_fileAttributeName.value[0] =='profile'
-     try{
-      console.log('saving image...')
-      //_save screenshoots _for_SRC_display ( being used method__now!) as [PNG]____as primary choice
-        _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/png')); //_save as jpeg
-        //_save screeshots _As_Raw_for_uploading
-        _liveFeedSRC.value.toBlob((blob) => {
-          _fileAsRaw.value.push( new File([blob], "fileName.png"+String(new Date()), { type: "image/png" },0.9))        
-          }, 'image/png')
-      }catch{
-      //_save screenshoots _for_SRC_display ( being used method__now!) as [JPEG]__if Not
-        _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/jpeg')); //or _save as jpeg
-        //_save screeshots _As_Raw_for_uploading
-      _liveFeedSRC.value.toBlob((blob) => {
-        _fileAsRaw.value.push( new File([blob], "fileName.jpeg"+String(new Date()), { type: "image/jpeg" },0.9))        
-          }, 'image/jpeg')
+            //_save screenshoots _for_canvas_display(if needed ? )
+            _liveFeedSRCStreaming.value= _liveFeedSRC.value.getContext('2d');
+            _liveFeedSRCStreaming.value.drawImage(_liveFeedRawStreaming.value, 0,0, _liveFeedSRC.value.width, _liveFeedSRC.value.height);
+            try{
+            //_save screenshoots _for_SRC_display ( being used method__now!) as [PNG]____as primary choice
+              _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/png')); //_save as jpeg
+              //_save screeshots _As_Raw_for_uploading
+            _liveFeedSRC.value.toBlob((blob) => {
+              _fileAsRaw.value.push( new File([blob], "fileName.png"+String(new Date()), { type: "image/png" },0.9))        
+                }, 'image/png')
+            }catch{
+            //_save screenshoots _for_SRC_display ( being used method__now!) as [JPEG]__if Not
+              _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/jpeg')); //or _save as jpeg
+              //_save screeshots _As_Raw_for_uploading
+            _liveFeedSRC.value.toBlob((blob) => {
+              _fileAsRaw.value.push( new File([blob], "fileName.jpeg"+String(new Date()), { type: "image/jpeg" },0.9))        
+                }, 'image/jpeg')
+            }
+        return true
       }
-      return true
-    }
-    async _saveScreenShoots (_remove=false){
-
-      //----shutdown camera RawFeed_& displaying
-      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
-              _streamTrack.stop();
-              _streamTrack=false
-
-            })
-      _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
-            _streamTrack.stop();
-            _streamTrack=false
-      })
-      _liveFeedRawStreaming.value.src=null
-      //--------
-      _saveFileSource()
-      return true
-      }
-
+//----
     async _stopCamera (){
       //----shutdown camera RawFeed_& displaying
-      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
-              _streamTrack.stop();
-              _streamTrack=false
-
+      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  _streamTrack.stop();
             })
-      _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
-            _streamTrack.stop();
-            _streamTrack=false
-      })
       _liveFeedRawStreaming.value.src=null
       //------
       _resetFileSource()
@@ -1055,40 +981,90 @@ class _navgatorMeta{
     async _operateDevice(cmd){
 
       if(cmd == 'pause'){ _liveFeedRawStreaming.value.pause()    }
-        else if(cmd =='play'){_liveFeedRawStreaming.value.play()   }
-        return true
-      }
-    //--------------setting camera_view & Mic
+      else if(cmd =='play'){_liveFeedRawStreaming.value.play()   }
+      return true
+    }
+
     async _setCameraParam (cameraID='',_facetoggler=false){  //switching camera
       _selectedCameraByface.value=_facetoggler     
       _selectedCameraById.value =cameraID      
       return await this._openCamera()    
     }
-    async  _setMicParam (audioID=''){
+
+    async _setMicParam (audioID=''){
       _selectedMicById.value = _listMicSource.value['deviceId'][audioID]
       return await this._openCamera()
     }
  }
 
+//-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@---- authentication Auditors and Setup
+const authService =authenticatingStore()
+var {getLogStatus} = storeToRefs(authService) //is like making reactive(ref)_variable
+//watch(getLogStatus, (data) => {
+    //_isRegistered.value=true;
+ //   console.log('isLoggedIn ref changed, do something!',data)
+ // })
+//--------------------------------------------------------------------Profiling (CHECK AUTHENTICATIONS &&& USER INFORMATIONS)
+var _profileInformation = async () => {
+    var _registered = getLogStatus.value._isRegistered ?? false // for already registered
+    var _newRegister = _localStorage._get('_isRegistered') ?? false //for auto registere(new)
+    console.log('starting')
+
+    if(!(_registered || _newRegister)){//_isRegistered
+    return false    }
+
+    if(_registered && (getLogStatus.value?.user ?? false)){
+        id.value = getLogStatus.value.user.id ?? null; // check if _it's authenticated_with it's user_id
+       _phone.value = getLogStatus.value.user.phone ?? null // check if _it's authenticated_with it's user_id
+    }else{
+         id.value = _localStorage._get("id") ?? null; // check if _it is Priviledges_box has options
+        _phone.value = _localStorage._get("phone") ?? null; // check if _it is Priviledges_box has options
+    }
+    //-----------------   
+    _anyAccess.value = _localStorage._get('_anyAccess') ?? null; // check if _it is Priviledges_box has options
+    //-----------------
+    if(_anyAccess.value){
+      _iss.value = _localStorage._get("_iss"); // check if _it is Priviledges_box has optionss
+      //_Modals.value = _localStorage._get("_Modals"); // check if _it is Priviledges_box has options
+      _priviledgedFor.value = _localStorage._get("_priviledgedFor"); // check if _it is Priviledges_box has options
+
+      _isupgraded.value =  _localStorage._get("_isupgraded") ?? false  //is admin/creator...
+      _ispremium.value =  _localStorage._get("_ispremium") ?? false  //is admin/creator...
+    }
+    var fetchService = {};
+    fetchService["phone"] = _phone.value;
+    return await Crud_.genapiFData('/profileapi/profile',fetchService).then((response) =>{        
+        if(response ){     
+           onplayRowItem.value = response[0]; 
+          return true
+        }else{
+          return onplayRowItem.value = _localStorage._get("_userData") ?? false
+        }
+    }).catch((error)=>{ //newlly registered use storage_profile or if network down
+       return onplayRowItem.value= _localStorage._get("_userData") ?? false
+    })
+};
+
 //---------@@@@@@@@@@@@@@@@@@@@-------------General Functions and Service
 var _languages =['English','Tigrigna']
+
 var preferedLang =ref(0)
 
 async function _setLanguages() {
   preferedLang.value = preferedLang.value ? 0 : 1
   return true
 }
-//------Local Storage___o
-const _storageapi = $q.localStorage
+//------Local Storage___
+const _storageapi = ref($q.localStorage)
 const _localStorage = {
   _get: (_item) => {
-    return _storageapi.getItem(_item);
+    return _storageapi.value.getItem(_item);
   },
   _set: (_key, _item) => {
-    return _storageapi.set(_key, _item);
+    return _storageapi.value.set(_key, _item);
   },
   _clear: (_key, _item) => {
-    return _storageapi.clear();
+    return _storageapi.value.clear();
   },
 };
 
@@ -1100,7 +1076,7 @@ function logout() {
 }
 //-------Redirecting Routes ------
 async function redirectto(routes,key) {
-return router.push({path:routes[1], name:key,query:{_request_id:"dblyt"+key},meta: {_user3A:_accessPackage.value[key],_isauthenticated:true},params: {_user3A:_accessPackage.value[key],id: id.value,_thisusertoken: "date-22-02-22"} } ); //is slim enter , it doesn't create loudness in router_gates 
+return router.push({path:routes[1], name:key,query:{_request_id:"dblyt"+key},meta: {_user3A:_priviledgedFor.value[key],_isauthenticated:true},params: {_user3A:_priviledgedFor.value[key],id: id.value,_thisusertoken: "date-22-02-22"} } ); //is slim enter , it doesn't create loudness in router_gates 
 }
 
 const responsiveHxW = computed(() => ({  //computer Screen size on gowing
@@ -1306,6 +1282,57 @@ const Crud_ = {
       });
   },
 };
+
+//-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-----------ON-Mouted Operations and Authentications
+var acctype_=false //is user annoymouse or priiledged ?
+var _navClass =new _navgatorMeta()
+_resetFileSource()
+
+onMounted(async () => {  //--------------ON MOUNT
+  console.log('starting @mount@@@@@@@@@@@@@@@@@@@@@@@@@@')
+
+  //--------reintiate_navigation_class
+  await _navClass._navigateDevice()
+  await _navClass._navigateGeo()
+  await _navClass._enumNavigateDevice()
+  console.log('starting @mount')
+
+  return await _profileInformation()
+    .then(async (resp) => {
+      console.log(resp,'onmouted response..3333333333333')
+      if(resp){
+          notifyit.succes("Wellcome " + onplayRowItem.value["name"] + " @itService");
+          acctype_=true
+          return router.push({path:"/play", name:'playTrends',query:{_request_id:"gpg"+'nnpriv'},params: {} } ); 
+      }
+      timerResponse(4000, "scrumbled privilege detected").then((response) => {
+
+                        return router.push({path:"/",name:'sign' } ); 
+                  });     
+      //for authenticated, but not upgraded_user
+    })
+    .catch((respError) => {
+        console.log(respError,'onmouted response..22')
+        timerResponse(3000, "scrumbled privilege detected").then((response) => {
+         return  router.push({path:"/",name:'sign' } ); 
+      });
+    });
+});
+
+async function timerResponse(period = 6000, message = "") {
+   //pageLoadingNote.value = message;
+    setTimeout(() => {
+    //pageLoading.value = false;
+    clearTimeout(pageLoading.value)
+    return true;
+  }, period);
+}
+
+//--
+timeService.timeMachine();
+
+//------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@------------Modal CRUD_OPs
+
 //--------------------------------------------------------------------UTILITIED_FUNCTIONS ( LocalStarage -- Profiling)
 //_____________________________________________________Functions Definitions
 
@@ -1530,101 +1557,6 @@ const loadit = {
     }, period);
   },
 };
-
-//-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@---- authentication Auditors and Setup
-var acctype_=false //is user annoymouse or priiledged ?
-const authService =authenticatingStore()
-var {getLogStatus} = storeToRefs(authService) //is like making reactive(ref)_variable
-//watch(getLogStatus, (data) => {
-    //_isRegistered.value=true;
- //   console.log('isLoggedIn ref changed, do something!',data)
- // })
-//--------------------------------------------------------------------Profiling (CHECK AUTHENTICATIONS &&& USER INFORMATIONS)
-var _profileInformation = async () => {
-    var _registered = getLogStatus.value._isRegistered ?? false // for already registered
-    var _newRegister = _localStorage._get('_isRegistered') ?? false //for auto registere(new)
-
-    if(!(_registered || _newRegister)){//_isRegistered
-    return false    }
-
-    if(_registered && (getLogStatus.value?.user ?? false)){
-        id.value = getLogStatus.value.user.id ?? null; // check if _it's authenticated_with it's user_id
-       _phone.value = getLogStatus.value.user.phone ?? null // check if _it's authenticated_with it's user_id
-    }else{
-         id.value = _localStorage._get("id") ?? null; // check if _it is Priviledges_box has options
-        _phone.value = _localStorage._get("phone") ?? null; // check if _it is Priviledges_box has options
-    }
-    //-----------------   
-    _hasAccess.value = _localStorage._get('_hasAccess') ?? null; // check if _it is Priviledges_box has options
-    //-----------------
-    if(_hasAccess.value){
-      _iss.value = _localStorage._get("_iss"); // check if _it is Priviledges_box has optionss
-      //_Modals.value = _localStorage._get("_Modals"); // check if _it is Priviledges_box has options
-      _accessPackage.value = _localStorage._get("_accessPackage"); // check if _it is Priviledges_box has options
-
-      _isupgraded.value =  _localStorage._get("_isupgraded") ?? false  //is admin/creator...
-      _ispremium.value =  _localStorage._get("_ispremium") ?? false  //is admin/creator...
-    }
-    var fetchService = {};
-    fetchService["phone"] = _phone.value;
-    return await Crud_.genapiFData('/profileapi/profile',fetchService).then((response) =>{        
-        if(response ){     
-           onplayRowItem.value = response[0]; 
-          return true
-        }else{
-          return onplayRowItem.value = _localStorage._get("_userData") ?? false
-        }
-    }).catch((error)=>{ //newlly registered use storage_profile or if network down
-       return onplayRowItem.value= _localStorage._get("_userData") ?? false
-    })
-};
-//-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-----------ON-Mouted Operations and Authentications
-//-----------Intializing....first functions and required datas
-
-var _navClass = new _navgatorMeta() //constructorialize navigator class
-//var _storageClass =new _storageMeta() //constructorialize stre class
-//var _clientCcode=ref(getCountry() ? getCountry() : ['',''])
-
-onBeforeMount(async () => {  //--------------ON MOUNT
-  //await _navClass._navPhone()
-  await _navClass._navigateGeo()
-  await _navClass._enumNavigateDevice()
-  await _navClass._navigateDevice()
-
-  return await _profileInformation()
-    .then(async (resp) => {
-      console.log(resp,'onmouted response..')
-      if(resp){
-          notifyit.succes("Wellcome " + onplayRowItem.value["name"] + " @itService");
-          acctype_=true
-          return router.push({path:"/play", name:'playTrends',query:{_request_id:"gpg"+'nnpriv'},params: {} } ); 
-      }
-      timerResponse(4000, "scrumbled privilege detected").then((response) => {
-
-                        return router.push({path:"/",name:'sign' } ); 
-                  });     
-      //for authenticated, but not upgraded_user
-    })
-    .catch((respError) => {
-        console.log(respError,'onmouted response..22')
-        timerResponse(3000, "scrumbled privilege detected").then((response) => {
-         return  router.push({path:"/",name:'sign' } ); 
-      });
-    });
-});
-
-async function timerResponse(period = 6000, message = "") {
-   //pageLoadingNote.value = message;
-    setTimeout(() => {
-    //pageLoading.value = false;
-    clearTimeout(pageLoading.value)
-    return true;
-  }, period);
-}
-
-//--
-timeService.timeMachine();
-//------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@------------Modal CRUD_OPs
 
 </script>
 

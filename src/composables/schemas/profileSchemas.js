@@ -43,14 +43,18 @@ const profileSchema = {
     $ifNull: 1,
 
   },
-  profile: { type: String,vtype:'file',default: "/profile/profilejpeg.jpeg" },
-
+  profile: {     
+    type:Array,
+    default:["/saleitgr/saleitpng.png"],
+    $ifNull:["/saleitgr/saleitpng.png"],
+    vtype:'file'
+    },
   cover: {
-    type:String,
-    vtype:'file',
-    default:'/cover/itService.jpg',
-    contentType: "String",
-  },
+    type:Array,
+    default:["/saleitgr/saleitpng.png"],
+    $ifNull:["/saleitgr/saleitpng.png"],
+    vtype:'file'
+    },
 userName: {
     type: String,
      default: "",
@@ -93,51 +97,70 @@ userName: {
       //index: { unique: true, dropDups: true },
     },
 
-    phone: {
-      type: String,
-       default: "+251 0000000000",
-       $ifNull: "",
+  phone: {
+      type: Number,vtype:"Number",
+       default: 0,
+       $ifNull: 0,
        required:true,
        index: { unique: true, dropDups: true,length:10 },
      },
-   phoneCode: {
-       type: String,
-        default: "+251",
-        $ifNull: "",
-        required:true,
-      },
+     phoneCode: {
+      type: Array,vtype:"Array",
+      default: ['',''],
+      $ifNull: ['',''],
+      required:true,
+    },
 
-address: {
-  Country: {
-    type: String,
-      default: "Ethi",
-      $ifNull: "",
-    },
-    Provinance: {
-    type: String,
-      default: "Tigrai",
-      $ifNull: "",
-    },
-    City: {
-    type: String,
-      default: "Mekelle",
-      $ifNull: "",
-    },
-  },
-  __liveCord: {
+    location: {
+        country: {
+          type: String,
+            default: "",
+            $ifNull: "",
+          },
+          provinance: {
+          type: String,
+            default: "",
+            $ifNull: "",
+          },
+          city: {
+          type: String,
+            default: "",
+            $ifNull: "",
+          },
+          street: {
+            type: String,
+              default: "",
+              $ifNull: "",
+            },
+        },
+  geolocation: {
     lat: {
-      type: String,
-        default: "000123",
-        $ifNull: "",
+      type: Number,vtype:"Number",
+        default:0,
+        $ifNull: 0,
       },
       long: {
-      type: String,
-        default: "000123",
-        $ifNull: "",
+        type: Number,vtype:"Number",
+        default: 0,
+        $ifNull: 0,
       },
-
     },
-
+    verified: {
+      type: String,Vtype:"String",
+       default: "0",
+       $ifNull: "",
+       enum:['0','1']
+     },
+     cart: {
+      type: Array,Vtype:"Array",
+       default: [],
+       $ifNull: [],
+     },
+     queryWeight: {
+      type: String,Vtype:"String",
+      default: "25.25.0.0",
+      $ifNull: "25.25.0.0",
+     },
 //img: {
 //  type: String,
 //},

@@ -55,10 +55,11 @@ function request(method) {
     } else {  
       try {
         StoreDebug = "Store Requesting Setted Up...#"+method
+        console.log(StoreDebug,requestOptions,'genapistor ge/del')
         const response = method === "GET" ? await authApi.get(url, requestOptions) : await authApi.delete(url, requestOptions);
         StoreDebug = "Store Showing BackEnd Debug :- ...#"+method+response
         return await respHandler(response).then((HandledRESP) => { return [true, HandledRESP];  }, // Handling Friendly Errors of the response
-                                                (error) => {console.log(StoreDebug)
+                                                (error) => {console.log(StoreDebug,requestOptions,'genapistor ge/del')
                                                   return [false,error]; } ); // the friendly errors
       } catch (error) {
         StoreDebug = "Request_aborted_OnStore :-Axios_Error "+method+tobeUpload+error
