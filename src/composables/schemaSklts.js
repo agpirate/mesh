@@ -1,6 +1,8 @@
-async function qschemaDataSkelton(schemaData) {
-  //onplayRowItem Scheleton of Data...Imaging acording the authorized_columns schema
-  let onplayRowItem = {};
+async function schemaSklt(schemaData) {
+  console.log('schemaSklt Called')
+
+  //onplayRowItemm Scheleton of Data...Imaging acording the authorized_columns schema
+  let onplayRowItemm = {};
 
   let topcolumnName; //require with qtable_schema..
 
@@ -20,27 +22,27 @@ async function qschemaDataSkelton(schemaData) {
     //-----
     //Check if Type is Existing ..[String,Number,file...]
     if ("type" in tempCols) {
-      onplayRowItem[topcolumnName] = ""; //Registering column_name      { the Name  }
-      onplayRowItem[topcolumnName] = tempCols.default;
+      onplayRowItemm[topcolumnName] = ""; //Registering column_name      { the Name  }
+      onplayRowItemm[topcolumnName] = tempCols.default ?? '';
     } 
    //----is Object(dictionary)
     else {
       //----------- Column is Object ( multiValued...).....
-      onplayRowItem[topcolumnName] = {}; //Registering the Object_name
+      onplayRowItemm[topcolumnName] = {}; //Registering the Object_name
       let columnsG = tempCols;
       for (let topcolumnNameG in columnsG) {
         tempCols = columnsG[topcolumnNameG];
 
         if ("type" in tempCols) {
           //----is String L2
-          onplayRowItem[topcolumnName][topcolumnNameG] = "";
+          onplayRowItemm[topcolumnName][topcolumnNameG] = "";
  
-          onplayRowItem[topcolumnName][topcolumnNameG] = tempCols.default;
+          onplayRowItemm[topcolumnName][topcolumnNameG] = tempCols.default ?? '';
           ////console.log(column.name)
 
         } else {
           //-----------is Object (Layer_3)
-          onplayRowItem[topcolumnName][topcolumnNameG] = {};
+          onplayRowItemm[topcolumnName][topcolumnNameG] = {};
 
           let columnsGG = tempCols;
           for (let topcolumnNameGG in columnsGG) {
@@ -48,14 +50,14 @@ async function qschemaDataSkelton(schemaData) {
 
             tempCols = columnsGG[topcolumnNameGG];
             if ("type" in tempCols) {
-              onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG] =
+              onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG] =
                 "";
             
-              onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG] =
-                tempCols.default;
+              onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG] =
+                tempCols.default ?? '';
             } else {
               //-----------is Object (Layer_3)
-              onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG] =
+              onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG] =
                 "";
 
               let columnsGGG = tempCols;
@@ -64,15 +66,15 @@ async function qschemaDataSkelton(schemaData) {
 
                 let tempCols = columnsGGG[topcolumnNameGG];
                 if ("type" in tempCols) {
-                  onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG][
+                  onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG][
                     topcolumnNameGGG
                   ] = "";
                
-                  onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG][
+                  onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG][
                     topcolumnNameGGG
-                  ] = tempCols.default;
+                  ] = tempCols.default ?? '';
                 } else {
-                  onplayRowItem[topcolumnName][topcolumnNameG][topcolumnNameGG][
+                  onplayRowItemm[topcolumnName][topcolumnNameG][topcolumnNameGG][
                     topcolumnNameGGG
                   ] = "";
 
@@ -80,13 +82,13 @@ async function qschemaDataSkelton(schemaData) {
                   for (let topcolumnNameGGGG in columnsGGGG) {                //--------is String L3
                     let tempCols = columns[topcolumnNameGGGG];
                     if ("type" in tempCols) {
-                      onplayRowItem[topcolumnName][topcolumnNameG][
+                      onplayRowItemm[topcolumnName][topcolumnNameG][
                         topcolumnNameGG
                       ][topcolumnNameGGG][topcolumnNameGGGG] = "";
                     
-                      onplayRowItem[topcolumnName][topcolumnNameG][
+                      onplayRowItemm[topcolumnName][topcolumnNameG][
                         topcolumnNameGG
-                      ][topcolumnNameGGG][topcolumnNameGGGG] = tempCols.default;
+                      ][topcolumnNameGGG][topcolumnNameGGGG] = tempCols.default ?? '';
                     }
                   } }
               }
@@ -96,8 +98,7 @@ async function qschemaDataSkelton(schemaData) {
       }
     }
   }
-  console.log('onplayrow item',onplayRowItem)
 
-  return onplayRowItem;
+  return onplayRowItemm;
 }
-export default qschemaDataSkelton;
+export { schemaSklt };

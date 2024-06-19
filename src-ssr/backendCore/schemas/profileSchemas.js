@@ -1,42 +1,93 @@
 
-//import _acctype from "src/hooks/_acctype";
-//var todday = () => Math.floor(Date.now() / 1000);
-var todday = () => new Date().toLocaleDateString();//.split("T")[0];
+//import _permission from "src/hooks/_permission";
+import { mongoose } from "mongoose";
+import { ref } from "vue";
+var Schema = mongoose.Schema
+var ObjectId = Schema.ObjectId;
 
-//{'profileMeta':'client','profile':'client','saleit':'client'}
-const _acctype ={
+var todday = () => new Date().toLocaleDateString();//.split("T")[0];
+//{'profileMeta':'clients','profile':'clients','saleit':'clients'}
+const _permission ={
+  group:{ type: String,  default: "client"},
   profile: {
-    type: String,
-     default: "client",
-     vmeta:{'creator_rw':[],},
-     enum: ["admin","creator_rwx","client"],
+    group:{
+      type: String,
+       default: "client",
+       role:{'xrole':[],'clients':['likes','comment'],'upgraded':['clients','likes','comment'],'creatorrw':2001,'creator':2001,'admin':2001},
+       enum: ["upgraded","client","creator","admin","xrole"],
+     },
+     role:[{
+      type: String,
+      default: "",
+      enum: ["likes","comments",'clients',"*","***",""],
+    }], 
+    capability: {
+      type: String,
+       default: '1010',
+     },
+     accstage: {
+      type: Array,
+       default:[],
+     }
    },
+
    profileMeta: {
     type: String,
      default: "client",
-     vmeta:{'creator_rw':[],},
-     enum: ["creator_rw", "creator_rwx","upgraded", "client","admin"],
+     role:{'client':['clients','likes','comments']},
+     enum: ["upgraded", "client","creator","admin"], 
    },
-
    saleit: {
-    type: String,
-     default: "client",
-     enum: ["creator_rw", "creator_rwx","upgraded", "client","admin"],
+    group:{
+      type: String,
+       default: "client",
+       role:{'xrole':[],'client':['likes','comments','clients'],'upgraded':['clients','likes','comments'],'creatorrw':2001,'creator':2001,'admin':2001},
+       enum: ["upgraded","client","creator","admin","xrole"],
+     },
+     role:[{
+      type: String,
+      default: "",
+      enum: ["likes","comments",'clients',"*","***",""],
+    }],
+    capability: {
+      type: String,
+       default: '1010',
+     },
+     accstage: {
+      type: Array,
+       default:[],
+     }
+   },
+   saleclient: {
+    group:{
+      type: String,
+       default: "client",
+       role:{'xrole':[],'client':['likes','comments','clients'],'upgraded':['clients','likes','comments'],'creatorrw':2001,'creator':2001,'admin':2001},
+       enum: ["upgraded","client","creator","admin","xrole"],
+     },
+     role:[{
+      type: String,
+      default: "",
+      enum: ["likes","comments",'clients',"*","***",""],
+    }],
+    capability: {
+      type: String,
+       default: '1010',
+     },
+     accstage: {
+      type: Array,
+       default:[],
+     }
    }
 }
 
-//-------------USER profileSchema_Variables..
-//--profileSchema shema
-
-const profileSchemaCompute = {
-  _rank:{
-    type: String,
-    default: "0",
-  },
+const _userPermissions = {
+  //user_id:{ type:ObjectId, ref: "profile" }, //acctype_:{ type:ObjectId, ref: "acctypes" },
+  //acctype_id:{ type:ObjectId, ref: "acctypes" },
+  acctype_group:{ type:String,default:'clients'},
 }
-
+//-------------USER profileSchema_Variables..
 const profileSchema = {
-
   _stage_: {
     type:Number,
     default:1,
@@ -49,9 +100,9 @@ const profileSchema = {
     vtype:'file'
     },
   cover: {
-    type:Array,
-    default:["/saleitgr/saleitpng.png"],
-    $ifNull:["/saleitgr/saleitpng.png"],
+    type:String,
+    default:"/saleitgr/saleitpng.png",
+    $ifNull:"/saleitgr/saleitpng.png",
     vtype:'file'
     },
 
@@ -69,16 +120,6 @@ const profileSchema = {
        //required: true,
        //index: { unique: true, dropDups: true },
      },
-
-  userID: {
-    type: String,Vtype:"String",
-
-      default: "xyxyx",
-      $ifNull: "",
-      //required: true,
-      //index: { unique: true, dropDups: true },
-    },
-
     name: {
       type: String,Vtype:"String",
 
@@ -143,13 +184,12 @@ location: {
         $ifNull: 0,
       },
       long: {
-        type: String,Vtype:"String",
-
-         default: "yyyyyyyyyyyyyy",
-         $ifNull: "",
+        type: Number,vtype:"Number",
+         default: 0,
+         $ifNull: 0,
        },
      },
-     verified: {
+  verified: {
       type: String,Vtype:"String",
        default: "0",
        $ifNull: "",
@@ -161,37 +201,26 @@ location: {
        $ifNull: [],
      },
      queryWeight: {
-      type: String,Vtype:"String",
-       default: "25.25.0.0",
-       $ifNull: "25.25.0.0",
+      '1':{ type: Array,Vtype:"Array", ///userProfile for saleit_contents
+            default: [1,50,50,50],
+            $ifNull: [1,50,50,50],},
+      '2':{ type: String,Vtype:"String",  ///userProfile for rentit_contents
+            default: "1.1.1.1",
+            $ifNull: "1.1.1.1",},
+      '3':{ type: String,Vtype:"String",  ///userProfile for ..._contents
+            default: "1.1.1.1",
+            $ifNull: "1.1.1.1",}
      },
-
-//img: {
-//  type: String, cart
-//},
-
-//--------------------------------
-acctype: _acctype,
-//---------------------------------
-//profileCompute,
-  
+    //--------------------------------
+      acckey:{ type:ObjectId, ref: "acctypes" }, //"acctype"/"_id": ObjectId("62d01d17cdd1b7c8a5f945b9")
+    //---------------------------------
   }
-
-
-
-const profileMetaCompute = {
-    _rank:{
-      type: String,
-      default: "0",
-    },
-  }
-  
 const profileMetaSchema = {
     userID: {
       type: String,
       default: "",
-      ref:"profileSchema"
-    },
+      //ref:"profileSchema"
+    },  
     location: {
      type: String,
       default: "",
@@ -210,13 +239,10 @@ const profileMetaSchema = {
      type: String,
       default: "",
     },
-    
     //---------------------------------s
-  
   }
 
-
-  export { profileSchema,profileMetaSchema}
+export { profileSchema,profileMetaSchema,_permission,_userPermissions}
 
 
 

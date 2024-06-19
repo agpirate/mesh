@@ -1,0 +1,15 @@
+HTTrack3.49-2 launched on Sat, 18 May 2024 14:50:35 at https://getbootstrap.com/docs/5.0/getting-started/introduction +*
+(httrack https://getbootstrap.com/docs/5.0/getting-started/introduction +* -r6 )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+14:50:38	Warning: 	Moved Permanently for getbootstrap.com/robots.txt
+14:50:38	Warning: 	Redirected link is identical because of 'URL Hack' option: getbootstrap.com/robots.txt and https://getbootstrap.com/robots.txt
+14:50:38	Warning: 	Warning moved treated for getbootstrap.com/robots.txt (real one is https://getbootstrap.com/robots.txt)
+14:50:38	Warning: 	Moved Permanently for getbootstrap.com/docs/5.0/getting-started/introduction/
+14:50:38	Warning: 	Redirected link is identical because of 'URL Hack' option: getbootstrap.com/docs/5.0/getting-started/introduction/ and https://getbootstrap.com/docs/5.0/getting-started/introduction/
+14:50:38	Warning: 	File has moved from getbootstrap.com/docs/5.0/getting-started/introduction/ to https://getbootstrap.com/docs/5.0/getting-started/introduction/
+14:50:38	Warning: 	No data seems to have been transferred during this session! : restoring previous one!

@@ -1,101 +1,84 @@
-<template>
-
-  <q-dialog
-      v-model="_onplayRowItemBox"
-      transition-show="scale"
-      transition-hide="scale"   
-      :style="{ 'background-image': 'url('  + ')' }"
-    >
-    <q-card style="min-width: 50vw;" class="overlay-Glass " >
+<template> 
+<q-dialog v-model="__thisBox"       
+:style="{ 'background-image': 'url(' +  _this?.saleitgr ?? '' + ')' }"
+      class="fit shadow-5 column" >
+    
+    <q-card style="min-width:30vw;" class="overlay-Glass   " v-if="_this ?? false">
   
-      <!----HEADER-TOP Begin-->
+      <!----HEADER-TOP Begin--> 
       
           <q-linear-progress :value="0.8" color="orange" />
 
-          <!--q-bar style='font-weight: bold;'>
-            <div>{{  new Date().toDateString() }}</div>
-            <q-space />
-            <q-btn dense flat  v-close-popup>
-              Post
-              <q-tooltip>Post</q-tooltip>
-            </q-btn>
-            <q-btn dense flat  v-close-popup>
-              Save
-              <q-tooltip>Save</q-tooltip>
-            </q-btn>
-            <q-btn dense flat icon="close" @click="_onplayRowItemBoxset()">
-              <q-tooltip>Close</q-tooltip>
-            </q-btn>
-          </q-bar -->
-  
           <q-card-section class="row items-center no-wrap q-pa-none"  >
-            
-            <div class="col " style="max-height:80vh;" >
+            <div class="col " style="max-height:50vh;" >
           <q-img            
               loading="lazy"
-               style="max-height: 100%;"
-                      :src="_fileAttributeName ? _fileAsSRC[_fileAsSRCIndex] : onplayRowItem['saleitgr'][_fileAsSRCIndex]">  
+               style="min-height: 50vh;aspect-ratio: 2/1.5;"
+                      :src="_fileAttributeName ? _fileAsSRC[_fileAsSRCIndex] : _this['saleitgr'][_fileAsSRCIndex]">  
                   
                             <div class="absolute-full transparent column justify-between " >
                               
-                              <div class="row" style="width:100%" >
-                                    <div class="col">
-                                      
+                              <div class="row" style="min-width:10vw" >
+                                    <div class="col fontdstyle text-dark">
+                                      <q-btn round icon="add" color="orange" @click="_this['quantity'] = parseFloat(_this['quantity'])+1" />  
+                                      Quantity                                   
                                     </div>
-                                    <div class="column col-auto " style="width: 5vw;">                                        
-                                            <q-item-label class="text-grey"> Via  </q-item-label>
-                                            <input type="file" multiple ref="filep" style="display: none" @change="_fileSourceFolder($event,'saleitgr')" /> 
-                                            <q-btn icon="folder" @click="$refs.filep.click()" :dense="true" />
-                                            <q-btn icon="add_a_photo" @click="_cameraInstance._openCamera('saleitgr')" :dense="true"  />
+                                    <div class="column col-auto q-gutter-xs  " style="width: 5vw;">                                        
+                                            <q-item-label class="text-orange">Upload Via  </q-item-label>
+                                            <input type="file" multiple ref="openFolder" style="display: none" @change="_fileSourceFolder($event,'saleitgr')" /> 
+                                            <q-btn class="bg-orange" icon="folder" @click="$refs.openFolder.click()" :dense="true" />
+                                            <q-btn class="bg-orange" icon="add_a_photo" @click="_cameraInstance._openCamera('saleitgr')" :dense="true"  />
                                       </div>
-                              </div>
-                             
-                              
-                             
+                                </div>
+               
+                                    <div class="flex  fontestyle">
+                                      <q-item-label> {{_this['header'] }}</q-item-label>
+
+                                    </div>
+
+
                               <div class="col row justify-between">
                                
-
                                     <div class="self-end justify-left col-auto "> 
-                                              <div v-if="_onplayRowItemOps == 'CreateRowItem'"  style="background-color:rgba(106, 93, 255,0.6)" >
+                                              <div v-if="__thisOps == 'CreateRowItem'"  style="background-color:rgba(106, 93, 255,0.6)" >
                                             
-                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="q-px-sm "  color="warning" label="Upload"  icon="upload" 
-                                                @click="_createRow(false)" v-if="_fileAsSRC?.length ?? false" >
-                                                    <!--template v-slot:_onplayRowItemOpsStatus>
+                                                <q-btn     :loading="__thisOpsStatus" class="bg-white fontestyle shadow-7  q-pa-xs" color="orange" :label="_pageSettings.language ? 'ሽጥ' :'Create Sale'"  icon="upload" 
+                                                @click="Create_this()"  >
+                                                    <!--template v-slot:__thisOpsStatus>
                                                       uploading...
                                                       <q-spinner-radio class="on-left" />
                                                       uploading...
                                                     </template-->
-                                                    </q-btn>
-                                                  <q-btn  outline rounded no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="warning" label="saleIt"  icon="upload" 
-                                                    @click="_createRow(true)" v-else />
+                                                    </q-btn>                                                
 
                                               </div>   
 
-                                              <div v-else  style="background-color:rgba(255, 165, 0,0.2)"  >                                    
+                                              <div v-else   >                                    
+                                              
+                                                <q-btn  rounded   :loading="__thisOpsStatus" class="bg-black shadow-7  fontestyle q-pa-xs" color="green" :label="_pageSettings.language ? 'ሽጥ' :'Update Sale'"  icon="upload" 
+                                                @click="Update_this()" />
                                                
-                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="warning" label="saleIt"  icon="upload" 
-                                                @click="_updateRow(true)" v-if="_fileAsSRC?.length ?? false" />
-                                                <q-btn  outline no-caps :dense="true" :loading="_onplayRowItemOpsStatus" class="" color="black" label="saleIt"  icon="upload" 
-                                                @click="_updateRow(false)" v-else/>
                                               </div>        
                                       
                                         </div>
                                         
                                         <div class="self-end justify-right col-grow column  q-pa-xs" v-if="_fileAsSRC?.length ?? false"  style="max-height:100%;" > 
                                           
-                                              <div class="self-end justify-right col row  q-pa-xs">
+                                              <div class="self-end justify-right col row bg-orange fontastyle q-pa-xs" v-if="_fileAsSRC.length > 1">
                                                   <q-checkbox
                                                         left-label
                                                         v-model="_fileAsSRCOps"
-                                                        label="Delete"
+                                                        :label="_pageSettings.language ? 'መደምሰሲ' :'Enable Delete'"
                                                         checked-icon="task_alt"
                                                         unchecked-icon="highlight_off"
+                                                        :dense="true"
                                                       />
+                                                      <q-tooltip>Check Enable Delete & Click The Image ?</q-tooltip>
                                               </div>
                                              
                                               <div  class="self-end justify-right col row shadow-5 q-pa-xs" style="max-height:100%;max-width: 100%;" v-if="_fileAttributeName ?? false">
                                                       <div v-for="item,fileIndx in _fileAsSRC" :key="fileIndx" class="col row inset-shadow q-px-xs" 
-                                                    style="max-height:100%;" > {{  fileIndx }}                                           
+                                                    style="max-height:100%;" >                                         
                                                       
                                                           
                                                             <q-btn round @click="_fileAsSRCOpsCall(fileIndx)" class="col-auto">
@@ -108,8 +91,8 @@
 
                                               </div>
                                               <div  class="self-end justify-right col row shadow-5 q-pa-xs" style="max-height:100%;max-width: 100%;" v-else>
-                                                      <div v-for="item,fileIndx in onplayRowItem['saleitgr']" :key="fileIndx" class="col row inset-shadow q-px-xs" 
-                                                    style="max-height:100%;" > {{  fileIndx }}                                       
+                                                      <div v-for="item,fileIndx in _this['saleitgr']" :key="fileIndx" class="col row inset-shadow q-px-xs" 
+                                                    style="max-height:100%;" >                                 
                                                       
                                                           
                                                             <q-btn round @click="_fileAsSRCOpsCall(fileIndx)" class="col-auto">
@@ -129,84 +112,61 @@
                                 </div>
                                                         
                               </q-img>
-                                    </div>
+                          </div>
   
           </q-card-section>
-     
-          <q-card-section class="column text-dark bg-orange" >
-           <fieldset class="col  q-gutter-xs" style="border-radius: 5px;border: 3px solid grey;"  >
-  
-            <legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
-                Descriptions
-            </legend>
-            <template v-if="_formsMeta.description">
+
+          <q-card-section class="column text-dark bg-orange fontbstyle" v-if="__thisOps == 'CreateRowItem'" >
             
-            
-              <div class="row  flex flex-center">
-                <q-input class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['header']" label="what you selling" stack-label :dense="true"  />
-              <q-input class="col-md-4 col-xs-4" type="Number" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['quantity']" label="quantity" stack-label :dense="true"  />
-  
+           <fieldset class="col fontastyle  q-gutter-xs" style="border-radius: 5px;border: 0px solid white;"  >
+
+            <div class="row q-gutter-sm  " > 
+              <q-input type="Number" class="col fontestyle" :min="1"    outlined v-model="_this['quantity']" :label="_pageSettings.language ? 'በዝሒ' :'Quantity'"  stack-label   />
+              <q-input type="Number" class="col fontestyle " :min="1"   outlined v-model="_this['price']"  :label="_pageSettings.language ? 'ዋጋ' :'Price'" stack-label  />
             </div>
-          
-      <q-separator inset  />
-        <q-input
-        outlined v-model="onplayRowItem['content']" label="decscriptions" style="text-transform: capitalize;" 
-        filled  
-        autogrow
-      />  
     
-      <fieldset class="col-grow row  q-pa-sm q-gutter-xs" style="text-transform: capitalize;border-radius: 5px;border: 0px solid grey;">
-  
-        <legend @click="_formsMeta.pricing = !_formsMeta.pricing" class=" text-weight-bolder">
-            catagory
-        </legend>
-  
-        <template v-if="_formsMeta.pricing ?? false" >
-          <q-select outlined :dense="true"  class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  color="purple-12" v-model="onplayRowItem['catagory']" :options="saleitSchema['catagory']['enum']" label="catagory" />
-          <q-select outlined :dense="true"  class="col-md col-xs q-pa-sm" style="text-transform: capitalize;"  color="purple-12" v-model="onplayRowItem['usage']" :options="saleitSchema['usage']['enum']" label="usage" />
-          </template>
-        
-        </fieldset>
-  
+            <q-select outlined   class="col-md col-xs q-pa-none" style=""  color="purple-12" v-model="_this['catagory']" :options="saleitSchema['catagory']['enum']"  :label="_pageSettings.language ? 'ምድብ' :'catagory'" />
+            <div v-if="['Vehicles','Households'].includes(_this['catagory'])" >
+            <q-radio keep-color left-label size="md" v-model="_this['usage']" :val="usage" :label="usage" color="black" v-for="usage in saleitSchema['usage']['enum']" :key="usage"/>
+            </div>
+            <q-item-label caption> What are You Saling !</q-item-label>        
         <q-separator inset />
-  
-          <fieldset class="col-grow row q-pa-sm " style="text-transform: capitalize;border-radius: 5px;border: 0px solid grey;">
-  
-            <legend @click="_formsMeta.address = !_formsMeta.address" class=" text-weight-bolder">
-                Address
-            </legend>
-            <template v-if="_formsMeta.address ?? false" >
-              <q-input class="col-md-auto col-xs-12 q-px-sm text-weight-bold"  outlined v-model="onplayRowItem['location']['country']" label="Country" stack-label :dense="true" />
-            <q-input class="col-md-auto col-xs-12 q-px-sm text-weight-bold"  outlined v-model="onplayRowItem['location']['city']" label="City" stack-label :dense="true" />
-            <q-input class="col-md-auto col-xs-12"  outlined v-model="onplayRowItem['location']['street']" label="Street" stack-label :dense="true" />
-           </template>
-           
-            </fieldset>
-  
-            </template>
-          
    
            </fieldset>
-  
-  
-      <fieldset class="col-grow   q-gutter-xs" style="text-transform: capitalize;border-radius: 05px;border: 0.01px solid grey;">
-  
-          <legend class=" text-weight-bolder">
-              Set Price
-          </legend>
-          
-            <q-input type="Number" class="col-md-auto col-xs-12" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['price']" label="Normal" stack-label :dense="true" />
-            <q-input type="Number" class="col-md-auto col-xs-12" style="text-transform: capitalize;"  outlined v-model="onplayRowItem['discount']" label="discount" stack-label :dense="true" />
-              
-          </fieldset>
-  
           </q-card-section>
   
+          <q-card-section class="column text-dark bg-orange fontbstyle" v-else >
+            
+            <fieldset class="col fontastyle  q-gutter-xs" style="border-radius: 5px;border: 0px solid white;"  >
+   
+             <!--legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
+                 Descriptions   :rules="[_valRules]" 
+             </legend -->
+               <div class="row q-gutter-sm  " > 
+                <q-input type="Number" class="col fontestyle" :min="1"  outlined v-model="_this['quantity']" :label="_pageSettings.language ? 'በዝሒ' :'Quantity'"  stack-label   />
+                <q-input type="Number" class="col fontestyle " :min="1"  outlined v-model="_this['price']"  :label="_pageSettings.language ? 'ዋጋ' :'Price'" stack-label  />
+                <q-input type="Number" class="col fontestyle " :min="1"  outlined v-model="_this['discount']" label="Discount Price ?" stack-label  />
+   
+             </div>
+           
+       <q-separator inset  />
+          <q-input class="col-md col-xs q-pa-sm" style=""  outlined v-model="_this['header']" label="Name" stack-label  />
+          <q-input outlined v-model="_this['content']" label="decscriptions" style="" filled  autogrow   />  
+ 
+       <q-separator inset />
+             <q-item-label caption> Notes to be displayed !</q-item-label>        
+         <q-separator inset /> 
+    
+
+            </fieldset>
+  
+           </q-card-section>
+
         </q-card>
   
-  </q-dialog>
+      </q-dialog>
 
-  <q-dialog v-model="_cameraBox" class="column overlay-Glass rounded-borders" >
+  <dialogOne :isOpen="_cameraBox" @emitClick0="_cameraBox = $event" class="column overlay-Glass rounded-borders bg-orange " >
       <!--CameraFeeds  @Picture-taken="imageSrc = $event" / -->
       <div class="column" style="background-color:orange;
         border: 1px dashed #d6d6d6;
@@ -257,274 +217,415 @@
       
 	       
 	    </div>
+</dialogOne>
+
+<q-dialog v-model="_fileAsPathSlide" class="column saleitContentOps-Glass bg-orange ">
+    <div class="col" v-if="_this?.['saleitgr'] ?? false">
+      <q-carousel
+        animated
+        swipeable
+        loading="lazy"
+        v-model="slideIndex"
+        navigation
+        infinite
+        arrows
+        transition-prev="slide-right"
+        transition-next="slide-left"
+        control-color="amber"
+        v-model:fullscreen="slideFullscreen"
+        class="bg-grey-9 shadow-2 rounded-borders"
+      >
+        <q-carousel-slide :name="imgindex" :img-src="imggr" v-for="imggr,imgindex in _this['saleitgr']" :key="imgindex" />
+        <template v-slot:control>
+        <q-carousel-control
+          position="bottom-right"
+          :offset="[18, 18]"
+        >
+          <q-btn
+            push round dense color="white" text-color="primary"
+            :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="slideFullscreen = !slideFullscreen"
+          />
+        </q-carousel-control>
+      </template>
+
+      </q-carousel>
+    </div>
+
 </q-dialog>
 
+<!----Detail View-->
+<!-- Dialog Windows and ... -->
+<dialogOne :isOpen="status_thisDetail" @emitClick0="status_thisDetail = $event">
+          <div v-if="_this_Details" class=" " :set="_details = _this_Details[0]">
+            <div class="cardPopDetails" style="">
 
-  <q-page class="col column" style="" >
-  
-          <!------------------------------ ioio ----->
-        <div class="col q-pa-none column " v-if="rows?.length ?? false"    style="height:70vh">
-      
-              <q-table 
-              flat bordered
+              <div class="row no-wrap q-gutter-sm">
+                        <q-img   loading="lazy"  style="min-height:20vh;aspect-ratio: 2/1;"
+                            :src="_details['saleitgr'][0]">    
+                            
+                            </q-img>
 
-              :rows="rows"
+                            <div class="col-1 column q-gutter-xs ">
+
+                          
+                                <q-img :src="immg"  class="shadow-3" v-for="immg in _details.saleitgr" :key="immg" >
+                                    
+
+                                  </q-img>
+
+
+                            
+                            </div>
+              </div>
+
+              <div class="boxastyle"></div>
+
+              <div class="cardPopDetails-title">
+                  {{ _details.header}}
+              </div>
+              <div style="" >
+                <p class="cardPopDetails-content">
+                  {{ _details.content}}
+                </p>
+              </div>            
+
+              <div class="row">
+                  <div >
+
+                    <div class="cardPopDetails-meta">
+                      <div class="fontdstyle">{{ _details.userName}}</div>
+                      <div>Call Us: <b>{{_details.phone}}</b></div>
+                      <div >{{_details.location.country}} {{_details.location.provinance+' '}} {{_details.location.city+' '}} {{_details.location.street+' '}}</div>
+                      <div> {{_details.createdAt}}</div>               
+                    </div>
+          
+                <div class="boxastyle"></div>
+
+                <div class=" row cardPopDetails-items">
+                  <div class=""> <div>Price:</div><div class="boxastyle bg-orange">{{  _details.price}} </div>   </div>
+                  <div class=""> <div>Quantity:</div><div class="boxastyle bg-orange">{{  _details.quantity }} </div>  </div>
+                  <div class=""><div>#Buyers:</div><div class="boxastyle bg-orange">{{  _details.tClient }} </div>   </div>
+                </div>
+
+                <div class="cardPopDetails-items">
+                  <div class=""> Likes: <div class="boxbstyle">{{  _details.likes.like }} </div>  </div>
+                  <div class=" "> Rating:<div class="boxbstyle">{{  _details._itServiceRating }} </div>   </div>
+                  <div class=""> trendScore:<div class="boxbstyle">{{  _details.trendScore ?? 0 }} </div>  </div>
+                </div>
+
+                  </div>
+                
+                  <div class="col boxbstyle  column justify-center items-center">
+                      <h2>{{ _details.price}} {{   _pageSettings['currency']}} </h2>
+                      <q-tooltip class="bg-orange fontbstyle"> Unite Price</q-tooltip>
+
+                  </div>
+              </div>
+
+            </div>
+          
+            <div class="row justify-evenly q-gutter-sm q-py-sm">
+                <q-btn v-if="_is_this_open"  color="orange" class="col"  label="Direct Buy (Qty = 1)" @click="_this_foreignOperation._newbuyer_foreign('buy')" icon="shops" />
+                <q-btn color="green"  label="Add to cart" @click="_this_foreignOperation._newbuyer_foreign('cart')" icon="save" />
+            </div>
+
+          </div>
+
+          <div v-else class="fontestyle text-white">
+            Loading ...
+          </div>
+
+</dialogOne>
+
+
+<!-- //-------------------------- -->
+<dialogOne :isOpen="confirmObj" @emitClick0="confirmObj = $event">
+
+      <confirmButton @confirmButton="confirmObj"
+      :header=confirmMessage
+      title="Yes" textcolor="black" background="green"
+      title2="No" textcolor2="green" background2="red"/>
+
+</dialogOne>
+
+  <!-----DEbug ( Action ) Informations-->
+    <template v-if="DoneMessage.length ?? false">
+      <debugCard :messages="DoneMessage ?? [] " @closeButton="DoneMessage =[]" />
+    </template>
+    <template v-if="WarnthisMessage.length ?? false">
+      <debugCard :messages="WarnthisMessage ?? [{}]" />
+    </template>
+  <!-----Status ( Store/Loading ) Informations-->
+    <template v-if="status_WarnthisMessage.length ?? false">
+      <statusCard :messages="status_WarnthisMessage ?? [{}]" />
+    </template>
+    <template v-if="status_KnowthisMessage.length ?? false">
+      <statusCard :messages="status_KnowthisMessage ?? [{}]" />
+    </template>
+    <template v-if="status_DoneMessage.length ?? false">
+      <statusCard :messages="status_DoneMessage ?? [{}]" />
+    </template>
+
+  <q-page class="fit column rounded-borders fontastyle    "  >
+          <!------------------------------ ioio ----->     
+        <div class="col q-pa-none column fit" v-if="(_this_Rows ?? false)"    >
+
+              <q-table  v-if="_pageSettings['tableView'] == 'main'"
+             
+              :rows="_this_Rows"
               :columns="columns"
   
               virtual-scroll
 
-              :filterMethod="filterMethod"
+              :filterMethod="_thisFiltering"
               :filter="filter"
 
-              
               row-key="id" 
               rowIndex="true"
 
               :inFullscreen="true"
-              class="col column  q-gutter-sm fit"
+              class="col column transparent q-py-md"
+              card-class="text-brown"
+              color="white"
 
               hide-pagination
+              :pagination="pagination"
+
               hide-top
               hide-bottom
-              style="height:70vh"
+              style="min-width:100vw;border:0px;"
               >
-            
-                <template v-slot:top="props" v-if="false">
-                    <q-btn class="hidden"  style="height:0px;width:0px"   ref="togflscreen" :set="enableflscreen = props.inFullscreen" @click="props.toggleFullscreen()" />
-                </template>
-               
                 <template v-slot:header="props">
-                  <q-tr :props="props" style="position:absolute;z-index:2;width:100vw;"  class="no-wrap col-1 transparent column " >
-                    <q-scroll-area style="max-width:100vw;" class="col column transparent q-pa-xs">
-                      <div class="col flex flex-center q-gutter-sm  q-py-xs  transparent no-wrap" style="max-width:100%;max-height: 100%;"> 
-                                            <q-btn rounded no-caps size="sm"  @click="_itServiceSE('_trend','')" :key="_qgroup1" class="col-auto"  >
-                                             Show All          
-                                            </q-btn>
-                                            <q-btn rounded no-caps size="sm"  v-for="_qgroup1 in ['New','Used']" @click="_itServiceSE('usage',_qgroup1)" :key="_qgroup1" class="col-auto"  >
-                                              {{  _qgroup1 }}   
-                                            </q-btn>  
-                                            <q-separator inset vertical class='q-py-sm'  />
+                  <q-tr :props="props"  class="col-auto column q-px-md transparent" 
+                  style="position:fixed;z-index:1;" :style="$q.screen.lt.sm ? 'top:8vh' : 'top:7vh'"  >
+                   
+                    <q-scroll-area  class="col-grow column transparent flex flex-center" style="min-width:95vw;">
+                      <div class="col-grow row justify-between q-gutter-sm q-px-md  no-wrap saleitHeader-Glass " style="min-width:100%;max-height:100%;"> 
+                                            <div class="row q-gutter-sm ">
+                                              <q-separator inset vertical class='q-py-sm'  />
 
-                                            <q-btn rounded no-caps size="sm" v-for="_qgroup0 in _thisSchema['catagory']['enum']" @click="_itServiceSE('catagory',_qgroup0)" :key="_qgroup0" class="col-auto q-py-xs"  >
-                                              {{  _qgroup0 }}            
-                                            </q-btn> 
-                    
+                                            <q-btn rounded  size="sm" no-caps  @click="this_Query(null,'',16)"  class="col-auto fontdstyle"  >
+                                             Show All  
+                                            </q-btn>
+
+                                            <q-separator inset vertical class='q-py-sm'  />
+                                            <q-btn rounded no-caps :class="((_this_Query.qweight ?? false) && _this_Query.qweight[1]) == _qvalue0 ? 'bg-orange-3 text-white' : ''"  
+                                            size="sm" v-for="_qvalue0,_qgroup0 in saleCatagory"  
+                                            @click="this_Query('catagory',_qgroup0,_qvalue0)" :key="_qvalue0" class="column col-auto q-py-xs" >
+
+                                                <div class='fontastyle'>       {{  _qgroup0 }}   </div>
+                                                     
+
+
+                                            </q-btn>  
+
+                                            <q-separator inset vertical class='q-py-sm'  />
+                                            </div>
+                                            <div>
+
+                                                <q-btn rounded outline no-caps :class="((_this_Query.qweight ?? false) && _this_Query.qweight[2]) == _qvalue1 ? 'bg-grey-5 text-white' : ''"   
+                                            size="md"  v-for="_qvalue1,_qgroup1 in saleUsage" 
+                                            @click="this_Query('usage',_qgroup1,_qvalue1)" :key="_qvalue1" class="col-auto" >
+                                            <div class='fontdstyle'>       {{  _qgroup1 }}   </div>
+                                            </q-btn>                                                               
                                            
-                                            <q-space />
-                                                        
-                                            <q-btn
-                                                flat round dense
-                                                :icon="enableflscreen ? 'fullscreen_exit' : 'fullscreen'"
-                                                @click="$refs.togflscreen.click()"
-                                                class="q-ml-md"
-                                              />
+                                            <q-space />  
+                                            </div>
+                                                                                                
+                                          
                       </div>
 
                       
                   </q-scroll-area>             
-
+                    <lable class="row justify-center fontastyle" v-if="!_this_Rows.length">
+                      No Data
+                    </lable>
                   </q-tr>
-              </template>
+                 
+                </template>
 
-              <template v-slot:body="props"   >
-
+                <template v-slot:body="props"  >
+                     
                   <!--row Object [key(id=?)],row,_trClass,cols,sort,rowIndex,color,dark,dense,expand]-->
-                  <q-tr
-                    :props="props" :class="$q.screen.gt.sm ? 'row' : 'column'"
-                    class="col-11 cursor-pointer text-bold text-weight-bolder q-gutter-sm"  
-                    style="height:80vh;width:99vw;"                   
+                 
+                  <q-tr    
+                    :props="props" :class="!$q.screen.lt.sm ? 'row' : 'column'"
+                    class="col-11 q-gutter-xs q-tr--no-hover fit transparent fontbstyle"  
+                    style="min-height:75vh;width:98vw;padding-top:5vh;border:0px solid blue;"
                   >
                               
                     <!------------------ iterating _ body cell-->
-                    <q-td  auto-width class="col-2" v-if="$q.screen.gt.md">
-                     
+                   
+                    <q-td  auto-width class="col-2 " v-if="__this_foreignBoxsubOps != 'view'">  
+                                  
                     </q-td>
- 
-                    <q-td  :class="$q.screen.gt.md ? 'column col-6' :'col-grow column'  " v-if="props.row.saleitgr ?? false"  >
+                    <!--   Content (if >sm)       --->
+                    <q-td  :class="$q.screen.lt.sm ? 'col-6 column' : 'column col-6'  " v-if="props.row.saleitgr ?? false"  >
 
                           <div class="col row ">
   
                               <div class="col column" >
                               
-                                  <q-img                                  
+                                  <q-img                                 
                                               loading="lazy"
-                                              :src=" (_onplayRowIndex == props.rowIndex) && _fileAsStringIndex ? props.row.saleitgr[_fileAsStringIndex] : props.row.saleitgr[0]"
-                                              spinner-color="white"
-                                              class="column" style="max-width:100%;border-radius:20px;aspect-ratio: 2/1;"                                            
+                                              :src=" (__thisIndex == props.rowIndex) && _fileAsPathIndex ? props.row.saleitgr[_fileAsPathIndex] : props.row.saleitgr[0]"
+                                              spinner-color="orange"
+                                              class="column  rounded-borders fit shadow-8" style="max-width:100%;border-radius:12px;aspect-ratio: 2/1;"                                            
                                               >
-                                     
-                                        <q-list class="column col fit " :class="props.row.userName ? 'transparent': 'transparent'">
-                                          <q-item class=" col-auto row items-top"> 
+                                              
+                                        <q-list class="column col fit fontbstyle q-px-none" :class="props.row.phone ? 'transparent': 'transparent'">
+                                          <q-item class=" col-auto row items-top q-px-none justify-between items-start"> 
 
-                                           <q-item-section class="col-auto " style="">
-                                            <q-itel-label style=""  v-if="props.row.userName ?? false">
-                                              <q-item-label class="q-pa-xs saleitHeader-Glass fit"> 
-                                              
-                                                <q-avatar size="xs">
-                                                    <img src="/icons/itsVerified.png">
-                                                  </q-avatar>                                              
-                                                <q-badge >{{props.row.userName}}   </q-badge>
-                                               </q-item-label>                                          
-                                              
-                                            </q-itel-label>
-                                            <q-itel-label style="" v-else> 
-                                               #saleit Service
-                                             </q-itel-label>
-                                             <div v-if="props.row.fupdatedAt?.hours ?? false" class="flex row q-gutter-sm"> 
+                                           <div class="col-sm-5 col-md-3   q-py-none fit-width q-gutter-xs" style="">
+                                                <q-btn v-if="props.row.fphone ?? false" class="col-auto q-pa-none" @click="this_Query('userID',props.row.userID ?? null)">
+
+                                                  <q-item-label style=""  >
+                                                        <q-item-label class="saleitHeader-Glass fit row justify-between">                                                        
+                                                                                                    
+                                                          <div class="transparent items-end row fontastyle">  <q-icon name="phone" size="xs" />{{(props.row.fphone)}}</div>
+                                                          <q-icon name="check_circle" size="xs" />
+
+                                                        </q-item-label>                                          
+                                                        
+                                                      </q-item-label>
+
+                                                </q-btn>                                                
+                                                <q-item-label class="saleitHeader-Glass" v-else> 
+                                                  #saleit Service 
+                                                </q-item-label>
+
                                                 
-                                                <div> Since </div>
-                                                <div v-if="props.row.fupdatedAt?.days != 0 ?? false"> {{  props.row.fupdatedAt.days }} Days </div>
-                                                <div v-if="props.row.fupdatedAt?.hours != 0 ?? false"> {{ props.row.fupdatedAt.hours}} Hours</div> 
-                                             </div>
-                                              <q-item-label v-else> Just Now  </q-item-label>
+                                                <div v-if="typeof props.row.fupdatedAt == 'object'" class="fontastyle row q-gutter-xs q-mx-sm"> 
+                                                          <div  v-if="props.row.fupdatedAt.days " > {{props.row.fupdatedAt.days}} Days ago</div> 
+                                                          <div v-else-if="props.row.fupdatedAt.hours " > {{props.row.fupdatedAt.hours}} Hours ago</div> 
+                                                          <div v-else-if="props.row.fupdatedAt.minutes" > {{props.row.fupdatedAt.minutes}} Minutes ago</div>
+                                                          <div v-else>Just Now</div>
+                                                          {{ _fileAsPathIndex ?? 'ff'}}
+                                                          </div>
+                                                <div v-else> {{props.row.fupdatedAt}} </div>
 
-                                          
+                                              <div class="col-auto column no-padding no-margine q-gutter-xs " style="border:0px solid orange;">
 
-                                           </q-item-section>
+                                                  <q-btn outline v-for="item,fileIndx in props.row.saleitgr" @click="_fileAsPathOpsCall(fileIndx,props.rowIndex)" :key="fileIndx" 
+                                                  @mouseover="_fileAsPathOpsCall(fileIndx,props.rowIndex)"
+                                                  class="col-1 column  transparent q-pa-none no-border " style="max-width:6dvw">   
+                                                        <img :src="item" class="col fit shadow-2 transparent rounded-borders q-pa-none" style="aspect-ratio: 1/1;width:100%;" >
+                                                      
+                                                  </q-btn>                                              
 
-                                           <q-item-section class="col columns row items-end" >
-                                                  <q-item-label> {{ props.row.queryWeight}} </q-item-label>
-                                                  <q-item-label> {{ Objprops._profile.queryWeight}} </q-item-label>
-                                                  <q-item-label> {{ props.row['clients'].length }} / {{ props.row['tPrice'] }}</q-item-label>
-                                           </q-item-section>
+                                                  
+                                              </div>
+                                                    <q-btn flat  :dense="true" icon="zoom_in" @click="_fileAsPathSlideCall(props.rowIndex)" @mouseover="_fileAsPathSlideCall(props.rowIndex)"> 
+                                                      <q-tooltip>Look Closer</q-tooltip>
+                                                    </q-btn>
+                                            </div>
+
+                                            <div v-if="_orderBox.includes(props.row.id)" class="fontastyle ">     Added to cart                                         
+                                                  <!--div v-if="props.row.buy =='buy' ?? false" style="color:orange"> Already Bought </div>
+                                                  <div v-else> Added to cart </div-->
+                                            </div>
+                                                  <!--q-item-section class="col columns row items-end float" >
+                                                          <q-item-label>D_QueryW {{ props.row.qweight}} </q-item-label>
+                                                          <q-item-label>Prof_W {{ Objprops._profile.qweight}} </q-item-label>
+                                                          <q-item-label> Revenu:- {{ props.row['tPrice'] }}</q-item-label>
+                                                  </q-item-section--->
+
                                           </q-item>
+                                      
                                           <q-item class="col-auto row justify-between content-start q-px-none q-mx-none">
-                                            <div class="col-auto column">
-                                              <q-btn outline v-for="item,fileIndx in props.row.saleitgr" @click="_fileAsStringOpsCall(fileIndx,props.rowIndex)" :key="fileIndx" class="col-auto q-gutter-xs">   
-                                                                                                   
-                                                  <q-avatar square >
-                                                    <img :src="item">
-                                                  </q-avatar>
-
-                                              </q-btn>
-                                            </div>
-
-                                            <div class="col-auto q-px-none q-mx-none" v-if="$q.screen.lt.lg">
-
-                                              <q-item  class="q-px-none">
-                                                      <q-sticky expand position="right" class="q-px-none" >
-                                                           <!--inseide_side_actions-->
-                                                  <q-card class="q-px-none column" style="background-color: rgba(6, 93, 255, 0.212);" >
-  
-                                                      <q-btn round flat color="white" text-color="primary" label="Buy" @click="_onplayRowItemsideBoxcall(props.rowIndex,'clients')"
-
-                                                        >
-                                                        <q-badge color="orange"  floating v-if="props.row.clients?.length ?? false">                                                                     
-                                                                  <q-item-label v-if="props.row.quantity == 0">sold </q-item-label>   
-                                                                  <q-item-label v-else>Selling </q-item-label>   
-                                                        </q-badge>                                          
-
-                                                      </q-btn>
-
-                                                      <q-btn round flat icon="message" @mouseover="message" @click="_onplayRowItemsideBoxcall(props.rowIndex,'comments')">
-                                                        <q-tooltip anchor="top end" self="top middle">comments</q-tooltip>    
-                                                      </q-btn>
-
-                                                      <q-btn round flat color="white" @mouseover="message" text-color="primary" label="like" @click="_activeRowOperation._likes(props.rowIndex)">
-                                                        <q-badge color="orange" floating v-if="props.row.likes ?? false">{{  props.row.likes.like }}</q-badge>
-                                                      </q-btn>
-
-                                                      <q-btn round flat icon="gps" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
-                                                        <q-tooltip anchor="top end" self="top middle">   map </q-tooltip>  
-                                                      </q-btn>
-
-                                                      <q-btn round flat icon="edit" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
-                                                        <q-tooltip anchor="top end" self="top middle">   edit </q-tooltip>  
-                                                      </q-btn>
-
-                                                      <q-btn round flat icon="delete" @mouseover="message"  @click="_activeRowOperation._delRow(props.rowIndex,props.key)"> 
-                                                        <q-tooltip anchor="top end" self="top middle"> delete </q-tooltip>  
-                                                      </q-btn>
-
-                                                      <q-btn round flat icon="more_vert">
-
-                                                            <q-menu anchor="top right" self="top left" flat  stack no-caps  class="row q-gutter-none" >
-                                                                  <q-list style="min-width: 100px">
-                                                                  <q-item clickable>
-                                                                    <q-input  filled  type="textarea" :label="cinfo" stack-label :dense="true"  />
-
-                                                                  </q-item>
-
-                                                                  <q-item >
-                                                                              more infos
-                                                                  </q-item>
-
-                                                                  </q-list>
-                                                                </q-menu>
-
-                                                      </q-btn>
-
-                                                      </q-card>
-
-
-                                                            
-                                                          </q-sticky>
-                                                    </q-item>
-                                            </div>
-                                             
-
-                                            
+                                        
                                           </q-item>
 
-                                         
-                                        
+                                          <q-item class="absolute-bottom fontdstyle items-center  q-gutter-sm row items-end ">
+                                            <div class="col row " >  <!---------------------Conteting While in NOT Mobile Screen-->
+                                              <q-item-section class="q-py-sm fontbstyle col row"  >                                                      
+                                                    <div class="col-auto column  justify-start q-pa-sm" >
 
-                                          <q-item class="absolute-bottom text-subtitle2 text-end q-gutter-sm row items-end">
+                                                      <div class="col-auto row q-pa-xs q-ma-none">
+                                                        <div class="col-auto justify-right q-py-none saleitContentOps-Glass fontbstyle" >
+                                                          {{ props.row.header }}
+                                                          <!--   {{ props.row.catagoryScore }}/{{ props.row.usageScore }} /{{ props.row.trendScore }}   -->
+                                                        </div>
+                                                      </div>
+                                                      <div style="width:90%;">
+                                                       
+                                                        <pre style="overflow:scroll;text-overflow: ellipsis;" class="fontdstyle">     
+                                                          {{ props.row.content }} 
+                                                        </pre>
 
-                                                <q-item-section class="q-py-sm" >  
-                                                    
-                                                    <div class="column flex flex-end justify-start q-pa-sm saleitContent-Glass" 
-                                                    style="text-transform: capitalize;">
-                                                      <q-itel-label class="flex flex-center justify-start q-pa-none saleitContent-Glass" >
-                                                          {{ props.row.header }}  
-                                                        </q-itel-label>
-                                                      <q-itel-label v-if="$q.screen.gt.sm">  {{ props.row.content }}  </q-itel-label>
+                                                      </div>
                                                     </div>                                                      
 
                                                 </q-item-section>
+                                             
+                                                <q-item-section class="row col-auto q-px-none  saleitContentOps-Glass">
+                                              <!--  -->
+                                                    <div class="col-auto fontastyle row no-wrap q-gutter-sm"> 
+                                                            <q-btn size="md" no-caps icon="shop" v-if="(props.row?.price ?? false) && (props.row?.quantity ?? false)"  
+                                                            class="fontestyle bg-orange col-grow" :label="_pageSettings.language ? 'ይዓድጉ' :'Buy'" 
+                                                            @click="_this_clientActivator(props.rowIndex)"/>
 
-                                                <q-item-section>
-                                                  
-                                                 
-                                                </q-item-section>                                                
-  
-                                                <q-item-section class="row col-auto q-px-none text-sm">
-                                                      <div v-if="typeof props.row.timer ?? false "> 
-                                                         Price: {{  props.row.price  }}   
-                                                        <q-item>
-                                                          <q-item-section v-if="$q.screen.gt.sm" >                                                             
-                                                            {{  showDate.split(':')[1] }}                                                             
-                                                                {{ props.row.timer.hours }}
-                                                                {{ props.row.timer.days }}
-                                                          </q-item-section>
-
-                                                          <q-item-section>
+                                                            <q-btn class="col-grow" label="Add to Cart" no-caps color="black"  @click="_this_ActiveOperation._toCart(props.row.id,'clients')" />
                                                             
-                                                          </q-item-section>
-                                                        </q-item>
-                                                      </div> 
-                                                      
-                                                      <q-separator inset />
-                                                      <div v-if="props.row.clients ?? false">Buyers : {{ props.row.clients.length}}</div>
-                                                      <q-separator inset />
-                                                      <div v-if="props.row.clients ?? false">Quantity : {{ props.row.quantity}}</div>
+                                                          <!--div class="fontdstyle q-gutter-sm column">   
 
-                                                      <q-badge class="q-pa-sm text-bold" v-if="props.row.discount ?? false" color="pink">
-                                                        
-                                                          Happy-Hour Price : <q-item-label class="text-strike text-orange">{{ props.row.price  }}</q-item-label>{{  props.row.discount }}
-                                                                                                              
-                                                      </q-badge>  
-                                                      <q-badge class="q-pa-sm text-bold" v-else>                                                  
-                                                      
-                                                          Price: {{  props.row.price }}
-                                                      </q-badge>  
+                                                                <div>
+                                                                      Revenue: {{  props.row.tPrice  }}
+                                                                    <q-item v-if="typeof props.row.timer ?? false ">
+                                                                      <--q-item-section>                                         
+                                                                            {{ props.row.timer.hours }}
+                                                                            {{ props.row.timer.days }}
+                                                                      </q-item-section ->
+                                                                      <q-item-section>
+                                                                      </q-item-section>
 
-                                                      <div class="text-orange"> 
-                                                         <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_activeRowOperation._rating(props.rowIndex)"/>                                                       
-                                                     </div>                                                     
+                                                                      </q-item>
+                                                                      <q-item v-else>
+                                                                          Normal Market
+                                                                      </q-item>
+                                                                </div> 
+                                                          
+                                                                <q-separator inset />
+
+                                                                <div class="">Buyers : {{ props.row.tClient}}</div>
+
+                                                                <q-separator inset />
+
+                                                                <div  > Available Quantity : {{ props.row.quantity}}   </div>
+
+                                                            </div-->                                                      
+
+                                                    
+                                                       </div>
+
+                                                       <div class="col-grow column q-pa-sm" style="min-height:10vh">
+
+                                                          <div class="col-grow row  flex-center fontestyle" v-if="props.row.discount ?? false" color="">                                                        
+                                                              <q-item-label class="text-strike text-red q-pa-sm">{{ props.row.price  }}</q-item-label>{{  props.row.discount }} {{    _pageSettings['currency'] }} (New Price)
+                                                          </div>  
+
+                                                          <div class="col-grow q-gutter-md  flex-center fontestyle row" v-else> 
+                                                            
+                                                            
+                                                            {{  props.row.price }} {{    _pageSettings['currency'] }} ( Price )
+                                                                
+                                                          </div>  
+
+                                                          <div class="col-auto text-orange row justify-between"> 
+                                                            <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_this_ActiveOperation._rating(props.rowIndex)">
+                                                              <q-tooltip>Product Reliability Score</q-tooltip>
+                                                              </q-rating>
+                                                            <div class="fontdstyle">Quantity :  {{ props.row.quantity}} </div>                                                       
+                                                        </div>    
+                                                       </div>
+                                                                                                     
                                                         
                                                 </q-item-section>
-                                                
+
+
+                                             </div>
+
                                           </q-item>
                                         
 
@@ -539,42 +640,49 @@
                            
                               <div class="col-auto">
                                    <!--outside _side_actions-->
-                                  <q-sticky v-if="$q.screen.gt.sm" expand position="left" class="q-px-xs">
+                                  <q-sticky v-if="$q.screen.gt.sm" expand position="left" class=" q-px-xs">
   
-                                        <q-card class="q-pa-none column" style="background-color: rgba(6, 93, 255, 0.212);" >
-  
-                                          <q-btn round flat color="white" text-color="primary" label="Buy" @click="_onplayRowItemsideBoxcall(props.rowIndex,'clients')"
-                                        
-                                            >
-                                            <q-badge color="orange"  floating v-if="props.row.clients?.length ?? false">                                                                     
-                                                                  <q-item-label v-if="props.row.quantity == 0">sold </q-item-label>   
-                                                                  <q-item-label v-else>Selling </q-item-label>   
-                                                        </q-badge>                                           
+                                        <q-card class="q-pa-none column transparent" style="" >
 
-                                          </q-btn>
+                                                          <q-badge color="orange" class="fontastyle text-bold " v-if="props.row.quantity != 0">Open </q-badge>
+                                                              <q-badge color="orange" left floating v-else>                                                                     
+                                                                        <q-item-label v-if="props.row.tClient ?? false">sold </q-item-label>                                                                        
+                                                                        <q-item-label v-else>sold </q-item-label>                                                                        
+                                                              </q-badge> 
 
-                                          <q-btn round flat icon="message" @mouseover="message" @click="_onplayRowItemsideBoxcall(props.rowIndex,'comments')">
-                                            <q-tooltip anchor="top end" self="top middle">comments</q-tooltip>    
-                                          </q-btn>
+                                                          <q-btn flat size="sm" :dense="true" class="flex-center row" icon="shop"   @click="_this_clientActivator(props.rowIndex)"
+                                                            />
+                                                          <q-btn  flat size="sm" :dense="true"  class="text-blue"    @click="_this_ActiveOperation._likes(props.rowIndex)">
+                                                            <q-badge class="bg-black text-white fontcstyle" color="orange" floating v-if="props.row.likes ?? false">{{  props.row.likes.like }}</q-badge>
+                                                            <!--q-icon :name="matThumbUp" size="sm"/-->
+                                                            <q-icon color="red" name="favorite" size="sm"/>
+                                                          </q-btn>
 
-                                          <q-btn round flat color="white" @mouseover="message" text-color="primary" label="like" @click="_activeRowOperation._likes(props.rowIndex)">
-                                            <q-badge color="orange" floating v-if="props.row.likes ?? false">{{  props.row.likes.like }}</q-badge>
-                                          </q-btn>
+                                                          <q-btn   flat size="sm" :dense="true"  icon="message"  @click="_this_chatActivator(props.rowIndex)">
+                                                            <!--q-tooltip :dense="true" class="bg-black text-white fontbstyle"  self="left middle">comments</q-tooltip-->    
+                                                          </q-btn>
 
-                                          <q-btn round flat icon="gps" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
-                                            <q-tooltip anchor="top end" self="top middle">   map </q-tooltip>  
-                                          </q-btn>
+                                                      
 
-                                          <q-btn round flat icon="edit" @mouseover="message" @click="_onplayRowItemBoxcall(props.rowIndex)"> 
-                                            <q-tooltip anchor="top end" self="top middle">   edit </q-tooltip>  
-                                          </q-btn>                                         
-                                          <q-btn round flat icon="delete" @mouseover="message"  @click="_activeRowOperation._delRow(props.rowIndex,props.key)"> 
-                                            <q-tooltip anchor="top end" self="top middle"> delete </q-tooltip>  
-                                          </q-btn>
+                                                          <!--q-btn  flat icon="map"  :dense="true"  @click="__thisBox_UDialog(props.rowIndex)"> 
+                                                            <q-tooltip class="bg-black text-white fontcstyle"  self="top middle">   map </q-tooltip>  
+                                                          </q-btn -->
+                                                          <div v-if="Objprops._profile.phone == props.row.phone" class="column">                   
+                                                                <q-btn round  :dense="true" flat icon="edit" 
+                                                                @click="__thisBox_UDialog(props.rowIndex)" > 
+                                                                <q-tooltip class="bg-black text-white fontcstyle"  self="top middle">   edit </q-tooltip>  
+                                                              </q-btn>
+
+                                                              <q-btn round  :dense="true" flat icon="delete"  
+                                                              @click="_this_ActiveOperation._delRow(null,props.rowIndex,props.key)" >  
+                                                                <q-tooltip class="bg-black text-white fontcstyle"  self="top middle"> delete </q-tooltip>  
+                                                              </q-btn>
+                                                          </div>
+                                       
+                                                          
 
                                           <q-btn round flat icon="more_vert">
-
-                                                 <q-menu anchor="top right" self="top left" flat  stack no-caps  class="row q-gutter-none" >
+                                                 <q-menu  self="top left" flat  stack no-caps  class="row q-gutter-none" >
                                                       <q-list style="min-width: 100px">
                                                       <q-item clickable>
                                                         <q-input  filled  type="textarea" :label="cinfo" stack-label :dense="true"  />
@@ -592,619 +700,702 @@
 
                                           </q-card>
                                   </q-sticky>
-                                 
+          
                               </div>
-  
                           </div>
-     
                     </q-td>
 
-                    <q-td :class="$q.screen.gt.md ? 'column col-6 q-ma-md q-pa-lg' :'col-6 column q-ma-md'" style="padding-top:8vh" v-else>
-                  
+                   <!---- else mobile-->
+                    <q-td :class="$q.screen.gt.sm ? 'column col-4 q-ma-md q-pa-lg' :'col-6 column q-ma-md'" style="padding-top:8vh" v-else>
                       <q-card  class="col row q-gutter-sm" >
                           <q-skeleton class="col" square />
                       </q-card>
                     </q-td>
+                      <!------Image Display Ends (with 1:Normal ; 2:sckelton)-->
 
-                    <q-td  auto-width class="col column full-height q-pa-md"  v-if=" $q.screen.gt.md && _onplayRowIndex == props.rowIndex">
-                    
-                      <div class="col row" v-if="_onplayRowItemsideBoxOps == 'comments' && props.row.comments != null">                             
-                                
-                              
+                       <!---------Disktop----sideBox_show (comment & client) Begin-->
+                    <q-td  auto-width class="col fit column q-pa-md no-borders"  style="min-height:75vh;" >
 
-                                <q-list class="column" style="height:100%;width:100%">  
+                            <div  class="col column" v-if="__thisIndex == props.rowIndex"> 
 
-                                  <q-item class="col-auto column">
-                                    <q-item-label> 
-                                      Comments:    
-                                      <q-btn style="background-color:white;" color="primary" :dense="true" size="sm" rounded flat @click="_passiveColumnOperation._add()"> add Comment</q-btn>                      
-                                    </q-item-label>     
+                              <q-card class="col column q-pa-sm " v-if="__this_foreignBoxOps == 'comments' ?? false">
 
-                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == null" class="column q-pa-xs">
-                                        <q-badge> New Comment</q-badge>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          <q-input  filled autogrow
-                                                type="textarea"  v-model="defaultItem.comments[0].comment" 
-                                                :label="cinfo" stack-label :dense="true"  />                                        
-                                        </q-item-label> 
-                                        <div class="col-auto q-pa-xs">
-                                          <q-btn label="Add Comment" :dense="true" @click="_passiveColumnOperation._submitArray('comments')"  size="md"/>
-                                        </div>     
-                                     </q-item-section>
+                                <div class="col column fit" v-if="_this_chatRows ?? false">    
+                                      <q-list class="" style="width:100%;height:70svh;overflow: hidden;">  
+                                        <q-item class="col-auto column">
+                                          <q-item-label> 
+                                            Comments:                                              
+                                            <q-btn style="background-color:white;" color="primary" :dense="true" size="sm" rounded flat @click="_this_foreignOperation._add('comments')"> Create Comment</q-btn>                      
+                                          </q-item-label>     
+                                          <q-item-section v-if="__this_foreignBoxIndex == null" class="column q-pa-sm">                                       
+                                              <q-item-label style="" v-if="Object.keys(_this_chatforeign).length" >                                                                                              
+                                                      <q-input outlined  v-model="_this_chatforeign['comment']" label="comment" stack-label :dense="true"   > </q-input>                                   
+                                              </q-item-label> 
+                                              <div class="col-auto q-pa-xs text-bold justify-end row">
+                                                  <q-btn color="blue"  no-caps size="sm" label="Add Comment " :dense="true" @click="_this_foreignOperation._create_foreign('comments')" />
+                                              </div>     
+                                          </q-item-section>
+                                        </q-item> 
+                                        <!--q-item v-for="item,index in _showOpsValue" :key="index"  class="col column fontastyle">
+                                          {{   _showOpsValue.length }} --      {{ item }}
+                                      </q-item-->
+                                        <q-separator spaced inset /> 
+                                        <div class="col column fit fontastyle" v-if="_this_chatRows.length ?? false" >                                           
 
-                                  </q-item> 
-                                 
-                                  <q-separator spaced inset />
+                                            <div class="col scroll-area" style="overflow-y: auto;" >                                                
+                                                <q-item v-for="item,index in _this_chatRows" :key="index"  class="col column">  
+                                                  <q-item-section   class="q-gutter-xs fontastyle ">
+                                                    <div class="col q-gutter-xs column items-left shadow-1 rounded-borders " v-if="item.phone == props.row.phone" > 
+                                                       
+                                                        <div class="transparent items-end row ">  <q-icon name="phone" size="xs" />{{ String(item.phone ?? '') }}</div>
 
-          
-                                  <q-scroll-area class="col column" v-if="props.row.comments?.length ?? false" >
-                                    
-                                  <q-item v-for="item,index in props.row.comments" :key="index"  class="col column">
-                      
-                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == index">                                        
-                                        <div class="justify-end  row "> <div  style="color:cyan"> Commenting..</div> </div>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          <q-input  filled autogrow
-                                                type="textarea"  v-model="onplayRowItem['comments'][index]['comment']" 
-                                                :label="cinfo" stack-label :dense="true"  />
-                                        
-                                        </q-item-label>      
-                                        
-                                     </q-item-section>
-    
-                                     <q-item-section v-else>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          {{props.row.comments[index].userName}}
-                                       </q-item-label>      
+                                                       <div class="fit q-py-xs q-px-sm text-grey " > {{  item.comment ?? '' }}</div>                                                      
 
-                                        <q-item-label style="text-transform: capitalize;">
-                                          <q-input  autogrow filled
-                                                type="textarea"  v-model="props.row.comments[index].comment" 
-                                                :label="cinfo" stack-label :dense="true" readonly />
+                                                    </div>
 
-                                       </q-item-label>    
-                                     </q-item-section>
-    
-                                    <q-item-section >
-                                      <q-item-label caption> {{  props.row.comments[index].time }}</q-item-label>
-                                      <div class="text-orange">
-                                        <q-icon name="star" />
-                                        <q-icon name="star" />
-                                        <q-icon name="star" />
-                                        <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray(_onplayRowItemsideBoxIndex)"> </q-btn>
-                                        <q-btn round flat icon="done" @click="_updateRow()" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn>
-                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(_onplayRowItemsideBoxIndex)" v-if="_onplayRowItemsideBoxIndex ==index "> </q-btn>
-                                      
-                                      </div>
+                                                    <div class="col q-gutter-xs column items-between rounded-borders" style="background-color:whitesmoke" v-else > 
+                                                        
+                                                        <div class="transparent items-end row fontbstyle">  <q-icon name="phone" size="xs" />{{ String(item.phone ?? '') }}</div>
 
-                                    
-                                    
-                                    </q-item-section>
-                                  </q-item>
-    
-                               
-    
-                                </q-scroll-area>
-    
-                                  <q-list v-else>
-                                    No Comments ( New)
-                                  </q-list>  
+                                                        <div class="fit q-py-none q-px-sm text-grey-7" > {{  item.comment ?? '' }}</div>   
+                                                  </div>
+                                                  </q-item-section>
 
-                                </q-list>                                           
-                              
-                              
-                              
-                          </div> 
+                                                  <div class=" row justify-between fontastyle text-grey-7 flex-center">
+                                                    <div class="text-orange" v-if="(item.userID == Objprops._profile.id)"> 
+                                                          <q-btn rounded flat icon="edit" label="Edit" size="sm" @click="_this_foreignOperation._select_foreignIndex(index)"> </q-btn>                       
+            
+                                                    </div> 
 
-                          <div class="col" v-else-if="_onplayRowItemsideBoxOps == 'clients' && (props.row.clients ?? false)">
+                                                    <div v-else style="width:2px;"></div>                                        
+                                                    <div  class="fontcstyle"> 
+                                                             
+                                                          <div v-if="typeof item.fupdatedAt == 'object'" class="fontcstyle row q-gutter-xs q-mx-sm"> 
+                                                          <div  v-if="item.fupdatedAt.days " > {{item.fupdatedAt.days}} Days ago</div> 
+                                                          <div v-else-if="item.fupdatedAt.hours " > {{item.fupdatedAt.hours}} Hours ago</div> 
+                                                          <div v-else-if="item.fupdatedAt.minutes" > {{item.fupdatedAt.minutes}} Minutes ago</div>
+                                                          <div v-else>Just Now</div>
+                                                         
+                                                          </div>
+                                                           <div v-else> {{item.fupdatedAt}} </div>
+                                                    
+                                                    </div>
+                                                  
+                                                  </div>
+                                                
+                                                </q-item>
+                  
+
+                                              </div>
+                                          </div>   
+
+                                        <div v-else class="flex flex-center fit text-grey">
+                                          No Comments [ADD New]
+                                        </div>  
+                                      </q-list>     
+
+                                      <div v-if="__this_foreignBoxIndex != null" class="shadow-1 q-pa-xs">                                                                                            
+                                                    <div class="justify-end  row ">  <div  style="color:teal"> Commenting..</div> </div>
+                                                    <div style="min-height:1vh;" class="column " >
+                                                      <q-input size="sm" outlined type="text" standout="bg-teal-2 text-white"
+                                                      autogrow v-model="_this_chatforeign['comment']" 
+                                                          stack-label :dense="true"  placeholder="commenting..." />                                              
+                                                    </div>      
+                                                    <q-btn rounded flat size="sm" color='red' icon="close" label="close" @click="__this_foreignBoxIndex = null" > </q-btn>
+                                                    <q-btn round flat icon="done" size="sm" @click="_this_foreignOperation._update_foreign()" > </q-btn>
+                                                    <q-btn round flat icon="delete" size="sm" @click="_this_foreignOperation._remove()"> </q-btn>
+                                                                             
+                                        </div>
+                                </div> 
+
+                              </q-card>
+
+                              <q-card class="col column q-pa-sm " v-if="__this_foreignBoxOps == 'clients' ?? false">
+                                <div class="col column" v-if="_this_clientRows ?? false">   
+
+                                    <q-list class=" column" style="width:100%;height:75svh">                       
+                                                  <div v-if="!_is_this_open"> 
+                                                          <div v-if="props.row.price == 0" class="q-pa-sm text-red"> Sorry, Price isn't fixed yet!</div>
+                                                          <div v-else class="q-pa-sm"> Product is sold out!</div>
+                                                  </div>  
+
+                                                  <div v-else class="q-px-sm"> 
+                                                 
+                                                        
+                                                          <q-card class="items-center q-pa-sm " style="background-color:whitesmoke;" > 
+                                                                <div  v-if="(_this_clientforeign['orderID'] ?? false)" class="q-gutter-sm">
+                                                                <!--q-item-label class="absolute-right q-px-sm fontastyle">Step - 1</q-item-label-->                                        
+
+                                                               
+                                                                  <div class="col row q-gutter-sm  q-pa-none fit">
+                                                                      <div class="col column q-gutter-xs fontdstyle">
+                                                                        <div>
+                                                                          Quantity
+                                                                        </div>
+                                                                        <div class="row">
+                                                                          <q-btn  icon="remove"  size="sm" @click="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity']) > 1 ? parseFloat(_this_clientforeign['quantity'])-1 : 1 "/>
+                                                                          <q-btn color="orange" size="md" class="q-mx-xs"  :label="_this_clientforeign['quantity']"   />
+                                                                          <q-btn  size="sm"  icon="add" @click="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity'] ?? 1)+1"   />
+
+                                                                        </div>
+                                                                      </div>
+
+                                                                      <div class="col column flex flex-center justify-center fontdstyle">
+                                                                        Total Prices
+                                                                        <q-btn flat class="fontestyle" :label="_this_clientforeign['quantity'] * _is_this_netPrice"  />
+                                                                      </div>
+                                                                  
+
+                                                                  </div>
+
+                                                                  <div class="q-gutter-sm row justify-end fontestyle"> 
+                                                                      <q-btn rounded color="orange" no-caps  glossy unelevated  @click="_this_foreignOperation._newbuyer_foreign('buy')" label="Order Now" :dense="true"/>
+                                                                      <q-btn rounded color="green" no-caps  glossy unelevated   @click="_this_foreignOperation._newbuyer_foreign('cart')" label="Add to Cart" :dense="true"/>
+                                                                
+                                                                  </div>                                                                  
+                                                                                                     
+                                                              
+                                                              </div>     
+                                                          </q-card>
+                                                        
+                                                                                                       
+                                                              
+                                                              <!--fieldset class="q-gutter-md row items-center fontastyle q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
+
+                                                                <q-item-label class="absolute-top-right q-px-md  ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_thisClientOperation._initiateOrder()"/>
+                                                                                                  
+                                                                </q-item-label>                                             
+                                                                <legend class="flex justify-start q-py-none fontastyle">Your OrderID :<q-item-label caption> <q-badge >{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
+                                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
+                                                        
+                                                              </fieldset--> 
+                                                  </div>
+                                             
+                                            <q-separator spaced inset />
+                                           <div class="col column fit fontastyle" v-if="_this_clientRows.length ?? false" >  
+
+                                                  <q-item  class="col-auto q-pa-xs" > 
+                                                    <q-badge outline color='orange'  class="fontastyle q-pa-xs">you Have {{ _this_clientRows.length }} : {{  _orderDebuger }}</q-badge>
+                                                  </q-item>
+
+                                                  <div class="col scroll-area" style="overflow-y: auto;" >                                                
+                                                      <q-item v-for="item,index in _this_clientRows" :key="index"  class="col column">  
+                                                            
+                                                        <q-item-section >
+
+                                                        <div class="row justify-between items-end q-gutter-sm ">
+                                                          <div class="q-py-sm" v-if="item?.['served'] ?? false">
+                                                              <div v-if="item['served'] == 'Requested' ?? false " class="row">                                                                
+                                                                    <div class="col-auto bg-orange q-px-xs" style="border-radius:5%;">
+                                                                      Just Ordered</div>
+                                                                </div> 
+                                                            
+                                                                <q-item-label style="" class="fontastyle" >
+                                                                  <q-avatar size="14px"  :color="item['served'] != 'Queed' ? 'orange' : 'green'"></q-avatar>
+                                                                    <template v-if="_is_clientOwner || item?.['userID'] == Objprops._profile.id" >{{item.phone}}
+                                                                    </template> 
+
+                                                                    <template v-else> {{item.fphone}}
+                                                                    </template> 
+
+                                                                    #{{item.orderID}}
+                                                                    <q-tooltip> Serve Status : {{ item.served }} </q-tooltip>
+
+                                                                </q-item-label>                                                    
+                                                          </div>
+                                                            <!---- is current loged user/client  is Owner)--> 
+                                                            <div> 
+                                                              <template v-if="__this_foreignBoxIndex == index">
+                                                                  <q-btn rounded flat size="sm" color='red' icon="close" label="close" @click="__this_foreignBoxIndex = null"  /> 
+                                                                  <q-btn round flat size="sm" :dense="true" icon="done" @click="_this_foreignOperation._update_foreign(false)" v-if="_is_clientOwner"/>                                                                  
+                                                                  <q-btn rounded flat size="sm" icon="delete" @click="_this_foreignOperation._remove(index,_this.id)" />            
+                                                        
+                                                                </template>
+                                                                <template v-else>
+                                                                <q-btn rounded flat size="sm" color='orange' icon="edit" label="edit" @click="_this_foreignOperation._select_foreignIndex(index,_this.id)"  v-if="__this_foreignBoxIndex != index "> </q-btn>
+
+                                                                </template>
+                                                        </div>
+                                                                                                                                                     
+
+                                                        </div>                                    
+
+                                                        <div class="justify-between row q-gutter-sm q-pa-xs"  v-if="__this_foreignBoxIndex == index && _is_clientOwner" >
+                                                        
+                                                                <div style="" class="col" >
+                                                                    <div>Descriptions ?</div>
+                                                                    <q-input  autogrow outlined class="col fontastyle" 
+                                                                    :shadow-text="textareaShadowText"
+                                                                          @keydown="processTextareaFill"
+                                                                          @focus="processTextareaFill" 
+                                                                          v-model="_this_clientforeign['description']" 
+                                                                          stack-label :dense="true"  />                                                                      
+                                                                </div>   
+
+                                                                <div style="" class="col-auto fontastyle">
+                                                                  <div>Change Status ?</div>                                                                  
+                                                                  <q-select
+                                                                  :dense="true" 
+                                                                  outlined
+                                                                        v-model="_this_clientforeign['served']"
+                                                                        :options="['Requested','Queed','Served']"                                                                      
+                                                                        stack-label
+                                                                        class="fontcstyle text-grey"
+                                                                      />                                                                           
+                                                                      
+                                                                </div>   
+
+                                                        </div> 
+
+                                                        <div class="justify-between row q-gutter-sm" v-else >
+                                                          <div class="col column rounded-borders bg-grey-3 q-pa-xs " v-for="k in ['quantity','price']" :key="k"  >
+                                                           {{ k}}
+                                                              <q-item-label class="fontastyle"> {{ item[k]}} </q-item-label> 
+                                                          </div>     
+                                                                                                                                                               
+                                                        </div>    
+                                                        </q-item-section>
+
+
+                                                        <q-item-section>                                     
+                                                              <div class="text-orange row justify-between fontastyle"> 
+                                                                    <!--q-item-label class="row justify-start items-center " >Remark: <q-item-label class="text-grey " > 
+                                                                      {{item['description']   }} </q-item-label>
+                                                                    </q-item-label-->
+                                                                    <div></div>
+                                                                    <!--q-item-label > {{  item.time?.split(',')[0] ?? ' ' + item.time?.split(',')[1] ?? ' ' }}</q-item-label-->
+                                                                                                                                    
+                                   
+                                                                      <div  class="fontcstyle"> 
+                                                                              
+                                                                            <div v-if="typeof item.fupdatedAt == 'object'" class="fontcstyle row q-gutter-xs q-mx-sm"> 
+                                                                            <div  v-if="item.fupdatedAt.days " > {{item.fupdatedAt.days}} Days ago</div> 
+                                                                            <div v-else-if="item.fupdatedAt.hours " > {{item.fupdatedAt.hours}} Hours ago</div> 
+                                                                            <div v-else-if="item.fupdatedAt.minutes" > {{item.fupdatedAt.minutes}} Minutes ago</div>
+                                                                            <div v-else>Just Now</div>
+                                                                          
+                                                                            </div>
+                                                                            <div v-else> {{item.fupdatedAt}} </div>
+                                                                      
+                                                                      </div>
+                                                                    
+                                                              </div>                                                                     
+                                                                
+                                                        </q-item-section>
+
+                                                    </q-item>
+                                                </div>
+
+                                            </div>
+                                            
+                                              <div class="col flex flex-center " v-else>
+                                                    <q-spinner color="blue" size="5em" :thickness="5" v-if="__this_foreignBoxOpsStatus" />
+                                                    <div v-else> Your Cart is Empty! </div>
+                                              </div>  
+                                    </q-list>
+
+                                </div>
                         
-                            
-                                <q-list class="column col" style="height:100%">   
-                                  <q-item class="col-auto row">
-                                    <q-list bordered class="col rounded-borders">
-                                      <q-expansion-item
-                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
-                                        >
-                                          <template v-slot:header>
-                                         <q-item-section>
-                                          payIt Service
-                                        </q-item-section>
-
-                                            <q-item-section>
-                                             pay using telebirr                                          
-                                          </q-item-section>
-                                          </template>
-                                          
-                                          
-                                         
-                                        </q-expansion-item>
-                                          <q-separator  inset />
-                                        <q-expansion-item
-                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
-                                        >
-                                          <template v-slot:header>
-                                         <q-item-section>
-                                          Easy-pay
-                                        </q-item-section>
-
-                                            <q-item-section>
-                                              #buyers ; Add to your Cart                                           
-                                          </q-item-section>
-                                          </template>
-                                          
-                                          
-                                          <q-card class="items-center" style="background-color:white;">     
-                                            <q-card-section>                                              
-                                              <div  v-if="(_orderStep == 0) &&  (defaultItem['clients']?.length ?? false)">
-                                                <q-item-label class="absolute-right q-px-sm">Step - 1</q-item-label>                                            
-
-                                                Your OrderID : {{ defaultItem['clients'][0]['orderID'] }}
-                                                <div class="q-gutter-sm row items-start q-pa-sm">
-                                                    <q-input filled v-model="defaultItem['clients'][0]['orderID']" class="col-grow" label="OrderID" stack-label :dense="true" readonly />
-                                                    <q-input type='Number'  outlined bottom-slots v-model="defaultItem['clients'][0]['quantity']" class="col-4" label="Quantity" default="1" min='1' :prefix="'+'" :dense='true' >
-                                                      <template v-slot:hint>
-                                                      </template>
-                                                    </q-input>
-                                                    <q-input filled v-model="defaultItem['clients'][0]['phone']" class="col-7" label="Phone_#" stack-label :dense="true" />                                 
-                                                   
-
-                                                    <q-btn color="indigo" no-caps  glossy unelevated  @click="_activeColumnOperation._confirmOrder()" label="Sent Order" :dense="true"/>
-                                                
-                                                </div>                                            
-                                              
-                                              </div>                                              
-                                              
-                                              <fieldset class="q-gutter-md row items-center q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
-
-                                                <q-item-label class="absolute-top-right q-px-sm ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_activeColumnOperation._initiateOrder()"/>
-                                                                                  
-                                                </q-item-label>                                             
-                                                <legend class="flex justify-start q-py-none">OrderID :<q-item-label caption> <q-badge>{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
-                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
-                                         
-                                              </fieldset> 
-                                            </q-card-section>
-                                          </q-card>
-                                        </q-expansion-item>
-                                        </q-list>
-                                  </q-item> 
-                                  <q-item  class="col-auto q-pa-xs " >
-                                    <q-badge outline color='green' > {{  _orderDebuger }}</q-badge>
-                                  </q-item>
-
-                                  <q-separator spaced inset />
-                                     
-
-                                      <q-scroll-area class="col column" v-if="props.row.clients?.length ?? false">                                
-                                        <q-item v-for="item,index in props.row.clients" :key="index"  class="col column">  
-                                                                            
-                                              <q-item-section v-if="props.row.clients[index] ?? false">
-
-                                                <div class="row justify-between items-end q-gutter-sm ">
-                                                  <div class="q-py-sm" v-if="props.row.clients[index]['served'] ?? false">
-
-                                                          <div v-if="props.row.clients[index]?.['served'] == 'Requested' ?? false " >
-                                                            <q-badge color="red" size="sm">Pending..</q-badge></div> 
-                                                      
-                                                          <q-item-label style="text-transform: capitalize;" >
-                                                            <q-avatar size="14px"  :color="props.row.clients[index]['served'] != 'Queed' ? 'orange' : 'green'"></q-avatar>
-                                                              {{props.row.clients[index].phone}} #{{props.row.clients[index].orderID}}
-                                                          </q-item-label>                                                   
-                                                  </div>
-                                                    <!---- is current loged user/client--> 
-                                                    <div  v-if="props.row?.['userID'] == Objprops.userID"> 
-                                                          <q-btn round color='blue' flat icon="edit" @click="_passiveColumnOperation._selectArray(index)"> </q-btn>
-                                                          <q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex  == index"> apply </q-btn>
-                                                          <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" v-if="_onplayRowItemsideBoxIndex == index "> </q-btn>
-                                                    </div>
-                                                    <div v-else-if="props.row.clients[index]?.['userID'] == Objprops.userID">
-                                                      <q-btn round flat color='orange' icon="edit" @click="_passiveColumnOperation._selectArray(index)" > </q-btn>
-                                                        <!--q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn-->
-                                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" > </q-btn>                
-                                              
-                                                      </div>
-                                                                                       
-
-                                              </div>                                       
-                                              
-                                              <div class="row q-gutter-sm" v-if="_onplayRowItemsideBoxIndex == index " >
-                                                        <q-item-label style="text-transform: capitalize;">
-                                                            <q-input  autogrow filled clearable
-                                                            :shadow-text="textareaShadowText"
-                                                                  @keydown="processTextareaFill"
-                                                                  @focus="processTextareaFill"
-                                                                  type="Number"  v-model="props.row.clients[index]['description']" 
-                                                                  label="Delivery Remark" stack-label :dense="true"  />
-                                                                
-                                                        </q-item-label>                                                
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                          
-                                                          <q-select
-                                                          :dense="true"
-                                                                filled
-                                                                v-model="props.row.clients[index]['served']"
-                                                                :options="['Requested','Queed','Served']"
-                                                                use-chips
-                                                                stack-label
-                                                                label="Served Status"
-                                                              />        
-                                                              
-                                                              
-                                                        </q-item-label>   
-                                                </div> 
-                                                <div class="flex flex-center  q-gutter-sm" v-else >
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled 
-                                                                  type="Number"  v-model="props.row.clients[index].quantity" 
-                                                                  label="Quantity" stack-label :dense="true" readonly />
-                                                                
-                                                        </q-item-label>
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled
-                                                                  type="Number"  v-model="props.row.clients[index].price" 
-                                                                  label="Price" stack-label :dense="true" readonly />
-                                                                
-                                                        </q-item-label>   
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled
-                                                                  type="Number"  v-model="props.row.clients[index].paymentMethod" 
-                                                                  label="Payment" stack-label :dense="true" readonly />                                                        
-                                                        </q-item-label>                                                
-
-                                                </div>    
-                                              </q-item-section>
-            
-                                              <q-item-section v-if="props.row.clients?.length ?? false">                                     
-                                                    <div class="text-orange"> 
-                                                      <q-item-label caption> {{  props.row.clients[index].time.split(',')[0] ?? ' ' + props.row.clients[index].time.split(',')[1] ?? ' ' }}</q-item-label>
-                                                      
-                                                          <q-itm-label class="row justify-start items-center " > Delivery Remarkk: <q-item-label class="text-black q-px-sm" caption> {{props.row.clients[index]['description']   }} </q-item-label> </q-itm-label>
-
-                                                        </div>                                                                     
-                                                      
-                                              </q-item-section>
-
-                                          </q-item>
-
-                      
-
-                                        </q-scroll-area>
-                                   
-                                        <q-list v-else>
-                                        No Clients ( Buyers)
-                                      </q-list>  
-
-                                    </q-list>
-
+                            </q-card>
                           </div>
                     </q-td>
-
-                    <div class="bg-red" style="position:absolute;width:100%;height:50%;bottom:0;z-index: 1;"  v-if=" $q.screen.lt.md && _onplayRowIndex == props.rowIndex">
-
-                      <div class="col row" v-if="_onplayRowItemsideBoxOps == 'comments' && props.row.comments != null">                             
-                                
-                              
-
-                                <q-list class="column" style="height:100%;width:100%">  
-
-                                  <q-item class="col-auto column">
-                                    <q-item-label> 
-                                      Comments:    
-                                      <q-btn style="background-color:white;" color="primary" :dense="true" size="sm" rounded flat @click="_passiveColumnOperation._add()"> add Comment</q-btn>                      
-                                    </q-item-label>     
-
-                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == null" class="column q-pa-xs">
-                                        <q-badge> New Comment</q-badge>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          <q-input  filled autogrow
-                                                type="textarea"  v-model="defaultItem.comments[0].comment" 
-                                                :label="cinfo" stack-label :dense="true"  />                                        
-                                        </q-item-label> 
-                                        <div class="col-auto q-pa-xs">
-                                          <q-btn label="Add Comment" :dense="true" @click="_passiveColumnOperation._submitArray('comments')"  size="md"/>
-                                        </div>     
-                                     </q-item-section>
-
-                                  </q-item> 
-                                 
-                                  <q-separator spaced inset />
-
-          
-                                  <q-scroll-area class="col column" v-if="props.row.comments?.length ?? false" >
-                                    
-                                  <q-item v-for="item,index in props.row.comments" :key="index"  class="col column">
-                      
-                                    <q-item-section v-if="_onplayRowItemsideBoxIndex == index">                                        
-                                        <div class="justify-end  row "> <div  style="color:cyan"> Commenting..</div> </div>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          <q-input  filled autogrow
-                                                type="textarea"  v-model="onplayRowItem['comments'][index]['comment']" 
-                                                :label="cinfo" stack-label :dense="true"  />
-                                        
-                                        </q-item-label>      
-                                        
-                                     </q-item-section>
-    
-                                     <q-item-section v-else>
-                                        <q-item-label style="text-transform: capitalize;" >
-                                          {{props.row.comments[index].userName}}
-                                       </q-item-label>      
-
-                                        <q-item-label style="text-transform: capitalize;">
-                                          <q-input  autogrow filled
-                                                type="textarea"  v-model="props.row.comments[index].comment" 
-                                                :label="cinfo" stack-label :dense="true" readonly />
-
-                                       </q-item-label>    
-                                     </q-item-section>
-    
-                                    <q-item-section >
-                                      <q-item-label caption> {{  props.row.comments[index].time }}</q-item-label>
-                                      <div class="text-orange">
-                                        <q-icon name="star" />
-                                        <q-icon name="star" />
-                                        <q-icon name="star" />
-                                        <q-btn round flat icon="edit" @click="_passiveColumnOperation._selectArray(_onplayRowItemsideBoxIndex)"> </q-btn>
-                                        <q-btn round flat icon="done" @click="_updateRow()" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn>
-                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(_onplayRowItemsideBoxIndex)" v-if="_onplayRowItemsideBoxIndex ==index "> </q-btn>
-                                      
-                                      </div>
-
-                                    
-                                    
-                                    </q-item-section>
-                                  </q-item>
-    
-                               
-    
-                                </q-scroll-area>
-    
-                                  <q-list v-else>
-                                    No Comments ( New)
-                                  </q-list>  
-
-                                </q-list>                                           
-                              
-                              
-                              
-                          </div> 
-
-                          <div class="col" v-else-if="_onplayRowItemsideBoxOps == 'clients' && (props.row.clients ?? false)">                       
-                            
-                                <q-list class="column col" style="height:100%">   
-                                  <q-item class="col-auto row">
-                                    <q-list bordered class="col rounded-borders">
-                                      <q-expansion-item
-                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
-                                        >
-                                          <template v-slot:header>
-                                         <q-item-section>
-                                          payIt Service
-                                        </q-item-section>
-
-                                            <q-item-section>
-                                             pay using telebirr                                          
-                                          </q-item-section>
-                                          </template>
-                                          
-                                          
-                                         
-                                        </q-expansion-item>
-                                          <q-separator  inset />
-                                        <q-expansion-item
-                                        icon="buy" :dense="true"   label="Counter" color="orange" style="background-color:orange"
-                                        >
-                                          <template v-slot:header>
-                                         <q-item-section>
-                                          Easy-pay
-                                        </q-item-section>
-
-                                            <q-item-section>
-                                              #buyers ; Add to your Cart                                           
-                                          </q-item-section>
-                                          </template>
-                                          
-                                          
-                                          <q-card class="items-center" style="background-color:white;">     
-                                            <q-card-section>                                              
-                                              <div  v-if="(_orderStep == 0) &&  (defaultItem['clients']?.length ?? false)">
-                                                <q-item-label class="absolute-right q-px-sm">Step - 1</q-item-label>                                            
-
-                                                Your OrderID : {{ defaultItem['clients'][0]['orderID'] }}
-                                                <div class="q-gutter-sm row items-start q-pa-sm">
-                                                    <q-input filled v-model="defaultItem['clients'][0]['orderID']" class="col-grow" label="OrderID" stack-label :dense="true" readonly />
-                                                    <q-input type='Number'  outlined bottom-slots v-model="defaultItem['clients'][0]['quantity']" class="col-4" label="Quantity" min='1' :prefix="'+'" :dense='true' >
-                                                      <template v-slot:hint>
-                                                      </template>
-                                                    </q-input>
-                                                    <q-input filled v-model="defaultItem['clients'][0]['phone']" class="col-7" label="Phone_#" stack-label :dense="true" />                                 
-                                                   
-
-                                                    <q-btn color="indigo" no-caps  glossy unelevated  @click="_activeColumnOperation._confirmOrder()" label="Sent Order" :dense="true"/>
-                                                
-                                                </div>                                            
-                                              
-                                              </div>                                              
-                                              
-                                              <fieldset class="q-gutter-md row items-center q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
-
-                                                <q-item-label class="absolute-top-right q-px-sm ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_activeColumnOperation._initiateOrder()"/>
-                                                                                  
-                                                </q-item-label>                                             
-                                                <legend class="flex justify-start q-py-none">OrderID :<q-item-label caption> <q-badge>{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
-                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
-                                         
-                                              </fieldset> 
-                                            </q-card-section>
-                                          </q-card>
-                                        </q-expansion-item>
-                                        </q-list>
-                                  </q-item> 
-                                  <q-item  class="col-auto q-pa-xs " >
-                                    <q-badge outline color='green' > {{  _orderDebuger }}</q-badge>
-                                  </q-item>
-
-                                  <q-separator spaced inset />
-                                     
-
-                                      <q-scroll-area class="col column" v-if="props.row.clients?.length ?? false">                                
-                                        <q-item v-for="item,index in props.row.clients" :key="index"  class="col column">  
-                                                                            
-                                              <q-item-section v-if="props.row.clients[index] ?? false">
-
-                                                <div class="row justify-between items-end q-gutter-sm ">
-                                                  <div class="q-py-sm" v-if="props.row.clients[index]['served'] ?? false">
-
-                                                          <div v-if="props.row.clients[index]?.['served'] == 'Requested' ?? false " >
-                                                            <q-badge color="red" size="sm">Pending..</q-badge></div> 
-                                                      
-                                                          <q-item-label style="text-transform: capitalize;" >
-                                                            <q-avatar size="14px"  :color="props.row.clients[index]['served'] != 'Queed' ? 'orange' : 'green'"></q-avatar>
-                                                              {{props.row.clients[index].phone}} #{{props.row.clients[index].orderID}}
-                                                          </q-item-label>                                                   
-                                                  </div>
-                                                    <!---- is current loged user/client--> 
-                                                    <div  v-if="props.row?.['userID'] == Objprops.userID"> 
-                                                          <q-btn round color='blue' flat icon="edit" @click="_passiveColumnOperation._selectArray(index)"> </q-btn>
-                                                          <q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex  == index"> apply </q-btn>
-                                                          <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" v-if="_onplayRowItemsideBoxIndex == index "> </q-btn>
-                                                    </div>
-                                                    <div v-else-if="props.row.clients[index]?.['userID'] == Objprops.userID">
-                                                      <q-btn round flat color='orange' icon="edit" @click="_passiveColumnOperation._selectArray(index)" > </q-btn>
-                                                        <!--q-btn round flat icon="done" @click="_updateRow(false)" v-if="_onplayRowItemsideBoxIndex == index"> </q-btn-->
-                                                        <q-btn round flat icon="delete" @click="_passiveColumnOperation._remove(index)" > </q-btn>                
-                                              
-                                                      </div>
-                                                                                       
-
-                                              </div>                                       
-                                              
-                                              <div class="row q-gutter-sm" v-if="_onplayRowItemsideBoxIndex == index " >
-                                                        <q-item-label style="text-transform: capitalize;">
-                                                            <q-input  autogrow filled clearable
-                                                            :shadow-text="textareaShadowText"
-                                                                  @keydown="processTextareaFill"
-                                                                  @focus="processTextareaFill"
-                                                                  type="Number"  v-model="props.row.clients[index]['description']" 
-                                                                  label="Delivery Remark" stack-label :dense="true"  />
-                                                                
-                                                        </q-item-label>                                                
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                          
-                                                          <q-select
-                                                          :dense="true"
-                                                                filled
-                                                                v-model="props.row.clients[index]['served']"
-                                                                :options="['Requested','Queed','Served']"
-                                                                use-chips
-                                                                stack-label
-                                                                label="Served Status"
-                                                              />                                                                                                      
-                                                        </q-item-label>   
-                                                </div> 
-                                                <div class="flex flex-center  q-gutter-sm" v-else >
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled 
-                                                                  type="Number"  v-model="props.row.clients[index].quantity" 
-                                                                  label="Quantity" stack-label :dense="true" readonly />
-                                                                
-                                                        </q-item-label>
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled
-                                                                  type="Number"  v-model="props.row.clients[index].price" 
-                                                                  label="Price" stack-label :dense="true" readonly />
-                                                                
-                                                        </q-item-label>   
-                                                        <q-item-label style="text-transform: capitalize;" class="col">
-                                                            <q-input  autogrow filled
-                                                                  type="Number"  v-model="props.row.clients[index].paymentMethod" 
-                                                                  label="Payment" stack-label :dense="true" readonly />                                                        
-                                                        </q-item-label>                                                
-
-                                                </div>    
-                                              </q-item-section>
-            
-                                              <q-item-section v-if="props.row.clients?.length ?? false">                                     
-                                                    <div class="text-orange"> 
-                                                      <q-item-label caption> {{  props.row.clients[index].time.split(',')[0] ?? ' ' + props.row.clients[index].time.split(',')[1] ?? ' ' }}</q-item-label>
-                                                      
-                                                          <q-itm-label class="row justify-start items-center " > Delivery Remarkk: <q-item-label class="text-black q-px-sm" caption> {{props.row.clients[index]['description']   }} </q-item-label> </q-itm-label>
-
-                                                        </div>                                                                     
-                                                      
-                                              </q-item-section>
-
-                                          </q-item>
-
-                      
-
-                                        </q-scroll-area>
-                                   
-                                        <q-list v-else>
-                                        No Clients ( Buyers)
-                                      </q-list>  
-
-                                    </q-list>
-
-                          </div>
-
-                      </div>
-
-                    <q-td v-else-if="props.row.saleitgr == null" auto-width class="col column  full-height" >
-                        <q-card  class="col row q-gutter-sm" >
-                          <q-skeleton class="col" square />
-                        </q-card>
-
-                    </q-td>
-
+                   
+                    <!---------Disktop----sideBox_show (comment & client) Ends-->
+                 
+                    <!---------Mobile----sideBox_show (comment & client) Ends-->
                     </q-tr>
-  
-                    </template>
+
+                  </template>
               </q-table>
   
+              <q-table v-else-if="_pageSettings['tableView'] == 'cards'"
+                flat 
+                bordered
+                
+                :rows="_this_Rows"
+                :columns="columns"
+    
+                virtual-scroll
+
+                :filterMethod="_thisFiltering"
+                :filter="filter"
+
+                row-key="id" 
+                rowIndex="true"
+
+                grid
+                grid-header
+
+                :inFullscreen="true"
+                class="col q-gutter-xs row q-px-md justify-end"
+
+                hide-pagination
+                :pagination="pagination"
+
+                hide-top
+                hide-bottom
+                style="min-width:100vw;padding-top:5vh;"
+                >
+
+                <template v-slot:top="props" v-if="false">
+                    <q-btn class="hidden"  style="height:0px;width:0px"   ref="togflscreen" :set="enableflscreen = props.inFullscreen" @click="props.toggleFullscreen()" />
+                </template>  
+
+                <template v-slot:header="props">
+
+                  <q-tr :props="props"  class="col-auto column q-px-md transparent" 
+                  style="backdrop-filter:blur(55px);position:fixed;z-index:1;" :style="$q.screen.lt.sm ? 'top:8vh' : 'top:7vh'"  >
+                   
+                    <q-scroll-area  class="col-grow column transparent flex flex-center" style="min-width:95vw;">
+                      <div class="col-grow flex flex-center q-gutter-sm q-px-md transparent no-wrap " style="min-width:100%;max-height:100%;"> 
+
+                                          <q-separator inset vertical class='q-py-sm'  />
+
+                                            <q-btn rounded no-caps color="orange"  @click="this_Query(null,'',16)"  class="col-auto fontdstyle"  >
+                                             Show All       
+                                            </q-btn>
+                                              
+                                            <q-separator inset vertical class='q-py-sm'  />
+
+                                            <q-btn rounded no-caps size="sm" v-for="_qvalue0,_qgroup0 in saleCatagory"  
+                                            @click="this_Query('catagory',_qgroup0,_qvalue0)" :key="_qvalue0" class="column col-auto q-py-xs fontestyle" :class="_this_Query['catagory'] == _qgroup0 ? 'bg-orange text-white' : ''" >
+                                                 
+                                            {{  _qgroup0 }}
+                                            </q-btn>                    
+
+                                            <q-separator inset vertical class='q-py-sm'  />
+                                            <q-btn rounded outline no-caps size="sm"  v-for="_qvalue1,_qgroup1 in saleUsage" 
+                                            @click="this_Query('catagory',_qgroup1,_qvalue1)" :key="_qvalue1" class="col-auto fontestyle"  :class="_this_Query['usage'] == _qgroup1 ? '' : ''">
+                                            {{  _qgroup1 }}
+                                            </q-btn> 
+
+                                            <q-space />  
+
+                                            <q-btn
+                                                flat round dense
+                                                :icon="enableflscreen ? 'fullscreen_exit' : 'fullscreen'"
+                                                @click="$refs.togflscreen.click()"
+                                                class="q-ml-md"
+                                              />
+                      </div>
+                  
+                  </q-scroll-area>             
+                 
+                  </q-tr>
+
+                </template>
+              
+                   <template v-slot:item="props">
+                    <q-tr :props="props" class="q-gutter-sm transparent column  q-tr--no-hover col-shrink  fontbstyle" 
+                    style="min-width:15vw;"                           
+                  >
+                    <div class="col  q-gutter-sm  column" v-if="props.row?.saleitgr ?? false">
+                              <div class="cardPL col-auto column fontbstyle" >
+                                 
+                                <q-img :src="props.row.saleitgr[0]"
+                                    style="aspect-ratio: 1/1;" class="cardPL img q-pa-xs">
+
+                                      <div class="transparent column" style="width:100%;height:100%;">                                          
+                                          
+                                              <div class="col  column q-gutter-sm" v-if="(__thisIndex == props.rowIndex) && _is_this_open" style="width:100%;">
+                                                <closeButton title="Add Quantity to buy.." textcolor="green"  @click="__thisIndex = null"   />
+                                               
+                                                <div class="col row  justify-around" >
+                                                
+                                                <buyButton style="" :quantity="_this_clientforeign['quantity']" :price="_is_this_netPrice" 
+                                                @decreaseButton="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity'] ?? 1) -1" 
+                                                @increaseButton="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity'] ?? 1) +1" 
+                                                 >
+                                                </buyButton>
+
+                                                <!-- <div class="col column  justify-center q-px-md" style="height:100%;width:100%;" >
+                                                  <- <q-btn flat no-caps class="fontestyle" :label="_this_clientforeign['quantity'] * props.row.price +' '+ currency"  />     ->
+                                                    
+                                                  <p style="width:90%;text-overflow:ellipsis;overflow: hidden;" class="fontestyle boxastyle"> {{ _this_clientforeign['quantity'] * props.row.price +'  '+   _pageSettings['currency']}}</p>
+                                                  
+                                                </div> -->
+
+                                                </div>
+                                               
+                                            </div>
+                                            
+                                            <div  class="q-gutter-sm" v-else>
+                                                <q-btn v-if="(props.row?.price ?? false) && (props.row?.quantity ?? false)" no-caps class="fontdstyle" color="orange" :dense="true" size="sm" label="Buy Option"
+                                                  @click="_this_clientActivator(props.rowIndex)"
+                                                  />
+                                                  <div v-if="_orderBox.includes(props.row.id)" class="fontastyle ">
+                                                  <!--div v-if="props.row.buy =='buy' ?? false" style="color:orange"> Already Bought </div>
+                                                  <div v-else> Added to cart </div-->
+                                                  </div>
+                                                  <q-btn v-else no-caps class="fontdstyle" color="teal" :dense="true" size="sm" :label="_pageSettings.language ? 'Zembile' : 'ADD To My Cart'"
+                                                  @click="_this_ActiveOperation._toCart(props.row.id,'clients')"
+                                                  />
+                                            </div>
+
+                                      <!--   
+                                          <q-card class="col relative-top z-top q-pa-sm items-end column" v-if="__thisIndex == props.rowIndex" style="min-width:10vw">
+                                            <div class="col-grow row q-gutter-xs fontdstyle">
+                                                < <div>
+                                                  Quantity
+                                                </div> >
+
+                                                <div class="row no-wrap">
+                                                  <q-btn rounded  size="sm" @click="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity'] ?? 1) -1" > -</q-btn>
+                                                  <q-btn color="orange" size="md" class="q-mx-xs"  :label="_this_clientforeign['quantity']"   />
+                                                  <q-btn rounded size="sm"  icon="add" @click="_this_clientforeign['quantity'] = parseFloat(_this_clientforeign['quantity'] ?? 1)+1"   />
+
+                                                </div>
+
+                                                <div class="col-auto row items-end fontdstyle">   
+                                                  <q-btn flat no-caps class="fontestyle" :label="_this_clientforeign['quantity'] * props.row.price +' '+ currency"  />    
+                                                </div>
+                                            </div>    
+
+                                              <div class="col-grow z-top q-pa-none row justify-end">
+                                                <q-btn :dense="true" size="sm" color="orange" class="fontestyle" label="Buy Now" @click="_this_foreignOperation._create_foreign()"  /> 
+                                              </div>
+
+                                          </q-card> -->
+
+
+                                      </div>
+
+                                    </q-img>
+
+                                  <q-card-section class="col q-gutter-xs fontastyle q-pa-xs" style="background-color:whitesmoke">   
+
+                                    <div class="row q-gutter-xs no-wrap justify-between fontdstyle">
+
+                                      <q-btn class="col-grow" flat :dense="true" size="sm" @click="this_Query('userID',props.row.userID ?? null)">
+                                        <div class="col row items-center fontastyle"><q-icon name="phone"  /> {{props.row.fphone}}</div>
+                                        <q-tooltip>More Product of {{props.row.userName}}</q-tooltip>
+                                      </q-btn>
+
+                                      <div class="col-grow column items-end q-gutter-xs fontastyle "> Price: {{props.row.price}} 
+                                        <div class="text-green">On Store: {{ props.row.quantity}}</div></div>
+                                          
+                                    </div>
+
+                                    <div class="row no-wrap items-center q-pa-sm q-gutter-md fontastyle">
+                                          
+                                          <!--div>                                   
+                                              <q-item-label> 
+                                                <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_this_ActiveOperation._rating(props.rowIndex)"/>
+                                                <q-tooltip class="bg-black">Product Reliability Score</q-tooltip>
+                                              </q-item-label>
+                                              <q-item-label>{{ props.row.catagory }} ({{ props.row.usage }})</q-item-label>
+                                          </div-->                                       
+                                          <!-- <q-btn no-caps color="orange" class="text-black" :dense="true" @click="this_Query(null,props.row.id)"  label="View" />                                     -->
+                                          
+                                    
+                                          <template v-if="__thisIndex == props.rowIndex">
+                                            <q-btn rounded class="col-grow bg-orange text-white"  v-if="_is_this_open" @click="_this_foreignOperation._newbuyer_foreign('buy')">Buy Now</q-btn>
+                                          <q-btn rounded class="col-grow bg-green text-white"   @click="_this_foreignOperation._newbuyer_foreign('cart')">ADD to Cart</q-btn>
+                                          
+                                          </template>
+                                          <template v-else>
+                                            <q-btn color="cyan"  class="col-grow" no-caps   @click="_this_clientDetailActivator(props.rowIndex)" >Details</q-btn>
+                                            <q-btn  class="col-grow" no-caps @click="this_Query(null,props.row.id)" >Explore Now</q-btn>
+
+                                          </template>
+
+                                      </div>
+                                  
+                                  </q-card-section>
+
+                                </div>
+                    </div>
+                
+
+                  </q-tr>
+
+                  </template>
+
+                </q-table >
+                
+                <q-table v-else  >
+                </q-table>
         </div>
    
-<!-- sckelton of single_content-->
-        <div class="col q-pa-md flex flex-center" style="height:90vh;" v-else>
+      <!-- sckelton of single_content-->
+        <div class="col q-py-md fit q-gutter-md transparent flex flex-center column" style="" v-else>
 
-          <q-card  style="height: 80vh;width:40%">
+          <q-card  style="width:90%" class="col-1 q-gutter-xs transparent row">
+            <q-skeleton class="col" square v-for="i in [1,2,3,4,5]" :key="i"/>
+          </q-card>
 
-            <q-skeleton class="fit" square />
+          <q-card  style="width:60%" class="col-grow q-pa-xs row q-gutter-xs">
+
+            <q-skeleton class="col-grow"  />
+            <q-skeleton class="col-4" square />
 
             </q-card>
 
             <q-separator inset />
-         
+            please wait, while fetching data....
         </div>
+
       <!----------------------LiveDATA Banner-->
-  
-     
-  
-          <!------------Zooming Level Adjuster Sticky-------------------------->
-  
-        
-  
+
+      <!------------Zooming Level Adjuster Sticky-------------------------->
+      {{ _this_clientforeign}} {{ _this_chatforeign}}
   
 </q-page>
 
+  <!-- <div>
+    <button @click="toggle_dialogOne">Open Popup</button>
+  </div> -->
+
     </template>
-    
-    <script setup>
+
+<script setup>
   //_____________________________________________Modules Definitions
   //-------------------------------------------------------------Importing System Modules
-  import { ref, reactive, computed, onMounted, onBeforeMount, watch } from "vue";
-  
-  import { exportFile, useQuasar, useMeta } from "quasar";
-  
-  //import print from 'print-js';
-  import { useRouter, useRoute } from "vue-router";
-  //import { storeToRefs } from "pinia";
-  import { saleitStore } from "stores/dataStores/saleitStore"; //saleit Store ( Main Store)
-  import { genapiStore } from "src/stores/jstStores/genapiStore";
-  
-  import { saleitSchema } from "src/composables/schemas/saleitSchemas";
-  import schemaSklt from "src/composables/schemaSklts";
-  import { _wiseDating } from "src/composables/utilServices/datePeriod"
+import { ref,computed,watch,onUnmounted, onMounted,defineComponent } from "vue";
+import {useQuasar, useMeta } from "quasar";
+//import print from 'print-js';
+import { useRouter } from "vue-router";
+//import { storeToRefs } from "pinia";
+import { saleitStore } from "stores/dataStores/saleitStore"; //saleit Store ( Main Store)
+import { saleclientStore } from "stores/dataStores/saleclientStore"; //saleit Store ( Main Store)
+import { salechatStore } from "stores/dataStores/salechatStore"; //saleit Store ( Main Store)
+import { thisStore } from "stores/dataStores/thisStore"; //saleit Store ( Main Store)
+import { genapiStore } from "src/stores/jstStores/genapiStore";
+
+import { saleitSchema } from "src/composables/schemas/saleitSchemas";
+import { saleitClientSchema } from "src/composables/schemas/saleitSchemas";
+import { saleChatSchema } from "src/composables/schemas/chatSchemas";
+// import { saleitSchema } from "src/composables/schemas/saleitSchemas";
+import { _permission } from "src/composables/schemas/profileSchemas"; //acctype//userRole Schema
+
+// import  {_isnull,_isempty,_isequ,_isgte,_islte,_isbtn} from "src/composables/validators" 
+
+import statusCard from "src/components/statusCards.vue"
+
+import buyButton from "src/components/buttons/buyButton.vue"
+import closeButton from "src/components/buttons/closeButton.vue"
+
+import confirmButton from "src/components/buttons/confirmButton.vue"
+let confirmObj = ref(null);
+let confirmMessage =ref('Are You Sure ?')
+
+import dialogOne from "src/components/dialogs/dialogOne.vue"
+const status_thisDetail = ref(null);
+
+
+import useThisMixin from "src/composables/thisMixin"
+var { 
+  _this_Rows,
+  _this_Details,
+      _this_Query,
+      _this_RowsStatus,
+      //-----------//-- returning values
+      _thisDefault,
+      _this,
+      //----------//-- settings
+      __thisBox,
+      //----------//-- 
+      __thisIndex,
+      __thisOps,
+      __thisOpsStatus,
+      //---------//-- functions
+      // Reset_this,
+      //====================
+      __this_foreignBox ,
+      //--------
+      __this_foreignBoxIndex ,
+      __this_foreignBoxOps ,
+      __this_foreignBoxOpsStatus ,
+      __this_foreignBoxsubOps ,
+      //---
+      // Reset_this_foreign,
+} = useThisMixin()
+
+import debugCard from "src/components/debugCards.vue"
+import useDebugMixin from "src/composables/debugMixin"
+const { 
+  Loading,
+      DoneMessage,
+      KnowthisMessage,
+      WarnthisMessage,
+      //----------returning values
+      timerLoad,
+      timerDone,
+      timerInformthis,
+      timerError
+} = useDebugMixin()
+
+import useStatusMixin from "src/composables/statusMixin"
+const { 
+  status_Loading,
+      status_DoneMessage,
+      status_KnowthisMessage,
+      status_WarnthisMessage,
+      //----------returning values
+      staus_timerLoad,
+      status_timerDone,
+      status_timerInformthis,
+      status_timerError
+} = useStatusMixin()
+
+import useDefaulMixin from "src/composables/myMixin"
+// Import the mixin
+// Use the mixin
+let {count,
+  //------------
+      //----------returning values
+      _allColumnNames,
+      _rolesColumns,
+      visibleColumns,
+
+      //---------settings
+      Objprops_,
+      _thisModel,
+      _this_Schema,
+      invisibleColumns,
+      //----------------functions
+      _allColumnName,
+      _rolesColumn,
+      visibleColumn,
+
+      modal_iss,
+      //------preparing the main default and table_design
+      _model_Defaulting,
+
+      //------preparing the foreign default and table_design
+      modal_Columns_,
+      _modal_Defaulting_,
+      
+} = useDefaulMixin();
+
+import usefileMixin from "src/composables/fileserviceMixin"
+var { 
+      _onPlayNavMedia,
+      _fileAttributeName,
+      //-------
+      _cameraBox,
+      _fileSourceFoCam,
+      _fileAsSRC,
+      _fileAsRaw,
+
+      _liveFeedSRC,
+      _fileAsSRCIndex,
+      //---
+      _cameraDevice,
+      _listCameraSource,
+      _selectedCameraById,
+      _selectedCameraByface,
+      _liveFeedRawStreaming,
+      //--------
+      _fileSourceFolder,
+      //--------
+      _fileAsSRCOps,
+      _fileAsSRCOpsCall,
+      //-----------
+      _resetFileSource,
+      //---
+      // Reset_this_foreign,
+} = usefileMixin()
   //----componenents..
   //------------------Global Variables [ uTILITIES..]
   const $q = useQuasar();
@@ -1215,335 +1406,432 @@
     // sets document title
     title: "sale_itService",
     // optional; sets final title as "Index Page - My Website", useful for multiple level meta
-    titleTemplate: (title) => `${title} - DashBoard`,
+    titleTemplate: (title) => `${title} - `,
     // JS tags
-    icon:"icons/favicon-32x32.png", 
-  
-    script: {
-      printJs: {
-        type: "application/ld+json",
-        innerHTML: `{  }`,
-      },
-      ldJson: {
-        type: "application/ld+json",
-        innerHTML: `{ }`,
-      },
-    },
+    icon:"/icons/qimage.png", 
+    script: { },
   };
-  
   useMeta(metaData);
-  //-------------------------------------------------------------Importing System Modules--------------END
-  //-------------------------------------------------------------Importing Defined Modules
-  const saleitService = saleitStore();
 
+ //----STORE & SERVICES
+const _thisService = thisStore()
+const saleitService = saleitStore();
 
-  const genapsaleitContentOps = genapiStore(); //import { genapiStore } from "src/stores/jstStores/genapiStore";
-  //-------
-  let _thisDate=ref(new Date().toLocaleDateString())
-  let nul = ref([undefined, "", null, false,"false",0,[],{},NaN]);
-  function ArrayHaseem (base,items)  { //checking arrays within arrays
-    return items.some(value => base.includes(value)) ? true : false };
-  //let keyhasValue = (key) => reqData[key] != null && Object.keys(reqData[key]).length != 0 ? true : false;
-  
-  ////////////////////////
-  const months = Array.from({ length: 12 }, (e, i) => {
-    return new Date(null, i, null).toLocaleDateString("en", {
-      month: "short",
-    }); //short || long
-  });
-  
+const clientService = saleclientStore();
+const chatService = salechatStore();
 
+const genapsaleitContentOps = genapiStore(); //import { genapiStore } from "src/stores/jstStores/genapiStore";
+//-------
   //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
   //-------------USER PROFILE_Variables..
-  
   let Objprops = defineProps({
     //----General Informations
     _profile: { type: Object, default: () => ({}) }, //user Datas all there is...
     //----User Credentials and Unique ID.
-    //id: { type: String, default: "" }, //
-    userID: { type: String, default: "" }, //
-    userName: { type: String, default: "" }, //
-    phone: { type: String, default: "" }, //phoneCode
-    phoneCode: { type: String, default: "" }, //phoneCode
-    location:{ type: Object, default: () => ({}) },
-    geolocation:{ type: Object, default: () => ({}) },
-    
     //-----------access Parameters
-    //_anyAccess: { type: Object, default: () => ({})  },
-    _isupgraded : { type: Boolean, default: false },
-    _ispremium : { type: Boolean, default: false },
-    _iss: { type: Object, default: () => ({}) }, //is the loged_user has privileged_routes...defintions
-
-    _accessPackage: { type: Object, default: () => {}},  
-    //----------------------empy model total privileges....
-    _modalPriviledges: { type: Object, default: () => ({}) }, //user's privileges on general....with object of privileges =>{'empy':'regAdmin'}
-  
+    _iss: { type: Object, default: () => ({}) },  ///Customized(is?)_ACCESS_Type of Per/User(for_all Models)..as 'saleit':[isUpgrade,isClient] Form
+    _acctype: { type: Object, default: () => {}},   ///RAW_ACCESS_Type of Per/User (for_all Models)..as 'saleit':[true,'/plat','',[]]
+    //---------
+    _issModal: { type: Object, default: () => ({}) }, //(Every Models _Schema for ACCEss Type)
     //-------------------(layout tunnel for command datas(signal))
     lytCreatRow : { type: Boolean, default: false },
     //--------Search Button Signal  
     lytSearchRow : { type: String, default: '' },
-    _onPlayNavMedia : { type: String, default: '' },
+    _onPlayNavMedia2 : { type: String, default: '' },
+    //----------
+    _pageSetting : { type: Object, default: () => ({}) }, 
   });
-  //Objprops.lytCreatRow
-  //===-----_--------THE MODEL/ MAIN_DATA....
-  let _thisModel = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)
-  let _thisSchema=saleitSchema
-
-  let _thisModelHeader = ref(_thisModel+" Managment"); // the Vue_Page_Data_Headers(Descriptions...)
   
-  let acctypeStage = ref({
+  Objprops_.value =Objprops ?? false
+  _onPlayNavMedia.value = Objprops._onPlayNavMedia2
 
-    'creator':[1,3,4,5], //who can create only & manage data with in ....the statu of not bought(chcked)
-    //-----
-    'isupgraded':[2,3], //who can buy only
-    'isclient':[2,3],
-    //-----
-    'isgm':[1,2,3,4,5,6,7,8,10],
-    //-----------
-    'root':[1,2,3,4,5,6,7,8,10],  //outof stages_root
-    })
-
-//---current Modal Specific_privileges_analysis
-let modalpriviledges = Objprops._modalPriviledges[_thisModel]['enum'] ?? Objprops._modalPriviledges[_thisModel]['venum']
-let _thisModelPriviledges = ref(modalpriviledges); //current model's possible privileges list....objects ( .enum=[1,2,3])
-let _thispriviledgedFor = ref(Objprops._accessPackage[_thisModel]); //user's priviledges on current model....string
-
-let __isCreator =ref(false) //has it, creator(admin) [Group] or just_Columnist_access
-try{
-__isCreator =  computed(() => _thispriviledgedFor.value[2] ?? false ) //is admin/creator...
-}catch{}
-
-let __iss =ref([]) ;//is not admin/registrat.. but isstore,isfinance
-try{
-__iss =  computed(() => Objprops._iss[_thisModel] ?? false ) // ['isgm','issale']...take index_0 default
-}catch{}
-
-let __isStage = ref([])
-try{
-   __isStage = computed(()=>
-  {
-    let isStage = []
-    for(let i in __iss.value){
-    let sStage = acctypeStage.value[__iss.value[i]] == null ? false : __iss.value[i] 
-    isStage =isStage.concat(acctypeStage.value[sStage])
-    }
-    return isStage;
-  })
-}catch{}
-  
-
-    //-----------------------  
-  //------------------------------------------------------------COLUMNs----------------
 //==============================================------------------------------------
-let enableflscreen =ref(true)
-async function _toggleflscreen (){ 
-  enableflscreen.value = enableflscreen.value ? false : true;
-  return true }
+  let enableflscreen =ref(true)
   //--------------
-  let columns = ref([]); //Actual Table_Columns ++Descriptions
-  let topLayerColumns = ref([]); //Actual OuterMost Table_Column_Names [Top(Layer_1] _Columns _Name_List]
-  let authorizedColumns = ref([]); //Filtered/Authorized_Table_Columns ++Descriptions for Editing/Adding.... but not Viewing
-  //------column invisiblity on table_
-  const pagination = ref({ rowsPerPage: 50 });
+//==========================================DEfaulting && Scheam Generations====Start
+//========<><><><><><==================Create Default Schemas
+//---foreignKeyed Defaulting (Scheam)==== PreDefined Models
+_thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)
+const _thisapiUrl='/saleitapi/saleit'
+//==========-----------Generating====The Schematic Models
+//---main Defaulting(Schema)------takes the model require table_view && filtering...
+let columns = ref([]); //Actual Table_Columns ++Descriptions
+let _this_clientColumns=ref([])
+let _this_chatColumns=ref([])
+  //Columns to be Redefined
+let _thisSchema=saleitSchema
+_this_Schema.value = saleitSchema
+let _this_clientSchema=saleitClientSchema
+let _this_chatSchema=saleChatSchema
 
-  //columns_filter()-------- which to displayOn REgisterations form
-  let lockedColumns = ref([ "userID","userName"]); //are blacklist of columns tobe not shown during the Registerations..form submitting
-  let tableZooming =ref(1)
-  //------column invisiblity on table_
-  let visibleColumns = ref([]); //Hold List of In
-  let invisibleColumns = [
-    //"financeStatus",
-  ]; //defualt hidden columns
-  if ($q.screen.lt.md) {
-    //invisibleColumns.push("storeStatus");
-  }
-  if ($q.screen.lt.lg) {
-    //invisibleColumns.push("storeStatus");
-  }
-  
-  visibleColumns.value = invisibleColumns;
-  //inject_actions columns to add controls...
-
-  //===============================================-----------------------------------
-  //-----------------------DATAs ROWs--------------
-  let rows = ref([{}]); //Data's projected with the Columns variable [ calling function.....Crud_.readDatas(top_100)]
-  let rowsCount = ref(0);
-    
-  //===============================================-----------------------------------------
-  //------------- MODAL ROWs_ MANAGMENT
-  let defaultItem = ref({});
-  let onplayRowItem = ref({}); //the selected row_actual_Data..as object
-
-  //------- Original/_UpdateRowItem:CreateRowItem _Commands
-  let _onplayRowItemBox = ref(false); //true...
-  let _onplayRowIndex = ref(null); //_row_item_index..0/1/2
-  let _onplayRowItemOps = ref(false); //_is UpdateRowItem/Creating_New
-  let _onplayRowItemOpsStatus =ref(false)
-  
-  //==-----tabular side_box ( Pop_by_Id and tell the Operation)
-  //let _setpopSideBox = ref(false); //true,..
-  //---Editing/_....arrays manupulating
-  let _onplayRowItemsideBox = ref(false); //clients,...
-  let _onplayRowItemsideBoxOps = ref(false); //editing,deleting,creating
-  let _onplayRowItemsideBoxIndex = ref(null); //array_index_0/1/2/3
-
-  //inject filtering mechanism into store
-
-rows = computed(() => {
-  //let data = saleitService.getDatas;
-  //let data = saleitService.Datas;
-  //console.log(saleitService.Datas,'watching')
-  //rows.value=data
-  notifyit.info(('')+"New "+_thisModel + " Item Loaded..!");
-  return saleitService.getDatas;
-
-  let dataCount = data.length;
-  if (data.length === 0) {
-    setDLoading(true);
-    return [{}];
-  } else{
-    notifyit.info((rowsCount.value - dataCount)+"New "+_thisModel + " Item Loaded..!");
-    setCounter(dataCount);
-    return saleitService.getDatas;
-  }
-});
-
-function setCounter(num) {
-  rowsCount.value = num;
+//----------models
+let _thisModels = []
+// let _this_clientModels = []
+let _this_chatModels = []
+//------column invisiblity on table_
+//columns_filter()-------- which to displayOn REgisterations form
+let lockedColumns = ref([ "userID","userName"]); //are blacklist of columns tobe not shown during the Registerations..form submitting
+//let tableZooming =ref(1)
+//------column invisiblity on table_
+// visibleColumns = ref([]); //Hold List of In
+invisibleColumns.value = [
+  //"financeStatus",
+]; //defualt hidden columns
+if ($q.screen.lt.md) {
+  //invisibleColumns.push("storeStatus");
 }
-
-  //===============================================-----------------------
-  //-------------Syncing Columns
+if ($q.screen.lt.lg) {
+  //invisibleColumns.push("storeStatus");
+}
+//==================-----------Generating====The Schematic Models
+//using above schema_models,schema build default values by the logedUser Roles (permission level)
+let gen_modal_iss = computed(() => { return modal_iss() } )
+//-------------Syncing Columns
 columns = computed(() => { 
-  
-    if (Object.values(Objprops).length === 0) {
-      return [{}];
-    } else {
-      let tempColumns = []; //HOLDING_  all the Columns of the Data_model ( TOTAL Columns)
-      let tempviewColumns = [];  ////--HOLDING_ all the "Visible" Columns of the Data_model ( TOTAL Columns)
-  
-      for (let schemaColumn in saleitSchema) {
-        let _col = { 
-          name: schemaColumn,
-          schema: saleitSchema[schemaColumn],
-        };
-        tempColumns.push(_col);
-        if (schemaColumn === "extraColumn" || lockedColumns.value.includes(schemaColumn)) {
+    //if (Object.values(Objprops).length === 0) { //is User_Fully_Authenticated &&  or Return Null_Columns
+    //  return [{}];
+    //} else {
+
+      let _tableColumn = []; //HOLDING_  all the ---"Columns"--- of the Data_model ( TOTAL Columns)
+      let _visibleColsName = [];  ////--HOLDING_ all the ---"Visible" Columns"---- of the Data_model ( TOTAL Columns)
+
+      //-------<<<<>>>>-------Preparing this_model role_schemas
+      let rolesWall = gen_modal_iss.value?.['role'] ?? false
+      let modelRole = gen_modal_iss.value._isRoleof ?? []
+
+      for (let schemaColumn in _thisSchema) {
+        //----------------loging all columns_ as table columns_format
+        let _col = { name: schemaColumn,schema: _thisSchema[schemaColumn], }; //the q-table format of Column Definitions... && Hold Every Columns
+        _tableColumn.push(_col); 
+        //----------------loging all columns name as normal list format
+        _allColumnName(schemaColumn); 
+        //---------------loging Visible Columns list(on table)
+        invisibleColumns.value.includes(schemaColumn) ? "" : _visibleColsName.push(schemaColumn);
+        //----
+        //----------------loging Role Based  && whitelisted Columns-Start
+        if (schemaColumn === "extraColumn" || lockedColumns.value.includes(schemaColumn)) { //if columns is locked(for not display or analysis).. passit.
           continue;
         } else {
-  
-          try{
-            if(_thispriviledgedFor.value[2]){
-            if(_thispriviledgedFor.value[3].includes(schemaColumn)){
-              continue
-            }else{
-              //authorizedColumn(_col); //
-            }
-          }else{
-            if(_thispriviledgedFor.value[3].includes(schemaColumn)){
-              //authorizedColumn(_col); //
-            }
-          }
-          }catch{}  
-          authorizedColumn(_col); //
+          try{ 
+                if(modelRole.includes('***')){  ///if user_ hass full access
+                  _rolesColumn(_col);
+                }
+                else if(modelRole.includes('**')){ //use has semi_full access
+                  _rolesColumn(_col);
+                  }
+                else if(modelRole.includes('*')){ //user has specified accesss with 1strickes ===['clientFlag','*'] 
+                    if(rolesWall['enum'].includes(schemaColumn)){ //excludes specifed columns
+                      // continue
+                      _rolesColumn(_col)
+                    }else{ _rolesColumn(_col);} //gives all other thatn specifiec columns
+                  }
+                else {
+                    if(modelRole.includes(schemaColumn)){ // ===['clientFlag',"StatusFlag"] 
+                      _rolesColumn(_col); 
+                    }
+                  }
+          }catch{}                 
         }
+        //------------------------roleBase Columns-End
       }
-  
-      _buildDataModel();
-      visibleColumn(tempviewColumns);
-      return tempColumns;
-    }
+      // _model_Defaulting();
+      _setDefaults()
+      visibleColumn(_visibleColsName);
+       //
+      _initialModal_defaults()
+      return _tableColumn;
+    //}
   });
 
-  const topLayerColumn = async (schemaColumn) => topLayerColumns.value.push(schemaColumn); //Holding topLayer Name of Columns
-  const authorizedColumn = async (_col) =>  authorizedColumns.value.push(_col);  //( Object List of author_columns Details)
-  const visibleColumn = async (visibleCols) =>  visibleColumns.value = visibleCols; //.slice[0,topLayerColumns.value.length]
-
-  async function _buildDataModel() {
-    if (!authorizedColumns.value.length) {
-      defaultItem.value={}
-      logUser(); //
-      return false;
-    }    
-     return await schemaSklt(authorizedColumns.value).then((_modelSkelton)=>{
-      console.log('model Return',_modelSkelton)
-      defaultItem.value=_modelSkelton
-      logUser(); //
-      return true
-    }).catch((error)=>{
-      defaultItem.value={}
-      logUser(); //
-    })
+  async function _setDefaults(){
+    // _this_clientModels = ['phone',"userName","geolocation",'location','phoneCode'] //
+    _thisModels = ['phone',"userName","geolocation",'location','userID','phoneCode'] //
+    _thisDefault.value = await _model_Defaulting(_thisModels)
+    _thisDefault.value['quantity']=1
+    _thisDefault.value['userID']=Objprops._profile.id
+    //------==== building columns of thisMoel
+    return true
   }
 
-let _defaultArray =ref({})
-let _onplayDefaultColumn = ['phone',"userName","geolocation",'location','phoneCode']
-async function logUser() { //should excute once on boot or on changing location(geolocation)
-    for (let kkey of _onplayDefaultColumn) {
-      try {
-        defaultItem.value[kkey] = Objprops._profile[kkey];
-      } catch {}
-    }
-
-    //defaultItem.value['comments']=[]
-    defaultItem.value['userID']= Objprops.userID
-    //defaultItem.value['clients']=[]
-    let _thisDate=new Date().toLocaleString()
-    
+async function _initialModal_defaults(){
+    //-------<<<<>>>>-------Preparing this_model role_schemas
+    let _defaulting_client = await modal_Columns_(_this_clientSchema)
+    await _clientDefaults(_defaulting_client[1])
+    let _defaulting_chat = await modal_Columns_(_this_chatSchema)
+    await _chatDefaults(_defaulting_chat[1])
+    return false
+}
+async function _clientDefaults(_this_clientModels){
+_thisDefault_client.value = await _modal_Defaulting_(_this_clientModels)
+_thisDefault_client.value['orderID']=await _genOrderID()
+_thisDefault_client.value['userID']=Objprops._profile.id
+_thisDefault_client.value['quantity']=1
+_thisDefault_client.value['served']='Requesting'
+_thisDefault_client.value['price']=0
+//-------------------------(Defined Schema-1)
+return true
+}
+async function _chatDefaults(_this_chatModels){
+_thisDefault_chat.value = await _modal_Defaulting_(_this_chatModels)
+_thisDefault_chat.value['userID']=Objprops._profile.id
+//-------------------------(Defined Schema-1)
+return true
+}
+//==========================================DEfaulting && Scheam Generations====End
+ ///======
+const _genOrderID = async()=>{
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     var result = ''
     for (let i = 0; i < 7; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    //defaultItem.value['clients'][0]={}
-    defaultItem.value['clients'][0]['orderID']=result
+    return result 
+  }
 
-    defaultItem.value['clients'][0]['userID'] = Objprops.userID ;//Object.assign(defaultItem.value['clients'][0],_client)
-    defaultItem.value['clients'][0]['userName'] = Objprops.userName ;
-    defaultItem.value['clients'][0]['phone'] = Objprops.phone ;
-    defaultItem.value['clients'][0]['phoneCode'] = Objprops.phoneCode ;
-    defaultItem.value['clients'][0]['confirmID'] = null ;
-    defaultItem.value['clients'][0]['time'] = _thisDate ;
+//---------form Validation_Rules
+ async function _valRules(val){
+    let _colRules ={'usage':[null,''],'catagory':[null,'']}
+    let _onplayCol =''//_colRules[column] ?? false
+    let _val=false
+    for(let [col,inx] in val){
+      _val =_colRules[inx].includes(col)
+       if(_val){
+        return 'Please Complete Form'
+       }
+    }
+    return _val
+  }
 
-    defaultItem.value['clients'][0]['geolocation'] = Objprops.geolocation ;
-    defaultItem.value['clients'][0]['location'] = Objprops.location ;
-    //-----------
-    //setted Comment (basic) information_ new Date().toLocaleString();
-    defaultItem.value['comments'][0]['userID']=Objprops.userID;
-    defaultItem.value['comments'][0]['time']=_thisDate;
-    defaultItem.value['comments'][0]['userName']=Objprops.userName;
-    //------------then re_assign to default too
-    onplayRowItem.value = Object.assign({},defaultItem.value)
-    console.log('logUser Out',onplayRowItem.value['clients'])
+  // const _null = ['',null,undefined,0]
+
+
+// let _isnull = computed ((_value)=> _null.includes(_value))
+let _isempty = computed ( (_value) => !!_value || 'Field is required')
+
+let _isequ = async (_value,_value2)=> _value == _value2
+let _isgte = async (_value,bottom)=>((_value >= bottom) || 'Please set value to maximum 60')
+let _islte = async (_value,top)=>(_value <= top) || 'Please set value to maximum 60'
+let _isbtn = async (_value,bottom,top)=>(_value >= bottom && val <= top) || 'Please set value to maximum 60'
+
+  //===============================================-----------------------------------
+  //-----------------------DATAs ROWs--------------
+  let _pageSettings=ref({})
+  _pageSettings.value['tableView'] = 'main'
+  _pageSettings.value['currency'] = 'Birr'
+  // Objprops._pageSettings['e']='r'
+  watch(Objprops._pageSetting,(_nowValue, ov) => {
+    _pageSettings.value =Object.assign(_pageSettings.value,_nowValue)
+    return true
+  })
+  let _contentingliveStatus=ref(20000)
+//-----------------------Secondary DATAs ROWs--------------
+  //--------------------------
+  let _this_chatRows = ref([]); //Data's projected with the Columns variable [ calling function.....Crud_this.readDatas(top_100)]
+  let _thisDefault_chat=ref({})
+  let _this_chatforeign = ref({}); //the selected row_actual_Data..as object
+
+  let _this_clientRows = ref([]); //Data's projected with the Columns variable [ calling function.....Crud_this.readDatas(top_100)]
+  let _thisDefault_client=ref({})
+  let _this_clientforeign = ref({}); //the selected row_actual_Data..as object
+  //===============================================-----------------------------------------
+
+  //-------
+  let _is_thisOwner=ref(false)
+  let _is_clientOwner=ref(false)
+  let _is_chatOwner=ref(false)
+  //--------------------CONTENTING (CREATING  && EDITING....) ====STARTS
+  let _is_this_open =ref()
+  let _is_this_netPrice =ref()
+//--------------------------------ROWS_SCHEMATIC FORMS 
+let _n =0
+const pageSize = 50
+//const lastPage = Math.ceil(allRows.length / pageSize)
+let pagination= ref({ rowsPerPage: 200 })
+//-------------SyncDEBUGGER========1
+_this_Rows = computed(() => { //Updating is comming
+  return _this_RowsCompute(saleitService.getDatas)
+});
+function _this_RowsCompute(_Datas) {
+  pagination.value.rowsPerPage=10
+  return _Datas
+}
+//-------------SyncDEBUGGER========2
+let watch_Rows=ref(null) 
+watch_Rows=computed(()=>{ //computer got problem with return value is not in applications
+return saleitService.getstatus_Rows}) 
+watch(watch_Rows,(_nowRows, ov) => {
+  // console.log('update founded 2',_nowRows)
+  let information = _nowRows
+  if(_nowRows == null){ information ='No Data'}
+  else if(_nowRows == false){ information ='No Data'}
+  else if(_nowRows == true){ information ='Loading New Data..'}
+  else if (_nowRows == 'Error Connection'){
+    status_timerError(9000,information+' ?','Product & Services')
     return true
   }
-  
-async function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  let _genNumber='st'//.append()
-  for(let ii in [0,1,2,3,4,5,6,7,8]){
-    _genNumber=_genNumber + String(Math.floor(Math.random() * (max - min + 1)) + min)
-  }
-  return _genNumber;
+  status_timerInformthis(9000,information,'Product & Services')
+   return true
+  }); 
+//----------------------------------
+
+let syncInt=''
+let synccliInt=''
+//------------------Quering and SE_settings
+//--------------clientQuery
+//Init_set default query and setInterval of 1000(1sec)  
+const saleCatagory = {"Households":'10',"Clothing":"25",
+"Food":"35",
+"Electronics":'50',"Vehicles":'75',"Land/House":'100',"Others":'1'}
+const saleUsage = {"New":'100',"Used":'75',"Others":'1'}
+
+var _this_Query_Meta={} //_trend:'', catagory:'',usage:'New',content:''
+
+_this_Query.value={} //_trend:'', catagory:'',usage:'New',content:''
+async function _thisRowSync(){ //Queries for LiveSyncing of Rows_One
+
+  //await _resetOnPlayRowItem()
+  __thisIndex.value=null
+  __thisOps.value=null
+  //------------switching view
+  //-----------------------Building Query
+  saleitService.set_syncLock(false)
+  saleitService.asyncDatas()
+
+  clearInterval(syncInt)
+  //-------------Building Query
+  //_this_Query.value=  _buildQuery(_queKey,_value)
+  setTimeout(function(){
+    clearInterval(syncInt)
+    syncInt = setInterval(saleitService.asyncDatas, _contentingliveStatus.value)
+  }, 5000);
+  return true
 }
 
-async function generateRandomString(length) {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  console.log(result,'result')
-  return result;
+//--------------------2ndary
+//-------instead of syncing secondary_data (use function)
+let _clientQuery = ref({})
+async function _this_clientSync(){
+  return await clientService.readFData(_clientQuery.value).then((res)=>{
+              if(res.status){
+                _this_clientRows.value=res.data //Object.assign(_this_clientRows.value,res)
+              }__this_foreignBoxOpsStatus.value=false
+              return true
+            })
+}
+//--------------------3ndary
+let _chatQuery = ref({})
+async function _this_chatSync(){
+  return await chatService.readFData(_chatQuery.value).then((res)=>{
+              if(res.status){
+                _this_chatRows.value=res.data//Object.assign(_this_chatRows.value,res)
+              }__this_foreignBoxOpsStatus.value=false
+              return true
+            })
 }
 
+//===============================QUERY_BUILDIMG+++START
+//==============Q1
+ async function this_Query (_queKey=null,_value=null){
+  //-----------Reseting Rows SEtting
+  _this_Rows.value=[] 
+  _this_Query_Meta={}
+  __this_foreignBoxsubOps.value = false
+  //--------------------Building Queries
+  let _thisQuery_Old =(_this_Query.value['qweight'] ?? [1,1,1,1]) //show searchedQuery
+  _this_Query.value={}
+if(_queKey){ //user_defined searchings
+      // _contenting.value='main'
+      _pageSettings.value['tableView']='main'
+      if(['catagory','usage','trend'].includes(_queKey)){
+        _this_Query.value['qweight']=[1,(saleCatagory[_value] ?? (_thisQuery_Old[1] ?? '1')),
+        (saleUsage[_value] ?? (_thisQuery_Old[2] ?? '1')),3]
 
-//-------------filtering and Searching Methodss
-//-----searaching on/off
+          _this_Query_Meta['catagory']=saleCatagory[_value] ?? (_this_Query.value[1] ?? '1')
+          _this_Query_Meta['usage']= saleUsage[_value] ?? (_thisQuery_Old[2] ?? '1')
+
+      }else{
+        // _pageSettings.value['tableView']='card'
+        _this_Query.value[_queKey]=_value ?? null//_queKey == 'id' ? {'id':_value} :"" 
+      }
+  }else{ //searching by id or profileSearch
+    // _this_Query.value={}
+    if(_value){ //if _value(with no key, but item_ID),.. show only userSpecific data
+      _this_Query.value['id']=_value
+      // _contenting.value = 'main'
+      _pageSettings.value['tableView']='main'
+      __this_foreignBoxsubOps.value = 'view' 
+
+    }else{ //show trend OR _userWeights(from history)
+      // _contenting.value='cards'
+      _pageSettings.value['tableView']='cards'
+      let _history= sessionStorage.getItem('qw').split(',') ?? [1,1,1,2]
+          _this_Query.value['qweight']=[1, _history[1] ,_history[2] , 2]
+    }
+  }
+  await saleitService.set_syncQuery(_this_Query.value)
+  //----------------Fetching Queried Rows
+  _thisRowSync()
+  //-------------------- Preparing Default Rows ( New Row Skeltons)
+  // ?
+
+  return true
+}
+
+//==============Q1
+async function _this_clientQuery (){
+    _this_clientRows.value=[] 
+    //-------------------- Reseting Rows
+    await Reset_this_foreign('clients',null)
+  //---------Query Building
+  //Content Owner is on client_link(show all)
+  if(!_is_clientOwner.value){ 
+              _clientQuery.value['userID']=Objprops._profile.id
+            }
+
+  //-------------------- Fetching Queried Rows
+  _this_clientSync()
+  //-------------------- Preparing Default Rows ( New Row Skeltons)
+  return true
+}
+
+//==============Q3
+async function _this_chatQuery (){
+    //-----------------Reseting Rows
+  _this_clientRows.value=[] 
+  //-------------------- Reseting Rows
+  await Reset_this_foreign('comments',null)
+  //-----------Building Queries
+  if(!_is_chatOwner.value){ 
+    _chatQuery.value['userID']=Objprops._profile.id
+    }
+  _chatQuery.value['saleitID']=_this.value['id']
+  //-----------------Fetching Queried Rows
+  _this_chatSync()
+   //----------------Preparing Default Rows (New Row Skelton)
+  return true
+}
+
+//==============================================
+
+///-------------- _this_chatRows --
+clearInterval(syncInt);
+clientService.set_syncLock(true)
+chatService.set_syncLock(true)
+saleitService.set_syncLock(true)
+//_this_clientSync()
+//-----------------------
+this_Query()
+
+onUnmounted(async () => { 
+    // Clear the interval when the component is destroyed to avoid memory leaks
+    clearInterval(syncInt);
+    clientService.set_syncLock(true)
+    saleitService.set_syncLock(true)
+    return true
+ });
+
+ //-----searaching on/off
 let _enableRowFilter=ref(false)
 //------------Setting up all the search attributes
 const filter = computed(() => {
@@ -1552,1127 +1840,669 @@ const filter = computed(() => {
   }});
 
   //-------------the search Engine..
-function filterMethod(rows, terms) {
-
-    if(_enableRowFilter.value){
+function _thisFiltering(rows, terms) {
+    if(_enableRowFilter.value && rows.length){
       return rows
-    }
+    }// rows contain the entire data
 
-    // rows contain the entire data
+    //============Search Service_ONE(serach Box)
     let lowerSearch = terms.search ? terms.search.toLowerCase() : ""; //holding search bar...value
+    //------Serialize search input_Value && iterate each row_against it.
     const filteredRows = rows.filter((row, i) => {
 
-      let _group0 = true;
-      let _group2 = false;
-      //let _group3 = true;
-      
-      //Assume true in case there is no search
-     // let s1 = true; //If search term exists, convert to lower case and see which rows contain it
+        let _group0 = true;
+        //let _group2 = false;
 
-      if (lowerSearch != "") {
-        _group0 = false;
-        let s1_values = Object.values(row);
-        //list of all values in the row ( evenObjec,string,date,.....).. converting this pandora_values could lead to error..
+        //-----------------------Search field specific matching
+        if (lowerSearch != "") {
+          _group0 = false;
+          let s1_values = Object.values(row);//row_all_values
 
-        let s1_lower = s1_values.map((x) => {
-          try {
-            return x.toString().toLowerCase();
-          } catch {
-            return " ";
-          }
-        });
-        for (let val = 0; val < s1_lower.length; val++) {
-          if (s1_lower[val].includes(lowerSearch)) {
-            _group0 = true;
-            break;
+          let s1_lower = s1_values.map((x) => {//iterate row_Values &&serialize each
+            try {return x.toString().toLowerCase();
+              } catch {return " ";  }
+          });
+
+          for (let val = 0; val < s1_lower.length; val++) { //matching row_values agains serch_term
+            if (s1_lower[val].includes(lowerSearch)) {
+              _group0 = true;
+              break;
+            }
           }
         }
-      }
-
-  //let sS9 = quickFilter.quickOOptions.Issued && row.catagories == "RaWMatterial";
-
-
-  //check if any of the conditions match..
-  //console.log(_group0,lowerSearch,'grouppppppppp00000000000')
-  if(_group0){
-    return true
-  }return false
-
-  //return ans;
-});
-//filteredRows.length ? notifyit.simple(filteredRows.length + " - Asset Item Founded") : ""
-return filteredRows;
-}
-
-var _querySE=ref({_trend:'', catagory:'',usage:'New',content:''})
-//saleitService.set_syncQuery(_querySE.value)   
-let syncInt = setInterval(saleitService.asyncDatas, 60000);
-var _intSpeed=ref(300)
-async function _itServiceSE(_queKey='usage',_value=''){
-
-  _querySE.value={}
-  _querySE.value[_queKey]=_value
-  console.log(_querySE.value,_queKey,_value,'querrring..')
-  saleitService.set_syncQuery(_querySE.value)   
-
-   rows.value=[]
-  _resetOnPlayRowItem()
-  clearInterval(syncInt)
-  syncInt = setInterval(saleitService.asyncDatas, 60000)
-  return true
-}
-_itServiceSE()
-//beforeDestroy() {
-    // Clear the interval when the component is destroyed to avoid memory leaks
- //   clearInterval(this.intervalId);
- // },
-
-//------------------------------------------SYNCING DATA With Store
-
-  //---------------------Syncing.....DATA---controlle syncing (on || off)
-  //-------forms
-  let _formsMeta=ref({
-    'updatorPop':true,
-    //-----------------forms collapsing/show commands
-    'pricing':true,
-    'description':true,
-    'location':true
-    //------------------
-  })
-
-//---------------
-let _cameraBox =ref(false)
-
-let _fileAttributeName =ref(null) //does give _image_attribute has single/multiple values of images ( sends it as 'file':name_attr, or 'files':name_attr)
-
-let _fileSourceFoCam =ref()//is folder or camera file source
-
-let _fileAsRaw =ref([]) //_file in Upload_Mode
-let _fileAsSRC =ref([])//_file in Show_Mode (Non_String / As_SRC)
-let _fileAsSRCIndex =ref(0)///_fileAsSRC_Array_index
-let _fileAsSRCOps = ref(false)
-
-let _fileAsString =ref(0)//_file in Show_Mode (As_String)  
-let _fileAsStringIndex =ref(0)//_fileAsString_Array_index
-
-//let _cov=document.getElementById('_fileAsSRC') 
-function _fileSourceFolder(e,_attributeName) {
-      // Check if file is selected
-      let _isthereFile = e.target.files == null || e.target.files.length == 0 ? false : e.target.files;
-      ///--------------
-      //_file.value[_attributeName]=[]
-      if (_isthereFile) {
-        _resetFileSource()
-      //---------reset _file_setting(params)   
-       _fileAttributeName.value=_attributeName
-       //--------
-       _fileSourceFoCam.value='folder'
-      //console.log(_file.value[_attributeName],'foldering0000')      
-      for(let i = 0; i < _isthereFile.length; i++){
-        _fileAsRaw.value.push(_isthereFile[i])
-        _fileAsSRC.value.push(URL.createObjectURL(_isthereFile[i])) 
-      }
-      }
-    }
-
-
-    ///-----------------------File Operations and setting  UP(Folder) vs Down(Camera)
-async function _fileAsSRCOpsCall(SRCIndex){
-  //_onplayRowIndex.value=index
-  if(_fileAsSRCOps.value){
-    _SRCDelOps(SRCIndex)
-  }else{
-  _fileAsSRCIndex.value=SRCIndex
-  }
-  return true
-}
-async function _SRCDelOps(SRCIndex){
-  _fileAsSRC.value.splice(SRCIndex,1)
-  _fileAsRaw.value.splice(SRCIndex,1)
-  return true
-}
-
-async function _fileAsStringOpsCall(StrIndex,index = null){
-  _onplayRowIndex.value=index
-  _fileAsStringIndex.value=StrIndex
-  return true
-}
-
-//-----------------
-async function _resetFileSource(){
-  _fileAttributeName.value=null
-  _fileSourceFoCam.value=null  
-  _cameraBox.value=false
-
-  _fileAsSRC.value = []
-  _fileAsRaw.value=[]
-
-return true
-}
-async function _saveFileSource(){
-  //_fileAttributeName.value=null
-  //_fileSourceFoCam.value=null  
-  _cameraBox.value=false
-
-  //_fileAsSRC.value = []
-  //_fileAsRaw.value=[]
-
-return true
-}
-    ///-----------------------File Operations and setting  UP(Folder) vs Down(Camera)
-
-//-------------------------------------------
-let _listNavDevices =ref({})
-
-let _listCameraSource =ref([])
-let _listMicSource =ref([])
-
-let _selectedCameraById =ref('')
-let _selectedCameraByface =ref(true)
-
-let _selectedMicById =ref('')
-
-let _liveFeedRaw =ref('')
-let _liveFeedRawStreaming =ref({})
-
-let __liveFeedRawStreamingHeight =ref('')
-let __liveFeedRawStreamingWidth =ref('')
-const _liveFeedRawAudAttribute = ref(false)
-const _liveFeedRawVidAttribute = ref({ facingMode: 'user', aspectRatio: { min: 1, max: 1.7777777778 },
-                                        width: { min: 1280, },
-                                        height: { min: 720,  }
-                                      });
-
-let _liveFeedSRC =ref({})
-let _liveFeedSRCStreaming =ref('')
-
-_liveFeedSRC.value['width']= 100;//window.innerWidth;
-_liveFeedSRC.value['height']=100;//window.innerHeight;
-
-//---------------------------------------------
-class _cameraDevice{
-  //this._navigateDevice();
-
-    constructor() { //_init_onPlayNavigator class
-        console.error("ffffffffGeolocation is  supported by this browser.");
-        try{      // Check if geolocation is supported by the browser
-
-        }catch{    }   
-      }
-    async _navigateDevice  ()  {  //navigate_phone_function
-        console.error("Navigating mediaDevice.");
-              if (Objprops._onPlayNavMedia ?? false) {
-                    _listNavDevices.value['getUserMedia'] = Objprops._onPlayNavMedia.getUserMedia ?? {}      
-                    for(let mediaDevice of ['getUserMedia','webkitGetUserMedia','mozGetUserMedia','msGetUserMedia']){
-                        var _doesCamera = navigator[mediaDevice] ?? false
-                        if(_doesCamera){
-                        _listNavDevices.value[mediaDevice] = _doesCamera
-                        }
-                    } //this._onPlayMediaDevice= _onPlayNavMedia.value.mediaDevices['getUserMedia']
-                    console.error("Navigating mediaDevice.00000000",_listNavDevices.value);
-                
-                  } else { // Geolocation is not supported by the browser
-                            console.error("MediaDevice is not supported by this browser.");
-                            }    
-            return true   
-          }
-
-        async _enumNavigateDevice  (){
-            try {
-            return await Objprops._onPlayNavMedia.enumerateDevices().then((_camDevices)=>{
-                  _listCameraSource.value = []
-                  for(let index in _camDevices){
-                    let _camDevice = _camDevices[index]
-                    //console.log('graphic device',_camDevice)
-                    if (_camDevice.kind === 'videoinput') {
-                        _selectedCameraById.value = _camDevice['deviceId'] //default camera_id
-                        _listCameraSource.value.push(_camDevice) //listing all available_camera media_device
-                    } 
-                    else{//for audio input
-                      _selectedMicById.value=_camDevice['deviceId']  //default mic_id
-                      _listMicSource.value.push(_camDevice) //listing all available_mic media_device
-                    }
-                  }
-                return true
-                })
-              } catch (error) {
-              console.log('Error No Camera Detected...Know this');
-            }  
-          return true
-    }
-
-    async _openCamera (_attributeName=''){
-
-          if (_listNavDevices.value['getUserMedia'] ?? false) {  //in priority use ( this device_ for media_sources)
-              await this._enumNavigateDevice()
-              _resetFileSource()
-              //------------
-              _cameraBox.value=true
-              //-------
-              _fileAttributeName.value=_attributeName
-              //------------------
-              _fileSourceFoCam.value='camera'   
-              //--------
-              if(_selectedCameraById.value == ''){//if 'user'
-                _liveFeedRawVidAttribute.value['facingMode']=_selectedCameraByface.value ? 'user':'environment'
-              }
-              else{
-                _liveFeedRawVidAttribute.value['deviceId'] = { exact: _selectedCameraById.value };
-                _liveFeedRawVidAttribute.value['facingMode'] = _selectedCameraByface.value ? 'user':'environment'
-              }
-            //booting the feed ( for streaming...)
-            _liveFeedRaw.value = await Objprops._onPlayNavMedia.getUserMedia({video:_liveFeedRawVidAttribute.value,audio:_liveFeedRawAudAttribute.value})                                                             
-            //initialize the video streaming                                                                                                  
-            _liveFeedRawStreaming.value['srcObject']= _liveFeedRaw.value
-            //_liveFeedRawStreaming.value.play()
-            _liveFeedRawStreaming.value.onloadedmetadata = () => {  _liveFeedRawStreaming.value.play(); };
-          }
-        return true;
-    }
-    async _stopCamera (){
-          //----shutdown camera RawFeed_& displaying
-          _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
-              _streamTrack.stop();
-              _streamTrack=false
-
-            })
-          _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
-                _streamTrack.stop();
-                _streamTrack=false
-          })
-          _liveFeedRawStreaming.value.src=null
-          //------
-          _resetFileSource()
-      return true
-    }
-    async _operateDevice  (cmd) {
-
-            if(cmd == 'pause'){ _liveFeedRawStreaming.value.pause()    }
-            else if(cmd =='play'){_liveFeedRawStreaming.value.play()   }
-            return true
-          }
-    async _saveScreenShoots (){
-      //----shutdown camera RawFeed_& displaying
-      _liveFeedRaw.value.getTracks().forEach(_streamTrack => {  
-              _streamTrack.stop();
-              _streamTrack=false
-
-            })
-      _liveFeedRaw.value.getVideoTracks().forEach(_streamTrack => {  
-            _streamTrack.stop();
-            _streamTrack=false
-      })
-      _liveFeedRawStreaming.value.src=null
-      //--------
-      _saveFileSource()
-      return true
-    }
-    async _screenShoot (_remove=false){
-
-        if(_remove && _fileAsSRC.value.length){
-            _fileAsRaw.value.pop();
-            _fileAsSRC.value.pop(); //viewable content
+        //--------------- filtering tech
+        if(_group0){
           return true
         }
-              //_save screenshoots _for_canvas_display(if needed ? )
-              _liveFeedSRCStreaming.value= _liveFeedSRC.value.getContext('2d');
-              _liveFeedSRCStreaming.value.drawImage(_liveFeedRawStreaming.value, 0,0, _liveFeedSRC.value.width, _liveFeedSRC.value.height);
-              try{
-              //_save screenshoots _for_SRC_display ( being used method__now!) as [PNG]____as primary choice
-                _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/png')); //_save as jpeg
-                //_save screeshots _As_Raw_for_uploading
-              _liveFeedSRC.value.toBlob((blob) => {
-                  _fileAsRaw.value.push( new File([blob], "fileName.png"+String(new Date()), { type: "image/png" },0.9))        
-                  }, 'image/png')
-              }catch{
-              //_save screenshoots _for_SRC_display ( being used method__now!) as [JPEG]__if Not
-                _fileAsSRC.value.push( _liveFeedSRC.value.toDataURL('image/jpeg')); //or _save as jpeg
-                //_save screeshots _As_Raw_for_uploading
-              _liveFeedSRC.value.toBlob((blob) => {
-                _fileAsRaw.value.push( new File([blob], "fileName.jpeg"+String(new Date()), { type: "image/jpeg" },0.9))        
-                  }, 'image/jpeg')
-              }
-          return true
-    }
-    //--------------setting camera_view & Mic
-    async _setCameraParam (cameraID='',_facetoggler=false){  //switching camera
-      _selectedCameraByface.value=_facetoggler     
-      _selectedCameraById.value =cameraID      
-      return await this._openCamera()    
-    }
-
-    async _setMicParam (audioID=''){
-      _selectedMicById.value = _listMicSource.value['deviceId'][audioID]
-      return await this._openCamera()
-    }
-
-
+        //--------------------
+        return false
+    });
+  return filteredRows;
 }
-var _cameraInstance = new _cameraDevice()
-_cameraInstance._navigateDevice()
-//--------------------------------ROWS_SCHEMATIC FORMS
-
-//-------------- POPUP_Box Controller functions
-let _popRegisterDialogBox = computed(() => { return Objprops.lytCreatRow}) //Layout_listening for pop_creator
-watch(_popRegisterDialogBox, async (cv, ov) => {
-    onplayRowItem.value = Object.assign({}, defaultItem.value); //deep copy item_objects with deep reactivity ( reactivity could lost... after multiple copying b/n or due depth increasing)
-    _onplayRowIndex.value = 0;//rows.value.indexOf(item); 
-   return await _onplayRowItemBoxset('CreateRowItem');
-  });  //POP_Controller From Parent Layout_For New Registration of RowItem
-
-//POP_Controller From With (Side_Bar)_For UpdateRowItem_RowItem
-async function _onplayRowItemBoxcall(_onplayrowIndex){
-    onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])
-    _onplayRowIndex.value = _onplayrowIndex;
-    return await _onplayRowItemBoxset('UpdateRowItem');
-  }
 //-----POP_UP Box Controller Room
-  async function _onplayRowItemBoxset(_rowOps='') {
-     //await _resetOnPlayRowItem()
-    _onplayRowItemOps.value=_rowOps
-    _onplayRowItemBox.value = !_onplayRowItemBox.value;
-    return true;
-  }
-
-//------SIDE_Wise Operations and Applications
-let saleitContentOps = ref();
-saleitContentOps.value={
- 'Buy':["Buying Options","market","buy",0],
- 'Comment':["Comments","collections_bookmark","comment",0],
- 'like':["likes","assistant","like",0],
- 'edit':["edit Content","group","edit",0],
- 'delete':["delete Content","delete","delete",0],
- //------more (option)
- 'more':["Locate Your Need","more","more",0],
-}
-
-//-------Listening for SideBox Operations & Visualizing
-async function _onplayRowItemsideBoxcall(_onplayrowIndex='',Ops=''){
-
-    if(_onplayRowIndex.value == _onplayrowIndex && Ops == _onplayRowItemsideBoxOps.value){
-      _onplayRowIndex.value = null;//rows.value.indexOf(item); 
-    }else{
-      await _resetOnPlayRowItem()
-      //----------SET_ROW
-      onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
-      _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item); 
-      //----------SET Columns
-   //_setpopSideBox.value  = false; //true,..
-      _onplayRowItemsideBox.value= true //default(main operations of pop_side box)
-      _onplayRowItemsideBoxOps.value=Ops
-    }
-    return true;
-  }
-
-async function _resetOnPlayRowItem(){
-
-      console.log('reseting onplayRow')
-        //--------reset _onplayRowItem ( Big_Fish)
-      _onplayRowItemOps.value  = null; //_is UpdateRowItem/Creating_New
-      _onplayRowIndex.value = null; //_row_item_index..0/1/2
-      
-      _onplayRowItemBox.value  = false; //true...
-      
-      //--------reset _onplayRowItem-SideBox ( Little_Fish)
-      _onplayRowItemsideBox.value  = false; //clients,...
-      _onplayRowItemsideBoxOps.value = null; //editing,deleting,creating
-      _onplayRowItemsideBoxIndex.value = null; //array_index_0/1/2/3
-    return true
-}
-
-//------operations OVer POP_Up_Box
-  let _passiveColumnOperation ={
-    //---Enabling Array_Index_For Operations (Select_Index)_For ---Editing:Deleting--Applying--
-  _selectArray:async(arrayIndex=null)=>{ // activate give array for operations of below options
-    _onplayRowItemsideBoxIndex.value = (_onplayRowItemsideBoxIndex.value == arrayIndex) ? null : arrayIndex
-    return true;
-  },
-  //-----------Operations on selected array
-  _remove:async (arrayIndex=null) =>{
-      _onplayRowItemsideBoxIndex.value= null; //which is null;;;
-       onplayRowItem.value[_onplayRowItemsideBoxOps.value].splice(arrayIndex, 1);
-    return await _updateRow().then((response)=>{
-      return true
-    })
-  },
-  
-  //--------------------------
-  _add:async ()=>{ //default_value for sideBox
-      _onplayRowItemsideBoxIndex.value= null; //it would Create Default_Form(like )
-      return true;
-  },
-
-  _submitArray:async ()=>{
-    onplayRowItem.value[_onplayRowItemsideBoxOps.value].unshift(defaultItem.value[_onplayRowItemsideBoxOps.value][0]);
-    return await _updateRow().then((response)=>{
-      return true
-    })
-  },
-
-}
-
+//_this_foreignOperation
 //---------------------Byuers and related Data Schema
 let _orderStep =ref(0)
-
 ///--------Order_Intiations Stage
-let _orderDebuger=ref('Orders List..')//
+let _orderDebuger=ref('Orders List..')
 let _orderIntiatedID=ref('')
-let _orderIntiatedPhone=ref('')
-
-//-----
-let _orderConfirmationRespID=ref('')//
 
 //---------Order_Confirmations Stage
-let _orderConfirmDebuger=ref(false)//
-let _orderConfirmationID=ref('')//
-let _orderConfirmationQuantity=ref('')//
+let _orderConfirmDebuger=ref(false)
+let _orderPayment=ref(false)
+let _orderBox=ref([])
 
-//--
-let  _activeColumnOperation = { 
-  _initiateOrder:async (arrayIndex=0) =>{ //Set_New OrderID ___For__DefaultRowItem
-  
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const charactersLength = characters.length;
-      var result = ''
-      for (let i = 0; i < 7; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      defaultItem.value['clients'][0]['orderID']=result
-
-    _orderDebuger.value= 'Personal Orders'
-    _orderStep.value=0
-    ///-----------------------------
-    //set New_orderID for defaultItem
-    _onplayRowItemsideBoxIndex.value= null; //it would Create Default_Form(like )
-    console.log(defaultItem.value['clients'],'reintiate order')
-      return true
-    
-  },
-  
-  _confirmOrder:async () =>{
-       _orderDebuger.value='Processing'
-       _orderStep.value = 0
-      //---------set custom value ( & wait as step_one)
-      onplayRowItem.value[_onplayRowItemsideBoxOps.value].unshift(defaultItem.value[_onplayRowItemsideBoxOps.value][0]); //Inject the Data into_ OnplayRowItem & to be sented.
-      console.log(defaultItem.value[_onplayRowItemsideBoxOps.value],'adding buyer')
-   
-      return await _updateRow().then(async (_confirmResult)=>{
-          if(_confirmResult){
-            _orderDebuger.value= 'Order Succeded.' //Confirmations message to wait for sms & re-enter
-            _orderStep.value = 1
-            //-------------grab Order_confirm Information (& enter into step_two)
-            _orderIntiatedID.value= defaultItem.value[_onplayRowItemsideBoxOps.value][0]['orderID']; //Hold _Sent_OrderID & Whic is Confirmed
-            _orderIntiatedPhone.value= defaultItem.value[_onplayRowItemsideBoxOps.value][0]['phone'] //Confirmations message to wait for sms & re-enter
-            //------Ready for New Order
-            return true          
-
-          }else{}
-            onplayRowItem.value[_onplayRowItemsideBoxOps.value].shift()
-            _orderDebuger.value='Request Failed, Try New Order'
-            //------Try with New Order
-            return true         
-      }).catch(async ()=>{ 
-            onplayRowItem.value[_onplayRowItemsideBoxOps.value].shift()
-            _orderDebuger.value='Try New'
-            _orderStep.value = 1
-            //------Try with New Order
-            //defaultItem.value[_onplayRowItemsideBoxOps.value][0]['orderID']= _newID
-            return true          
-        })
-  }}
-//---------------Operating on Row
+//---------------ACTIVE Operating on Row
  //Operating without setting onplayrowItem ( directlly calling for effect) === active _operations
- let  _activeRowOperation = {
-
+ let  _this_ActiveOperation = {
       _rating : async (_onplayrowIndex) =>{
-        onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
-        _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item);
-        _onplayRowItemOps.value='UpdateRowItem'
-        return await _updateRow()
+         //build dynamic object
+        _this.value = {'id':_this_Rows.value[_onplayrowIndex]['id'],
+        '_itServiceRating':_this_Rows.value[_onplayrowIndex]['_itServiceRating']} //DeepCopy Handle Reactivity
+
+        //create object operational command
+        _this.value['onplayOps']='_itServiceRating'
+        _this.value['onplaySubops'] = 'increase'   
+        //---set--loading row operation
+
+        return await Crud_this.updateData()
+        .then(async (response) => {
+          if (response) {
+            timerDone(5000,_createTitle[1],'Succefully Updated')
+            _this_Rows.value[__thisIndex.value]['_itServiceRating']++  
+          }else{
+            timerError(5000,_createTitle[1],'Succefully Updated')
+          }
+          return true
+        }).catch((error) => { return false; });
       },
 
       _likes : async (_onplayrowIndex) =>{
-        onplayRowItem.value = Object.assign({},rows.value[_onplayrowIndex])//reactive(rows.value.id[_onplayrowIndex])//Object.assign({}, item));
-        _onplayRowIndex.value = _onplayrowIndex;//rows.value.indexOf(item); 
-        _onplayRowItemOps.value='UpdateRowItem'
-        //---------set Value
-        if(onplayRowItem.value['likes'] == null){
-          onplayRowItem.value['likes']={'like':1}
-        }
-        onplayRowItem.value['likes']['like'] =onplayRowItem.value['likes']['like']+1
+         //build dynamic object
+        _this.value = {'id':_this_Rows.value[_onplayrowIndex]['id']} //DeepCopy Handle Reactivity
+        //create object operational command
+        _this.value['onplayOps']='likes'
+        _this.value['onplaySubops'] = 'increase'   
+        //---set--loading row operation  
 
-        return await _updateRow()
+        return await Crud_this.updateData()
+        .then(async (response) => {
+          if (response) { 
+            timerDone(5000,_createTitle[1],'Succefully Updated')
+            _this_Rows.value[_onplayrowIndex]['likes']['like']++// =Object.assign({},response); 
+          }else{
+            timerDone(5000,_createTitle[1],'Succefully Updated')
+          }
+          return true
+        }).catch((error) => { return false; });
       },
 
-      _delRow : async (_onplayrowIndex,itemId) =>{
-
-        return await Crud_.deleteData(itemId)
+      _delRow : async (confirm=null,_onplayrowIndex,itemId) =>{
+        //--------------
+        if(confirm ==null){//First (Null) Event -- Data Assigning && set confirmObj
+          //-----------------------------
+          _this.value = {'id':itemId} 
+          //--------------
+          confirmObj.value=_this_ActiveOperation._delRow;
+          // console.log('eeeeeeeeeeeeee',confirmObj.value)
+          return false;            
+        }
+        else{
+          confirmObj.value=null;
+          if(!confirm){return false} //Third (True) Event -- Go ahead
+        }
+        //--------waite for confirmation  
+        return await Crud_this.deleteData()
         .then((response) => {
           if (response) {
-            notifyit.warn("", "bottom-left", null, 10000);
-            rows.value.splice(_onplayrowIndex, 1);
-          } else {   }
+            this_Query('userID',Objprops._profile.id)
+          } 
           return true;
-        })
-        .catch((error) => { return false; });
-      } 
-}
-//--------------------------------------METHODS & PROCESS
-async function _createRow(_isthereFileCapsulated = false) {  //UpdateRowItem User DAta with no graphic to update
-      //---set--loading row operation
-      _onplayRowItemOpsStatus.value=true
-      //--------even defaultRowItem has clients & comments default_array_value ( ignore it while creating new)
-      onplayRowItem.value['clients']=[]
-      onplayRowItem.value['comments']=[]
-      //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-      if(_fileAttributeName.value != null){
-          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
-          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
-          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
-        }
-      _fileAttributeName.value=null
-      //---Creat the Content... which is with/out of file encapsulations
-    return await Crud_.createData()
-        .then(async (response) => {
-        _onplayRowItemOpsStatus.value=false
-          if (response) { 
-            //---right after the content has been created change the mode from creating to UpdateRowItem
-            onplayRowItem.value = response
-            notifyit.succes("", null, null, 7000);
-            _resetOnPlayRowItem()
-            return true
-          } else { }
-          //--unset--loading row operation
-          return false
-        })
-        .catch((error) => {//_popUpgrader.value = false;
-          //--unset--loading row operation
-          _onplayRowItemOpsStatus.value=false
-          return false;
-        });
+        }).catch((error) => { return false; });
+      },
+      //------------special Operations
+        _toCart:async (tocartID=null) =>{
+
+          _this.value={'id':tocartID,'clients':Object.assign({},_thisDefault_client.value ?? {})}//.push(_onplay); //or use below
+          _this.value['clients']['store']= 'cart'
+
+          _this.value['onplayOps']='clients'
+          _this.value['onplaySubops'] = 'create'  
+
+          let _clientResp = await clientService.createData(_this.value,{}) //[0],[1]
+          // console.log('creating client',_clientResp,_this.value,_this_clientforeign.value)
+          if(!_clientResp.status){timerError(500,'Error Creating','');return false}
+          
+          timerDone(5000,'Added','')
+          _orderBox.value.push(_clientResp.data['id'] ?? null)
+          await _this_clientQuery() 
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_clientResp.data
+          return true
+      },
+
+      //------------special Operations
+
 }
 
-async function _updateRow(_isthereFileCapsulated = false) { //UpdateRowItem User DAta with graphic to update or not
-  //---set--loading row operation
-  _onplayRowItemOpsStatus.value=true
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  if(_fileAttributeName.value != null){
-          //let _fileName = nul.value.includes(__fileAttrName) ? __filesAttrName : __fileAttrName
-          onplayRowItem.value['upload']={'file':_fileAttributeName.value,'files':_fileAttributeName.value}
-          onplayRowItem.value[_fileAttributeName.value]=_fileAsRaw.value
-        }
-      _fileAttributeName.value=null    
-    //onplayRowItem.value['phone']=Objprops._profile.phone;//always send the _loged phone along all content
-    return await Crud_.updateData()
-        .then(async (response) => {
-          _onplayRowItemOpsStatus.value=false
+//-------Listening for SideBox Operations & Visualizing
+async function _this_chatActivator(_thisindex=null,_foreignIndex=null){
 
-          if (response) { 
-            rows.value[_onplayRowIndex.value] = response; 
-            onplayRowItem.value =response
-            notifyit.succes("", null, null, 7000);
-            return true
-          } else { }
-           //--unset--loading row operation
-          return false;
-        })
-        .catch((error) => {//_popUpgrader.value = false;
-              //--unset--loading row operation
-          _onplayRowItemOpsStatus.value=false
-          return false;
-        });
-}
+        let _existed_this = (__thisIndex.value == _thisindex)
+        //------==if Selected is Existed...Close it.
+        if((_thisindex ==null) || (_existed_this && __this_foreignBoxOps.value == 'comments')){ //reset_default if same_index and Ops occured
+              await Reset_this_foreign('comments',null)
+              await Reset_this(null,null);
+              saleitService.set_syncLock(false); //and Continue Syncing
+            return true     
+          } 
+          await Reset_this(null,_thisindex)
+          saleitService.set_syncLock(true)
+          //----== passing New Selections
 
-  //----=========================================================================---DATA ---/// ---ROW----CRUD
-//----------------
-let createKey = "";
-let updateKey = "id";
-let delKey = "id";
+          //---Hold Updating Row(_this) && Reset it
+          // __thisIndex.value = _thisindex ;
+          _is_chatOwner.value= _this.value['userID'] == Objprops._profile.id
 
-const _theService = saleitService
-//ModalCrudOps
-//---------------notifications services
-const Crud_ = {
-  createData: async function () {
-    let objParam = {};
-    objParam[createKey] = onplayRowItem.value[createKey];
 
-    try {
-      if (Object.keys(objParam).length == 0) {
-        //notifyit.warn("Incompleted Form ?");
-       // return false;
+          await _this_chatQuery()
+
+          return true 
+  }
+  //-------Listening for SideBox Operations & Visualizing
+async function _this_clientActivator(_thisindex=null,_foreignIndex=null){
+        let _existed_this =(__thisIndex.value == _thisindex) 
+        __this_foreignBoxsubOps.value ='view'
+
+        //------==if Selected is Existed...Close it.
+          if((_thisindex ==null) || (_existed_this && __this_foreignBoxOps.value == 'clients')){ //reset_default if same_index and Ops occured
+            await Reset_this(null,null);
+            await Reset_this_foreign('clients',null)
+              saleitService.set_syncLock(false); //and Continue Syncing
+            return true    
+          } 
+        await Reset_this(null,_thisindex)
+
+          saleitService.set_syncLock(true)
+          
+          //----== passing New Selections
+          // __thisIndex.value = _thisindex;
+          _is_clientOwner.value= _this.value['userID'] == Objprops._profile.id
+          _is_this_open.value= _this.value['quantity'] && _this.value['price']
+          _is_this_netPrice.value = parseInt(_this.value['discount'] ? _this.value['discount'] : _this.value['price'])
+          // == Objprops._profile.id
+          //------foreign Operations
+          //----------------------------
+           _this_clientQuery()
+          return true 
+  }
+    //-------Listening for SideBox Operations & Visualizing
+async function _this_clientDetailActivator(_thisindex=null,_foreignIndex=null){
+        let _existed_this =(__thisIndex.value == _thisindex)
+        __this_foreignBoxsubOps.value ='view'
+
+        //------==if Selected is Existed...Close it.
+          if((_thisindex ==null) || (_existed_this && __this_foreignBoxOps.value == 'clients')){ //reset_default if same_index and Ops occured
+            await Reset_this(null,null);
+            await Reset_this_foreign('clients',null)
+              saleitService.set_syncLock(false); //and Continue Syncing
+            return true    
+          } 
+        await Reset_this(null,_thisindex)
+
+          saleitService.set_syncLock(true)
+          
+          //----== passing New Selections
+          // __thisIndex.value = _thisindex;
+          _is_clientOwner.value= _this.value['userID'] == Objprops._profile.id
+          _is_this_open.value= _this.value['quantity'] && _this.value['price']
+          _is_this_netPrice.value = parseInt(_this.value['discount'] ? _this.value['discount'] : _this.value['price'])
+
+          //------foreign Operations
+          //----------------------------
+          //  _this_clientQuery()
+
+          status_thisDetail.value=true
+          _this_Details.value=null
+          await saleitService.readFData({'id':_this.value['id']}).then((res)=>{if(res)_this_Details.value=res})
+          await Reset_this_foreign('clients',null)
+          return true 
+  } 
+//------operations OVer POP_Up_Box
+let _this_foreignOperation ={
+      //--------------------------
+  _add:async ()=>{ //default_value for sideBox
+    __this_foreignBoxIndex.value = null;
+    if(__this_foreignBoxOps.value == 'clients'){
+        _this_clientforeign.value=Object.assign({},_thisDefault_client.value)
+      }else{
+        _this_chatforeign.value=Object.assign({},_thisDefault_chat.value)
       }
-    } catch {
-      //notifyit.warn("Refresh It Please ?");
-     // return false;
-    }
-    
-  return await _theService
-    .createData(onplayRowItem.value, objParam)
-      .then((response) => { //returning as [false,response_obj]
-        if (response[0]) { //
-          return response[1];
-        } else {
-          notifyit.warn("Error ! .." + response[1]);
-          return false;
-        }
-      })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
+      return true
+  },
+    //---Enabling Array_Index_For Operations (Select_Index)_For ---Editing:Deleting--Applying--
+  _select_foreignIndex:async(_foreignIndex=null,foreignSuboperation=null)=>{ // activate give array for operations of below options --
+    __this_foreignBoxIndex.value = (__this_foreignBoxIndex.value == _foreignIndex) ? null : _foreignIndex
+    //  if(foreignSuboperation){ __this_foreignBoxsubOps.value =foreignSuboperation;return true}
+    __this_foreignBoxsubOps.value =foreignSuboperation;
+
+      if(__this_foreignBoxOps.value == 'clients'){
+        Reset_this_foreign('clients',__this_foreignBoxIndex.value)
+        _is_clientOwner.value= _this_clientforeign.value['userID'] == Objprops._profile.id
+      }else{
+        Reset_this_foreign('comments',__this_foreignBoxIndex.value)
+        _is_chatOwner.value= _this_chatforeign.value['userID'] == Objprops._profile.id
+      }
+      //----Defaulting foreign Links for main
+    return true;
   },
 
-    //------------------------------------------------------------------------
-    updateData: async function () {
-    let objParam = {};
-    objParam[updateKey] = onplayRowItem.value[updateKey];
-    try {
-      if (Object.keys(objParam).length == 0) {
-        notifyit.warn("Incompleted Form ?");
-        return false;
-      }
-    } catch {
-      notifyit.warn("Refresh It Please ?");
-      return false;
+  //-----------Operations on selected array
+  _remove:async ()=>{
+    if(__this_foreignBoxOps.value == 'comments'){
+          _this.value ={'id':_this.value['id'],'comments':_this_chatforeign.value}
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'delete'  
+
+          let _chatResp = await chatService.updateData(_this.value,{}) //[0],[1]
+          if(!_chatResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'Removed','')
+
+          await _this_chatQuery()
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_chatResp.data  
+       }else{
+          _this.value ={'id':_this.value['id'],'clients':_this_clientforeign.value}
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'delete'  
+
+          let _clientResp = await clientService.updateData(_this.value,{}) //[0],[1]
+          console.log('creating client',_clientResp,_this.value,_this_clientforeign.value)
+
+          if(!_clientResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'Removed','')
+
+          _orderBox.value.push(_clientResp.data['id'] ?? null)
+          await _this_clientQuery() 
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_clientResp.data
+       }
+
+       return true
+
+  },
+  _update_foreign:async ()=>{
+    if(__this_foreignBoxOps.value == 'comments'){
+          _this.value ={'id':_this.value['id'],'comments':_this_chatforeign.value}
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'update'  
+
+          let _chatResp = await chatService.updateData(_this.value,{}) //[0],[1]
+          if(!_chatResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'updated','')
+
+          await _this_chatQuery()
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_chatResp.data  
+       }else{
+          _this.value ={'id':_this.value['id'],'clients':_this_clientforeign.value}
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'update'  
+
+          let _clientResp = await clientService.updateData(_this.value,{}) //[0],[1]          
+
+          if(!_clientResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'updated','')
+
+          _orderBox.value.push(_clientResp.data['id'] ?? null)
+          await _this_clientQuery() 
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_clientResp.data
+       }
+
+       return true
+  },
+  _create_foreign:async ()=>{
+       if(__this_foreignBoxOps.value == 'comments'){
+          // _this_chatforeign.value['saleitID'] = _this.value['id']
+          // _this_chatforeign.value['userID'] = Objprops._profile.id
+          _this.value ={'id':_this.value['id'],'comments':_this_chatforeign.value}
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'create'  
+
+          let _chatResp = await chatService.createData(_this.value,{}) //[0],[1]
+          if(!_chatResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'updated','')
+
+          await _this_chatQuery()
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_chatResp.data  
+       }else{
+        // _this_clientforeign.value['saleitID'] = _this.value['id']
+        // _this_clientforeign.value['userID'] = Objprops._profile.id
+          _this.value ={'id':_this.value['id'],'clients':_this_clientforeign.value}
+          _this.value['clients']['store']= 'buy'
+
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'create'  
+
+          let _clientResp = await clientService.createData(_this.value,{}) //[0],[1]
+          if(!_clientResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,'updated','')
+
+          _orderBox.value.push(_clientResp.data['id'] ?? null)
+          await _this_clientQuery() 
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_clientResp.data
+       }
+
+      return true
+    },
+  //------special Operations=========
+  _newbuyer_foreign:async (_store ='buy',_isnewBuyer=true)=>{
+
+        // _this_clientforeign.value['saleitID'] = _this.value['id']
+        // _this_clientforeign.value['userID'] = Objprops._profile.id
+          _this.value ={'id':_this.value['id'],'clients':_this_clientforeign.value}
+          _this.value['clients']['store']= _store
+
+          _this.value['onplayOps']=__this_foreignBoxOps.value
+          _this.value['onplaySubops'] = 'create'  
+          let _clientResp;
+          if(_isnewBuyer){
+            _clientResp = await clientService.createData(_this.value,{}) 
+          }else{
+            _clientResp = await clientService.updateData(_this.value,{}) //[0],[1]
+          }
+          
+          if(!_clientResp.status){timerError(500,'Error Creating','');return false}
+          timerDone(5000,_store == 'buy' ? 'Ordered' : 'ADD To Cart','')
+
+          _orderBox.value.push(_clientResp.data['id'] ?? null)
+          await _this_clientQuery() 
+          //----updating saleitcontent
+          _this_Rows.value[__thisIndex.value] =_clientResp.data
+       
+
+      return true
+    },
+}
+
+//------------------
+// Return data and methods
+async function Reset_this(Ops,rowIndex){
+    _fileAttributeName.value=null;
+    _fileAsPathIndex.value=null
+    
+    __thisBox.value  = false; //OPen the Box
+     _this.value = Object.assign({},rowIndex == null ? _thisDefault.value : _this_Rows.value[rowIndex]  
+   ) //----assigning Onplay Row
+     __thisIndex.value=rowIndex
+     __thisOps.value =Ops
+     __thisOpsStatus.value=false
+     return true
+   }
+
+   async function Reset_this_foreign(foreignOps,_foreignIndex){ //Reset and Defaulting foreignBox
+    _thisDefault_client.value['orderID'] = await _genOrderID()
+
+    if(_foreignIndex){ //Reset Initiated from Array Selecting
+        if(foreignOps =='clients'){
+          _this_clientforeign.value = _this_clientRows.value[_foreignIndex]
+          _this_clientforeign.value['saleitID']=_this.value?.['id'] ?? ''
+          // _this_clientforeign.value['orderID']=await _genOrderID()
+          // _clientQuery.value['saleitID']=_this.value['id'] ?? ''
+
+        }else if(foreignOps =='comments'){
+          _this_chatforeign.value = _this_chatRows.value[_foreignIndex]
+          _this_chatforeign.value['saleitID']=_this.value?.['id'] ?? ''
+        }
+    }else{ //Reseting Default Foreign_Rows (null Index)
+        __this_foreignBox.value= true //disasble sideBox
+        __this_foreignBoxOpsStatus.value=false //turnofff active stauts
+        __this_foreignBoxIndex.value =null
+
+        __this_foreignBoxOps.value=foreignOps //diable andy operations
+        if(foreignOps =='clients'){
+            _this_clientforeign.value = _thisDefault_client.value
+            // // _clientQuery.value['store']='buy'
+            _this_clientforeign.value['saleitID']=_this.value['id'] ?? ''
+          }else if(foreignOps =='comments'){
+            _this_chatforeign.value = _thisDefault_chat.value
+            _this_chatforeign.value['saleitID']=_this.value['id'] ?? ''
+          }
     }
 
-    console.log('crud_',onplayRowItem.value)
-    return await _theService
-      .updateData(onplayRowItem.value, objParam)
-      .then((response) => { //returning as [false,response_obj]
-        if (response[0]) {
-          return response[1];
-        } else {
-          notifyit.warn("" + response[1]);
-          return false;
+    return true
+  }
+
+let __thisBox_CDialog = computed(() => { return Objprops.lytCreatRow}) //Layout_listening for pop_creator
+watch(__thisBox_CDialog, async (cv, ov) => {
+  // _fileAttributeName.value=null;
+   await Reset_this('CreateRowItem',null)
+   __thisBox.value  = true; //OPen the Box
+   return true
+  }); 
+async function __thisBox_UDialog(_playrowIndex){
+  // _fileAttributeName.value=null;
+    await Reset_this('UpdateRowItem',_playrowIndex)
+   __thisBox.value  = true; //OPen the Box
+    return true
+  }
+//--------------------------------------METHODS & PROCESS
+async function Create_this() {  //UpdateRowItem User DAta with no graphic to update
+      //---set--loading row operation
+      __thisOpsStatus.value=true
+      //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
+      let _fileExistance = _fileAttributeName.value ?? false
+      if(_fileExistance){
+          //_this.value['file_']={'files':_fileExistance}
+          _this.value[_fileExistance]=_fileAsRaw.value
+          if(typeof _fileAsRaw.value == 'object'){
+            _this.value['file_']={'files':_fileExistance}
+          }else{
+            _this.value['file_']={'file':_fileExistance}
+          }
         }
-      })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
+        //--------set Operational parameters
+      _this.value['onplayOps']='CreateRowItem'
+      _this.value['onplaySubops'] = 'new'   
+      //---Creat the Content... which is with/out of file encapsulations
+    return await Crud_this.createData()
+        .then(async (response) => {
+          if (response) {
+            timerDone(5000,_createTitle[2],'Succefully Created')
+           __thisBox.value=false;
+            return router.push('/play/playservice')
+          }else{
+            timerError(5000,_createTitle[2],_createTitle[0])
+          }
+          return true; 
+        }).catch((error) => {
+          timerError(5000,_createTitle[2],_createTitle[0])
+          _fileAttributeName.value=null;
+           __thisOpsStatus.value=false;
+           __thisBox.value=false;
+           return false;
+          });
+}
+
+async function Update_this() { //UpdateRowItem User DAta with graphic to update or not
+      //---set--loading row operation
+      __thisOpsStatus.value=true
+      //-------------
+      let _fileExistance = _fileAttributeName.value ?? false
+      if(_fileExistance){
+          //_this.value['file_']={'files':_fileExistance}
+          _this.value[_fileExistance]=_fileAsRaw.value
+          if(typeof _fileAsRaw.value == 'object'){
+            _this.value['file_']={'files':_fileExistance}
+          }else{
+            _this.value['file_']={'file':_fileExistance}
+          }
+        }
+       //----------set Operational parameters
+      _this.value['onplayOps']='UpdateRowItem'
+      _this.value['onplaySubops'] = 'update'
+      //--------
+      return await Crud_this.updateData()
+        .then(async (response) => {
+          if (response) {
+            timerDone(5000,_createTitle[1],'Succefully Updated')
+            _this_Rows.value[__thisIndex.value]=Object.assign({},response)
+            Reset_this(null,null)
+          }else{
+            timerError(5000,_updateTitle[1],_updateTitle[0])
+          }
+            __thisOpsStatus.value=false;
+          // _fileAttributeName.value=null;
+          return true; 
+        }).catch((error) => {
+            timerError(5000,_updateTitle[2],_updateTitle[0])
+           __thisOpsStatus.value=false;
+           __thisBox.value=false;
+           _fileAttributeName.value=null;
+           return false;
+          });
+}
+
+//========
+let _createTitle =["Creating Product & Services","Succefully Created","Please Try Again"]
+let _updateTitle =["Updating Product & Services","Succefully Updated","Please Try Again"]
+let _readTitle =["Fetching Product & Services","Done","No Data"]
+let _deleteTitle =["Deleting Product & Services","Succefully Deleted","Please Try Again"]
+  //----=========================================================================---DATA ---/// ---ROW----CRUD
+let createKey = "phone";
+let updateKey = "id";
+let delKey = "id";
+//ModalCrudOps
+const Crud_this = {
+  createData: async function (objParam={}) {
+    //-------Check for Param_Requirents
+    try {
+      if (_this.value[createKey] == null) {return false; }
+        //-----------Calling for Store Services  (_suburl, formData, objParam)
+      return await _thisService.createData(_thisapiUrl,_this.value,objParam).then((response) => { 
+            if (response[0]) {
+              return response[1];
+            } else {
+              return false;
+            }}).catch((error) => {return false;});
+    } catch {return false; }
+  },
+  //----------------------------------------------------------------
+  updateData: async function (objParam={}) {
+    //-------Check for Param_Requirments
+    try {
+      if (_this.value[updateKey] == null) {return false; }
+      //-----------Calling for Store Services
+      return await _thisService.updateData(_thisapiUrl,_this.value, objParam).then((response) => { //returning as [false,response_obj]
+          if (response[0]) {
+            return response[1];
+          } else {
+            return false;
+          }
+        }).catch((error) => {return false;});
+    } catch {return false; }
   },
 
   readData: async function () {
-    // null
-    //////consol.log("readData Requested with")
-    return await _theService
-      .readData()
-      .then((response) => { //returning as ['data'][{},{},{data..}]
-      if (response) {return response;
+    return await _thisService.readData(_thisapiUrl).then((response) => { //returning as ['data'][{},{},{data..}]
+      if (response) {
+          timerDone(5000,_readTitle[1],_readTitle[0]);return response;
         } else {
-          notifyit.warn("Error ! .." + response);
-          return false;
+          timerError(5000,_readTitle[2],_readTitle[0]);return false;
         }
-      })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
+       }).catch((error) => {timerError(5000,_readTitle[2],_readTitle[0]);return false;});
   },
 
   //---------------------------------------------------------------
-  readFData: async function (objParam) {
+  readFData: async function (objParam={}) {
+    //-------Check for Param_Requirents
     try {
-      if (Object.keys(objParam).length == 0) {
-        notifyit.warn("Incompleted Form ?");
-        return false;
-      }
-    } catch {
-      notifyit.warn("Refresh It Please ?");
-      return false;
-    }
-
-    return await _theService
-      .readFData(objParam)
-      .then((response) => {
-        if (response) {return response[0];
+      if (Object.keys(objParam).length ==0) {return false; }
+    //-----------Calling for Store Services
+    return await _thisService.readFData(_thisapiUrl,objParam).then((response) => {
+      if (response) {
+          timerDone(5000,_readTitle[1],_readTitle[0]);return response;  
         } else {
-          notifyit.warn("Error ! .." + response);
-          return false;
-        }
-      }).catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
-  },
-
-  //------------------filtering & searching for different Model
- //------------------filtering & searching for different Model
- genapiData: async function (modelUrl,objParam) {
-  try {
-      if (Object.keys(objParam).length == 0) {
-        notifyit.warn("Incompleted Form ?");
-        return false;
-      }
-    } catch {
-      notifyit.warn("Refresh It Please ?");
-      return false;
-    }
-
-    return await genapsaleitContentOps
-      .readData(modelUrl,objParam)
-      .then((response) => { //returning as ['data'][{},{},{data..}]
-      if (response) {return response;
-        } else {f
-          notifyit.warn("Error ! .." + response);
-          return false;
+          timerError(5000,_readTitle[2],_readTitle[0]);return false;
         }
       })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
+      .catch((error) => {timerError(5000,_readTitle[2],_readTitle[0]);return false;});
+    } catch {return false; }
   },
 
-  genapiFData: async function (modelUrl,objParam) {
+  deleteData: async function () {
+    //-------Check for Param_Requirents
     try {
-      if (Object.keys(objParam).length == 0) {
-        notifyit.warn("Incompleted Form ?");
-        return false;
-      }
-    } catch {
-      notifyit.warn("Refresh It Please ?");
-      return false;
-    }
-    
-    return await genapsaleitContentOps
-      .readFData(modelUrl,objParam)
-      .then((response) => {
-        if (response) {
-          return response;
-        } else {
-          notifyit.warn("Error ! .." + response);
-          return false;
-        }
-      })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
+      if (_this.value[delKey] == null) {return false; }
+      //-----------------
+      let objParam ={}
+      objParam[delKey]=_this.value[delKey]
+      //---------
+      return await _thisService.deleteData(_thisapiUrl,objParam).then((response) => {
+          if (response[0]) {
+            timerDone(5000,_deleteTitle[1],_deleteTitle[0]);return response[1];
+          } else {
+            timerError(5000,_deleteTitle[2],_deleteTitle[0]);;return false;
+          }
+        }).catch((error) => {timerError(5000,_deleteTitle[2],_deleteTitle[0]);return false; });
+      
+      } catch {return false; }
   },
-
-  deleteData: async function (ItemId) {
-    let objParam = {};
-    objParam[delKey] = ItemId;
-
-    try {
-      if (Object.keys(objParam).length == 0) {
-        notifyit.warn("Incompleted Form ?");
-        //return false;
-      }
-    } catch {
-      notifyit.warn("Refresh It Please ?");
-      return false;
-    }
-    
-    return await _theService
-      .deleteData(objParam)
-      .then((response) => {
-        if (response[0]) {
-          return response[1];
-        } else {
-          notifyit.warn("Error ! .." + response[1]);
-          return false;
-        }
-      })
-      .catch(() => {
-        notifyit.info("Try to reconnect...");
-        return false;
-      });
-  },
+   //------------------filtering & searching for different Model
 };
-  //-----------------End Data Functions
-  //--------------------------------------------------------------------UTILITIED_FUNCTIONS ( LocalStarage -- Profiling)
-  //_____________________________________________________Functions Definitions
+
+//------_clearLogs
+async function _clearLogs() {
+  localStorage.clear()
+  return router.push({path:'/'});
+}
   //-----------------------------------Loading...process...showOFF
   let loaditwellcome = ref(false);
-  watch(loaditwellcome, (currentValue, oldValue) => loadit.wellcome());
-  async function setDLoading(status) {
-    //handle qtable data-loading---flags
-    //rowsLoading.value = ref(status);
-  }
-  
-  //watch(warningDisplay, (currentValue, oldValue) => _confirmDialog());
-  const notifyit = {
-    info: (notes = "", position = "bottom-right", actions = "", period = 700) => {
-      $q.notify({
-        //type: "info",
-        message: "",
-        position,
-        actions: actions
-          ? [
-              {
-                label: actions,
-                color: "black",
-                handler: () => {
-                  return true;
-                },
-              },
-            ]
-          : null,
-        timeout: period,
-        spinner: false,
-        html:true,
-        caption: "<div style='background:transparent;color:white;width:15vw;'><p style='border-radius:10px;border:1.3px solid blue;padding:5px;margine-left:5px;background-grey'>...</p>" + notes+" </div>",
-        spinner: false,
-        group: "my-group", //identical messages with of same group..with show label_count..
-        progress: true,
-        classes:'flat'
-      });
-    },
-    warn: (notes = "", position = "bottom-right", actions = "", period = 700) => {
-      $q.notify({
-        type: "negative",
-        icon:'dislike',
-        message: notes,
-        position,
-        actions: actions
-          ? [
-              {
-                label: actions,
-                color: "orange",
-                handler: () => {
-                  return true;
-                },
-              },
-            ]
-          : null,
-        timeout: period,
-        html: true,
-        caption: "",
-      });
-    },
-    succes: (
-      notes = "",
-      position = "bottom-right",
-      actions = "",
-      period = 700
-    ) => {
-      $q.notify({
-        type: "positive",
-        icon:'like',
-        message: notes,
-        position,
-        actions: actions
-          ? [
-              {
-                label: actions,
-                color: "black",
-                handler: () => {
-                  return true;
-                },
-              },
-            ]
-          : null,
-        timeout: period,
-        html: true,
-        caption: "",
-      });
-    },
-    simple: (notes = "", position = "top-center", actions = "Ok", period = 1000) => {
-      $q.notify({
-        //type: "info",
-        color:"black",
-        textColor:"white",
-        message: "",
-        position:"top",
-        actions: actions
-          ? [
-              {
-                label: actions,
-                color: "red",
-                handler: () => {
-                  return true;
-                },
-              },
-            ]
-          : null,
-        timeout: period,
-        spinner: false,
-        html:true,
-        caption: "<p style='border-radius:10px;border:1.3px solid blue;padding:5px;margine-left:5px;font-size:1rem'>" + notes+ "</p>" ,
-        spinner: false,
-        group: "my-group", //identical messages with of same group..with show label_count..
-        progress: true,
-       // classes:'flat'
-      });
-    },
-  };
+//  watch(loaditwellcome, (currentValue, oldValue) => loadit.wellcome());
 
-  //------DIALOGS
-  let dialogAlert = ref(false);
-  let confirmationRequire = ref(false);
-  let dialogPrompt = ref(false);
-  
-  //watch(confirmationRequire, (currentValue, oldValue) => _confirmDialog());
-  const dialog = {
-    alert: async function (message) {
-      $q.dialog({
-        title: "Alert",
-        message: message,
-      })
-        .onOk(() => {
-          // ////consol.log('OK')
-        })
-        .onCancel(() => {
-          // ////consol.log('Cancel')
-        })
-        .onDismiss(() => {
-          // ////consol.log('I am triggered on both OK and Cancel')
-        });
-    },
-  
-    confirm: async function (message) {
-      //consol.log("confirmation dialog is up");
-      $q.dialog({
-        title: "Confirm",
-        message: message,
-        cancel: true,
-        persistent: true,
-      })
-        .onOk(() => {
-          confirmationRequire.value = true;
-          ////consol.log(">>>> OK");
-          return "ok";
-        })
-        .onOk(() => {
-          ////consol.log(">>>> second OK catcher");
-          return "ok2";
-        })
-        .onCancel(() => {
-          confirmationRequire.value = false;
-          ////consol.log(">>>> Cancel");
-          return "cancel";
-        })
-        .onDismiss(() => {
-          ////consol.log("I am triggered on both OK and Cancel");
-          return "dismiss";
-        });
-    },
-  
-    prompt: async function (message) {
-      $q.dialog({
-        title: "",
-        message: message,
-        prompt: {
-          model: "",
-          type: "text", // optional
-        },
-        cancel: true,
-        persistent: true,
-      })
-        .onOk((data) => {
-          // ////consol.log('>>>> OK, received', data)
-        })
-        .onCancel(() => {
-          // ////consol.log('>>>> Cancel')
-        })
-        .onDismiss(() => {
-          // ////consol.log('I am triggered on both OK and Cancel')
-        });
-    },
-  };
+// //--------------------
+let _fileAsPath =ref(0)//_file in Show_Mode (As_String)  
+let _fileAsPathIndex =ref(null)//_fileAsPath_Array_index
+let _fileAsPathSlide=ref(false)
 
-  //----- & Loading (InnerLoading)
-  let loaditwellcometimer = 50;
-  const loadit = {
-    wellcome: async function (notes = "Loading...Weblog....!", period = 9000) {
-      $q.loading.show({
-        message: notes,
-        boxClass: "bg-secondary",
-        spinnerColor: "orange",
-        boxClass: "transparent",
-        spinnerColor: "white",
-        messageColor: "black",
-        backgroundColor: "black",
-      });
-      // hiding in 3s
-      let loaditwellcometimer = setTimeout(() => {
-        $q.loading.hide();
-        loaditwellcometimer = void 0;
-      }, period);
-      return " ";
-    },
-    process: async function (notes = "wellcom", period = 5000) {
-      $q.loading.show({
-        message: notes,
-        boxClass: "transparent",
-        spinnerColor: "orange",
-      });
-      // hiding in 3s
-      let timer = setTimeout(() => {
-        $q.loading.hide();
-        //siteLoading.value = false;
-        timer = void 0;
-        return "terminating";
-      }, period);
-    },
-  };
-  
+let _fileAsPathOps = ref(false) //this is for selecting only
+
+
+ ///_fileAsPathSlide
+async function _fileAsPathOpsCall(StrIndex,index = null){ //calling for selections
+   __thisIndex.value=index
+   //__this_foreignBoxOps.value=null
+  _fileAsPathIndex.value=StrIndex
+  return true
+}
+
+async function _fileAsPathSlideCall(_thisindex = null){ //calling for selections
+   __thisIndex.value=_thisindex
+    //----------SET_ROW
+    let _onplayRI = {}
+    _onplayRI = _this_Rows.value[_thisindex]//Object.assign({},_this_Rows.value[_thisindex])
+    _this.value = Object.assign({},_onplayRI) //DeepCopy Handle Reactivity
+    //---------------
+   _fileAsPathSlide.value=true
+  return true
+}
+
+
+var _cameraInstance = null
+onMounted(()=>{
+  _cameraInstance = new _cameraDevice()
+  _cameraInstance._navigateDevice()
+  // console.error("Navigating mediaDevice.0ww");
+
+
+})
   //----------------------------Utilities Funtions
-  //----Local Storage___
-  const _localStorage = {
-    _get: (_item) => {
-      return $q.localStorage.getItem(_item);
-    },
-    _set: (_key, _item) => {
-      return $q.localStorage.set(_key, _item);
-    },
-    _clear: (_key, _item) => {
-      return $q.localStorage.clear();
-    },
-  };
+    </script>
+    
+    
+      <style>
   
-  //----logout
-  function logout() {
-    _localStorage._clear();
-    return router.push("/login");
-    //return true
-  }
-
-
-let showDate = ref("")// curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
-let showTime = "" //
-let showDay = ref("") //
-let breakTime = ref(false) //
-
-var days =ref(0)
-var hours =ref(0)
-function _dateCounter(startDate) {
-  var timeDifference = new Date() - new Date(startDate)
-  // Calculate days and hours from milliseconds
-  days.value = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-  hours.value = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    //var minutes = Math.floor(((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  return true;
-}
-
-function _igniteDCounter(delay,startDate){
-  setTimeout(function() {
-  _dateCounter(startDate);
-}, delay);
-}
-
-
-
-  //----color_Plate
-  const cp =  ['red','black',"blue",'green','orange','yellow']
-  //------------------------------------------------------------------------------ Warming UP(BIOS_Process.....POST)
-
-  </script>
-  
-  
-    <style>
-  
-  
-  /*=====================  Fronted_Glass / Blur Styles as OverLay Background... */
-
-  
-  @keyframes myfirst /* Firefox */{
-             50% {
-                     opacity: 50;
-                 }
-  }
-  </style>
+    </style>

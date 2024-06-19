@@ -84,10 +84,11 @@ CMD ["quasar","dev"]
 #1] tell what to push(into repo)..which is all the folder_in here
 #git add .  (push all this_folder_file).. if ignoregit(add blacklist)
 #2] and commit the push_changing..apply the push
-#git commit 
+#git commit  
+#after commit (&write new messages_comments) & just push using current branch
 
 #3]...here is the github_repository(store).. i need to push(the commite_changes(folders))
-#git remote add origin https://github..../agpirate/itserive.git
+#git remote add origin https://github..../agpirate/itserive.git (select new branch or under current_branch(right-bottom))
 #4] finally change the commit into the destination git_url of given branch(master default)
 #git push origin master  
 
@@ -100,3 +101,10 @@ CMD ["quasar","dev"]
 
 #then you can ( clone it into git_connected_vs_code....as workspace/project_dire/quasar_dir)
 #or from github page..goes to code and open on installed vscode ( then save it.......into local system & commit(push...next))
+
+
+
+#--------------------npm install --save-dev dotenv
+#.env ( API_KEY=your_api_key)
+#const apiUrl = process.env.API_BASE_URL
+#------now access the environment variables defined in the .env file anywhere in your Quasar application using process.env.VARIABLE_NAME

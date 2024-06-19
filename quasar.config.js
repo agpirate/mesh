@@ -59,7 +59,7 @@ module.exports = configure(function (ctx) {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
         node: 'node20',
         ApiIPI:"127.0.0.1:9100",
-        DBsIPI:"192.168.1.6:27017",
+        DBsIPI:"0.0.0.0:27017",
 
         SESSION_SECRET:"ABCVSDRGEHYRTRFGEHJD"
       },
@@ -70,15 +70,20 @@ module.exports = configure(function (ctx) {
       // passing down to UI code from the quasar.config file
 
       env: {
-        API: ctx.dev
-          ? 'https://dev.api.com'
-          : 'https://prod.api.com',
-        Api_IPI:"127.0.0.1",
+        API: ctx.dev ? '0.0.0.0' : '0.0.0.0',
+        API_PORT: ctx.dev ? 9100 : 9100,
+        API_IP_PORT: ctx.dev ? "http://0.0.0.0:9100" : "http://912.168.1.6:9100",
+        //-----------------------------
+        API_MNGDB: "mongodb://0.0.0.0:27017",
+
+        Api_IPI:"0.0.0.0",
         Api_PORTI:"9100",
 
-        Mongose_IPI:"127.0.0.1",
+        Mongose_IPI:"0.0.0.0",
         Mongose_PORTI:"9100",
 
+        
+        TOKEN_SECRET:'smsSecret'
       
       },
 

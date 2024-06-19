@@ -1,60 +1,44 @@
-import { mongoose } from "mongoose";
 import { saleitDBs } from "../dbConns";
-import { saleitSchema } from "../schemas/saleitSchema";
-import { saleitMetaSchema } from "../schemas/saleitSchema";
+import { saleitSchema } from "../schemas/saleitSchemas";
+import { saleitClientSchema } from "../schemas/saleitSchemas";
+import { _dateformating } from "../../services/modalServices/dateServices.js";
+
 //import { accComputing } from "../../services/accessComputing"
 // initialize the connections on boots...
-var Schema = mongoose.Schema,
-ObjectId = Schema.ObjectId;
+import { mongoose } from "mongoose";
+var Schema = mongoose.Schema
+var ObjectId = Schema.ObjectId;
 
 mongoose.set("strictQuery", true);
-
-//-------
-var todday = () => new Date().toLocaleString();
-const _dateConv = 1000 * 60 * 60 * 24
-
-function _eldate(startDate) {
-  var elapsedTime = new Date() - new Date(startDate)
-  // Calculate days and hours from milliseconds
-  var days = Math.floor(elapsedTime / (1000 * 60 * 60 * 24));
-  var hours = Math.floor(elapsedTime / (1000 * 60 * 60));
-  var minutes = Math.floor(elapsedTime / (1000 * 60));
-    hours %= 24;
-    minutes %= 60;
-
-  return { days: days, hours: hours,minutes:minutes};
-}
-
 //------------------------------empy Schema
-
 let _saleit = new Schema(
   saleitSchema,
-  { timestamps: todday }
+  { timestamps:  new Date() }
 );
 _saleit.method("toJSON",  function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
-
-  //object.updatedAt= object.updatedAt
-  object.fupdatedAt= _eldate(object.updatedAt)
+  object.fupdatedAt= _dateformating(object.updatedAt)
+  let _strPhone=String(object.phone)
+  object.fphone= _strPhone.slice(0,3)+'****'+_strPhone[7]+_strPhone[8]
   //---------------
   return object;
 });
 
 //------------------------------Attendance Schema
-let _saleitMeta = new Schema(
-  saleitMetaSchema,
-  { timestamps: todday }
+let _saleitClient = new Schema(
+  saleitClientSchema,
+  { timestamps: new Date() }
 );
-_saleitMeta.method("toJSON", function () {
+_saleitClient.method("toJSON", function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
-
-  object.updatedAt=object.updatedAt.toLocaleDateString()
-  object.date=object.date.toLocaleDateString()
-
+  object.fupdatedAt= _dateformating(object.updatedAt)
+  let _strPhone=String(object.phone)
+  object.fphone= _strPhone.slice(0,3)+'****'+_strPhone[7]+_strPhone[8]
   return object;
 });
+
 
 //------------------------------comment Schema
 
@@ -64,20 +48,20 @@ var saleitModel;
 if (saleitDBs.model.saleitModel) {
   console.log("sale it Collections already existed on saleit content");
 } else {
-  saleitModel = saleitDBs.model("saleit _Content", _saleit);
+  saleitModel = saleitDBs.model("sales", _saleit);
 }
 //-----
-var saleitMetaModel;
+var saleClientModel;
 //console.log('is empyModel Exist',Object.keys(procDBs.model.empy))
-if (saleitDBs.model.reportModel) {
+if (saleitDBs.model.saleClientModel) {
   console.log("sale it Collections already existed on saleit content");
 } else {
-  reportModel = saleitDBs.model("saleit _Meta", _saleitMeta);
+  saleClientModel = saleitDBs.model("saleclients", _saleitClient);
 }
 
 //-------------------- exporting schemas
-
 export {
   saleitModel,
-  saleitMetaModel,
+  saleClientModel,
+  
 }; //,rawModel,supplierModel };

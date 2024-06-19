@@ -1,28 +1,26 @@
 
 //import user3A from "src/hooks/user3A";
-//var todday = () => Math.floor(Date.now() / 1000);
-var todday = () => new Date().toLocaleString();//.split("T")[0];
-var ObjectID =""
-//-------------USER PROFILE_Variables..
+//var new Date() = () => Math.floor(Date.now() / 1000);
+var todday = () => new Date().toLocaleString()//.split("T")[0];
+// initialize the connections on boots...
+// import { mongoose } from "mongoose";
+// var Schema = mongoose.Schema
+var ObjectId = ''//Schema.ObjectId;
 
-const saleitcompute ={
-  _rank:{
-    type: String,
-    default: "others",
-  },
-}
+//-------------USER PROFILE_Variables..sss
 const saleitSchema = {
   //-------------item_staus(stage)
   _stage_: {
     type:Number,vtype:"Number",
     default:1,
   },
-  //-------
-  userID: { // will hold User_ID/phone as ref_value
+  userID: { type:ObjectId, ref: "profiles" },
+  userName: { // will hold User_ID/phone as ref_value
     type: String,vtype:"String",
     default: "",
     $ifNull: "",
-  },
+  },  
+  //------- 
   phone: { // will hold User_ID/phone as ref_value
     type: Number,vtype:"Number",
     default: "",
@@ -34,28 +32,40 @@ const saleitSchema = {
     $ifNull: ['',''],
     required:true,
   },
-  userName: { // will hold User_ID/phone as ref_value
-    type: String,vtype:"String",
-    default: "",
-    $ifNull: "",
-  },  
+
   //---------//----  jack
   catagory: {
     type: String,vtype:"String",
     default: "Households",
-    enum: ["Vehicles", "Households","Phones","Displays"],
+    $ifNull: "Households",
+    enum: ["Electronics","Vehicles", "Households","Land/House","Clothing","Food","Others"],
   },
-  queryWeight: { //yyyy(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+  queryWeight: { //saleit(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
     type: String,vtype:"String",
-    default: "2024-00-00-0",
-    $ifNull: "2024-00-00-0",
+    default: "1.1.1.1",
+    $ifNull: "1.1.1.1",
+  },
+  catagoryScore: { //saleit(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+    type: Number,vtype:"Number",
+    default: 0,
+    $ifNull: 0,
+  },
+  usageScore: { //saleit(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+    type: Number,vtype:"Number",
+    default: 0,
+    $ifNull: 0,
+  },  
+  trendScore: { //saleit(year)-00(catagoryindex)-00(subCat_)-0(trend)-......
+    type: Number,vtype:"Number",
+    default: 0,
+    $ifNull: 0,
   },
   //---------
   usage: { //
       type: String,vtype:"String",
       default: "Used",
       $ifNull: "Used",
-      enum: ["New", "Used","?",""],
+      enum: ["New", "Used",'Others'],
     },
   //---------
   saleitgr:{
@@ -78,8 +88,8 @@ const saleitSchema = {
     },
   quantity: {
       type: Number,vtype:'Number',
-       default: 1,
-       $ifNull: 1,
+       default: 0,
+       $ifNull: 0,
      },
   price: {
      type: Number,vtype:'Number',
@@ -118,18 +128,18 @@ const saleitSchema = {
             $ifNull: "",
           },
       },
-  geolocation: { //content GPS 
-      lat: {
-        type: String,vtype:"String",
-        default: "000000",
-        $ifNull: "000000",
-      },
-      long: {
-        type:String,vtype:"String",
-        default: "000001",
-        $ifNull: "000001",
-      }
-    },
+      geolocation: {
+        lat: {
+          type: Number,vtype:"Number",
+            default:0,
+            $ifNull: 0,
+          },
+          long: {
+            type: Number,vtype:"Number",
+             default: 0,
+             $ifNull: 0,
+           },
+         },
     //---------put timer for action 
     timer:{
         action:{
@@ -159,116 +169,6 @@ const saleitSchema = {
        $ifNull: "posted",
        enum: ["posted", "sold","Paused","discarded"],
      },
-    clients:{
-      type:Array,   ///array better to have default value on client side, for template form_generation
-      default:[{ phone:"",phoneCode:'',userID:'',userName:'',orderID:'',confirmID:'',
-       quantity:0,price:0,paymentMethod:'onDelivery',served:"Requested",time:new Date() } ],
-      vdata: {
-        geolocation: { //content GPS locations
-          lat: {
-            type: String,vtype:"String",
-            default: "000000",
-            $ifNull: "000000",
-          },
-          long: {
-            type:String,vtype:"String",
-            default: "000001",
-            $ifNull: "000001",
-          }
-        },
-        phone: { // will hold User_ID/phone as ref_value
-          type: Number,vtype:"Number",
-          default: "",
-          $ifNull: "",
-        },
-        phoneCode: {
-          type: Array,vtype:"Array",
-          default: ['',''],
-          $ifNull: ['',''],
-          required:true,
-        },
-        userName: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        userID: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        orderID: { //---
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        confirmID: {
-          type: String,vtype:"String",
-          default: "xyxy",
-          $ifNull: "+xyxy",
-        },
-        quantity: {
-          type: Number,vtype:'Number',
-          default: 0,
-          $ifNull: 0,
-        },
-        price: {
-          type: Number,vtype:'Number',
-          default: 0,
-          $ifNull: 0,
-        },
-
-        paymentMethod: {
-          type: String,vtype:"String",
-          default: "onDelivery",
-          $ifNull: "onDelivery",
-          enum: ["onDelivery","TELBirr","EBCBirr","others"],
-        },
-        time: {
-          type: Date,vtype:'Date',
-          default:new Date(),
-          $ifNull:new Date(),
-        },
-        description: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        served: {
-          type: String,vtype:"String",
-          default: "Requested",
-          $ifNull: "Requested",
-          enum: ["Served","Queed", "Requested"],
-        },
-      }
-    },
-     comments:{
-      type:Array,
-      default:[ { comment:"", UserID:"",time:new Date() } ],
-      vdata: {
-        comment: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        userID: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        userName: {
-          type: String,vtype:"String",
-          default: "",
-          $ifNull: "",
-        },
-        time:{
-          type:Date,
-          vtype:'Date',
-          default:new Date(),
-          $ifNull:new Date(),
-        } 
-      }
-    },
      likes: {
       like: {
         type: Number,vtype:"Number",
@@ -282,9 +182,9 @@ const saleitSchema = {
       }
       },
       completed: {
-        type: Boolean,vtype:'Boolean', //it hold winner_client id of registered clients
-        default: false,
-        $ifNull: false,
+        type: String,vtype:'String', //it hold winner_client id of registered clients
+        default: 'no',
+        $ifNull: "no",
       },
       _itServiceRating: {
         type: Number,vtype:'Number', //it hold winner_client id of registered clients
@@ -293,22 +193,144 @@ const saleitSchema = {
       },
        //---------------------------------
     //saleitcompute,
+    //---------on store items
+    tClient:{
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+    tQs: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     //-----------total activities
+     tQ: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     tC: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     tQC: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     //------------bought items
+     tQt: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     tCt: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     tQCt: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+     //---
+     tQCtonD: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
+
+     tQCttech: {
+      type: Number,vtype:'Number',
+       default: 0,
+       $ifNull: 0,
+     },
     //---------------------------------
-  }
-
-const saleitMetacompute ={
-    _rank:{
-      type: String,
-      default: "others",
+  };
+  
+const saleitClientSchema ={
+  geolocation: { //content GPS locations
+    lat: {
+      type: String,vtype:"String",
+      default: "000000",
+      $ifNull: "000000",
     },
-
-  }
-const saleitMetaSchema ={
-  _stage_: {
-    type:Number,
-    default:1,
+    long: {
+      type:String,vtype:"String",
+      default: "000001",
+      $ifNull: "000001",
+    }
   },
-  }
+  phone: { // will hold User_ID/phone as ref_value
+    type: Number,vtype:"Number",
+    default: "",
+    $ifNull: "",
+  },
+  phoneCode: {
+    type: Array,vtype:"Array",
+    default: ['',''],
+    $ifNull: ['',''],
+    required:true,
+  },
+  saleitID:{ type:ObjectId, ref: "saleits" },
+  userID: { type:ObjectId, ref: "profiles" },
+  orderID: { //---
+    type: String,vtype:"String",
+    default: "xyxy",
+    $ifNull: "+xyxy",
+  },
+  confirmID: {
+    type: String,vtype:"String",
+    default: "xyxy",
+    $ifNull: "+xyxy",
+  },
+  quantity: {
+    type: Number,vtype:'Number',
+    default: 0,
+    $ifNull: 0,
+  },
+  price: {
+    type: Number,vtype:'Number',
+    default: 0,
+    $ifNull: 0,
+  },
+  paymentMethod: {
+    type: String,vtype:"String",
+    default: "onDelivery",
+    $ifNull: "onDelivery",
+    enum: ["onDelivery","TELBirr","EBCBirr","others"],
+  },
+  served: {
+    type: String,vtype:"String",
+    default: "Requested",
+    $ifNull: "Requested",
+    enum: ["Served","Queed", "Requested","Requesting"],
+  },
+  store: {
+    type: String,vtype:"String",
+    default: "cart",
+    $ifNull: "cart",
+    enum: ["cart","buy",'bought'],
+  },
+  description: {
+    type: String,vtype:"String",
+    default: "",
+    $ifNull: "",
+  },
+  time: {
+    type: String,vtype:"String",
+    default: "",
+    $ifNull: "",
+  },
+  action: {
+    type: String,vtype:"String",
+    default: "",
+    $ifNull: "",
+  },
+}
 
 
-export { saleitSchema,saleitMetaSchema}
+export { saleitSchema,saleitClientSchema}

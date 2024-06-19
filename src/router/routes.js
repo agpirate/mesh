@@ -1,6 +1,6 @@
 
 import _acctype from "src/hooks/_acctype"
-//employee-attendance-asset-rawmaterial-goods-supplier-customer-monpay-mispay-statment
+//employee-saleit-asset-rawmaterial-goods-supplier-customer-monpay-mispay-statment
 
 const APIIPI = process.env.ApiIP
 
@@ -13,7 +13,7 @@ const routes = [
     meta: {
       _isauthenticated: false,
       _groups: false,
-      _modelGACWall:_acctype['attendance'],
+      _modelGACWall:_acctype['saleit'],
     }, 
     children: [
       //-------------------------------
@@ -23,7 +23,7 @@ const routes = [
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _modelGACWall:_acctype['attendance'],
+          _modelGACWall:_acctype['saleit'],
         }
      },
 
@@ -45,7 +45,7 @@ const routes = [
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['attendance'],
+          _resource3AWall:_acctype['saleit'],
         }, 
       },
       //-------------------------------
@@ -56,31 +56,62 @@ const routes = [
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['attendance'],
+          _resource3AWall:_acctype['saleit'],
         }, 
       },
       //------------------------------
       //-------------------------------
       {
-        path: "",
+        path: "strend", //page for smartphone V.
+        component: () => import("pages/playsPage.vue"),
+        name:"playsTrends",
+        meta: {
+          _isauthenticated: false,
+          _groups: false,
+          _resource3AWall:_acctype['saleit'],
+        }, 
+      },
+      {
+        path: "trend", //page for PCs V.
         component: () => import("pages/playPage.vue"),
         name:"playTrends",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['attendance'],
+          _resource3AWall:_acctype['saleit'],
         }, 
       },
+
       //------------------------------
       //-----------------------------
+      {
+        path: "playcart",
+        component: () => import("pages/playcartPage.vue"),
+        name:"playcart",
+        meta: {
+          _isauthenticated: false,
+          _groups: false,
+          _resource3AWall:_acctype['saleit'],
+        }, 
+      },
+      {
+        path: "playservice",
+        component: () => import("pages/playservicePage.vue"),
+        name:"playservice",
+        meta: {
+          _isauthenticated: false,
+          _groups: false,
+          _resource3AWall:_acctype['saleit'],
+        }, 
+      },
     ],
   },
 
   {
     path: '/itservices',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/PlayLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/itservices.vue') }
+      { path: 'user', component: () => import('pages/user.vue') },
     ]
   },
 
@@ -91,8 +122,6 @@ const routes = [
     //name:'errorPage',
     component: () => import("pages/ErrorNotFound.vue"),
   },
-
-
 ];
 
 export default routes;

@@ -1,43 +1,50 @@
 import { mongoose } from "mongoose";
 
-import { mongodAPI_URL } from "../config";
-
-const saleitMongodApi = mongodAPI_URL + "/saleit";
-const profileMongodApi = mongodAPI_URL + "/profile";
-const MONGO_adminURI = mongodAPI_URL + "/admin";
-
-//-------------
-const supportedMimes = {
-  "text/csv": "csv",
-};
-
-const uploadsFolder = "uploads";
-// defing the database instance as variable mean as this js_module is imported the get excuted..
+const saleitMongodApi = process.env.API_MNGDB + "/saleit";//mongodb DB_Name could be none plular_Values,but tables....
+const profileMongodApi = process.env.API_MNGDB + "/profile";
+const chatMongodApi = process.env.API_MNGDB + "/chat";
+const MONGO_adminURI = process.env.API_MNGDB + "/admin";
 
 try {
-  // create mongoose instance of named profileDBs with DB_name of finance
+  // create mongoose instance of named profileDBs with DB_name of saleitProfile
   var profileDBs = mongoose.createConnection(profileMongodApi, {});
-  console.log("Connecting to Finance DataBases....");
+  console.log("Connecting to saleitProfile DataBases....");
 } catch (err) {
-  console.log("Error Connecting to Finance DB_"+err);
+  console.log("Error Connecting to saleitProfile DB_"+err);
   process.exit(1);
 }
 const profileConnection = profileDBs.connection; // check if the Mongood Server has Already created_DBS and return connection status
 profileDBs.once("open", (_) => {
-  console.log(`Finance Database connected: ${profileMongodApi}`);
+  console.log(`saleitProfile Database connected: ${profileMongodApi}`);
 });
 
 profileDBs.on("error", (err) => {
-  console.error(`Finance DB connection error: ${err}`);
+  console.error(`saleitProfile DB connection error: ${err}`);
 });
 
+try {
+  // create mongoose instance of named chatDBs with DB_name of saleitProfile
+  var chatDBs = mongoose.createConnection(chatMongodApi, {});
+  console.log("Connecting to saleitProfile DataBases....");
+} catch (err) {
+  console.log("Error Connecting to saleitProfile DB_"+err);
+  process.exit(1);
+}
+const chatConnection = chatDBs.connection; // check if the Mongood Server has Already created_DBS and return connection status
+chatDBs.once("open", (_) => {
+  console.log(`saleitProfile Database connected: ${chatMongodApi}`);
+});
+
+chatDBs.on("error", (err) => {
+  console.error(`saleitProfile DB connection error: ${err}`);
+});
 
 try {
   // create mongoose instance of named saleitDBs with DB_name of humanResource
   var saleitDBs = mongoose.createConnection(saleitMongodApi, {});
   console.log("Connecting to saleit DataBases....");
 } catch (err) {
-  console.log("Error Connecting to Finance DB_"+err);
+  console.log("Error Connecting to saleitProfile DB_"+err);
   process.exit(1);
 }
 const saleitConnection = saleitDBs.connection; // check if the Mongood Server has Already created_DBS and return connection status
@@ -64,7 +71,7 @@ var adminDBs = async () => {
     });
 
     adminDBs.on("error", (err) => {
-      console.log("Error Connecting to Finance DB_"+err);
+      console.log("Error Connecting to saleitProfile DB_"+err);
     });
   } catch (err) {
     console.log(err);
@@ -73,7 +80,7 @@ var adminDBs = async () => {
 };
 
 //}
-export { profileDBs, saleitDBs, adminDBs };
+export { profileDBs,chatDBs, saleitDBs, adminDBs };
 
 //proc()
 //module.exports = {   proc2,proc,mongoose }
