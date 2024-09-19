@@ -22,7 +22,7 @@
         .sort(sortBy)
         .limit(limits) 
         .then((modelData) => {
-          // console.log(modelData.length,'and Fetching',findBy)
+          console.log(modelData.length,'and Fetching')
           if (modelData) { return { status: 200, data: modelData }; //returns null or object_
           } else { return { status: 200, data:modelData }; //not found Error
           } }).catch((modelError) => {
@@ -38,7 +38,7 @@
         .sort(sortBy)
         .limit(limits) 
         .then((modelData) => {
-          console.log(modelData.length,'Or Fetching',findBy)
+          console.log(modelData.length,'Or Fetching')
           if (modelData) { return { status: 200, data: modelData }; //returns null or object_
           } else { return { status: 200, data:modelData }; //not found Error
           } }).catch((modelError) => {

@@ -1,4 +1,6 @@
 
+import { ref, reactive, computed } from "vue";
+
 
 
 ///////////////////////
@@ -58,4 +60,18 @@ function _getMonthsPeriod(){
 var _getthismonth = () =>{ return {'daya':_startofthisMonth,'dayz':_endofthisMonth}}
 var _getthisyear = () =>{ return {'daya':_startofthisYear,'dayz':_endofthisYear}}
 
-export {monthObj,_getthismonth,_getthisyear}
+const monthDataFilter = ref({ //{  date: { $gte: "2022-01-01", $lte: "2022-12-30" },}
+  updatedAt: {
+    $gte: _getthismonth.daya,
+    $lt: _getthismonth.dayz,
+  },
+});
+
+const yearDataFilter = ref({ //{  date: { $gte: "2022-01-01", $lte: "2022-12-30" },}
+  updatedAt: {
+    $gte: _getthisyear.daya,
+    $lt: _getthisyear.dayz,
+  },
+});
+
+export {monthObj,_getthismonth,_getthisyear,monthDataFilter,yearDataFilter}

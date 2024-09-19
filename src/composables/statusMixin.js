@@ -15,12 +15,15 @@ import {schemaSklt} from "src/composables/schemaSklts";
     
     //-----
     // Define methods
-    async function status_timerLoad(period = 6000, message = "",title="") {
-      status_Loading.value.push({'color':'blue','content':message,'title':title})
+
+    function status_timerLoad(period = 6000, message = "",title='') {
+      status_Loading.value.push({'color':'grey','content':message,'title':title})
+      console.log('inform Status',message)
       setTimeout(() => {
         status_Loading.value.shift()
           return false;}, 
           period);
+      return true
     }
 
     //timerLoading
@@ -30,6 +33,8 @@ import {schemaSklt} from "src/composables/schemaSklts";
           status_DoneMessage.value.shift()
           return false;}, 
           period);
+      return true
+
      }
 
      function status_timerInformthis(period = 6000, message = "",title='') {
@@ -39,6 +44,8 @@ import {schemaSklt} from "src/composables/schemaSklts";
         status_KnowthisMessage.value.shift()
           return false;}, 
           period);
+      return true
+
     }
 
      function status_timerError(period = 6000, message = "",title="") {
@@ -47,6 +54,8 @@ import {schemaSklt} from "src/composables/schemaSklts";
         status_WarnthisMessage.value.shift()
           return false;}, 
           period);
+      return true
+
 
     }
 

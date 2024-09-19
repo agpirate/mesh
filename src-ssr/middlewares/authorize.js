@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 import {
-  profileModel,acctypeModel
+  profileModel,threeaModel
 } from "app/src-ssr/backendCore/models/profileModels";
 import { mongoose } from "mongoose";
 
@@ -68,7 +68,7 @@ ObjectId = mongoose.Types.ObjectId;
     req.queryWeight=_userQuery
     //--------------------------------------------------------------------Authentication Ends//
     if(_issID && _issmodal){
-     return await acctypeModel.findOne({'_id':new ObjectId(_issID)}).then((_role_permission)=>{
+     return await threeaModel.findOne({'_id':new ObjectId(_issID)}).then((_role_permission)=>{
         if(_role_permission){ //if Permissions Founded
           _issrole =_role_permission[_issmodal]
         }else{ _issrole= null }  //ifNot

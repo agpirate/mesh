@@ -8,10 +8,14 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
+const { configure } = require("quasar/wrappers");
+const path = require("path");
 
-const { configure } = require('quasar/wrappers');
-const path = require('path');
-
+// const __dirname=""
+console.log(
+  path.resolve(__dirname, "src") + "/stores/jstStores/genapiStore",
+  "lllllllllllllllll"
+);
 module.exports = configure(function (ctx) {
   return {
     eslint: {
@@ -20,7 +24,7 @@ module.exports = configure(function (ctx) {
       // exclude: [],
       // rawOptions: {},
       warnings: true,
-      errors: true
+      errors: true,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -29,15 +33,10 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
-      'i18n',
-      'axios',
-    ],
+    boot: ["i18n", "axios"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: [
-      'app.scss'
-    ],
+    css: ["app.scss"],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -49,19 +48,27 @@ module.exports = configure(function (ctx) {
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
+      "roboto-font", // optional, you are not bound to it
+      "material-icons", // optional, you are not bound to it
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
-      target: {
-        browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
-        node: 'node20',
-        ApiIPI:"127.0.0.1:9100",
-        DBsIPI:"0.0.0.0:27017",
+      // Extend Vite configuration
+      extendViteConf(viteConf) {
+        viteConf.resolve.alias = {
+          ...viteConf.resolve.alias,
+          "@": path.resolve(__dirname, "./src"),
+        };
+      },
 
-        SESSION_SECRET:"ABCVSDRGEHYRTRFGEHJD"
+      target: {
+        browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],
+        node: "node20",
+        ApiIPI: "127.0.0.1:8080",
+        DBsIPI: "127.0.0.1:27017",
+
+        SESSION_SECRET: "ABCVSDRGEHYRTRFGEHJD",
       },
 
       // Accessing terminal variables
@@ -70,26 +77,27 @@ module.exports = configure(function (ctx) {
       // passing down to UI code from the quasar.config file
 
       env: {
-        API: ctx.dev ? '0.0.0.0' : '0.0.0.0',
-        API_PORT: ctx.dev ? 9100 : 9100,
-        API_IP_PORT: ctx.dev ? "http://0.0.0.0:9100" : "http://912.168.1.6:9100",
+        API: ctx.dev ? "127.0.0.1" : "127.0.0.1",
+        API_PORT: ctx.dev ? 8080 : 8080,
+        API_IP_PORT: ctx.dev
+          ? "http://127.0.0.1:8080"
+          : "http://127.0.0.1:8080",
         //-----------------------------
-        API_MNGDB: "mongodb://0.0.0.0:27017",
+        API_MNGDB: "mongodb://127.0.0.1:27017",
 
-        Api_IPI:"0.0.0.0",
-        Api_PORTI:"9100",
+        Api_IPI: "127.0.0.1",
+        Api_PORTI: "8080",
 
-        Mongose_IPI:"0.0.0.0",
-        Mongose_PORTI:"9100",
+        Mongose_IPI: "127.0.0.1",
+        Mongose_PORTI: "8080",
 
-        
-        TOKEN_SECRET:'smsSecret'
-      
+        TOKEN_SECRET: "itserviceKey",
+        REFRESH_TOKEN_SECRET: "itserviceKey",
       },
 
       //env: require('dotenv').config().parsed, //will enable you to use external_ADD env(also for Src) and quasar env in sametime(for src-ssr)
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: "hash", // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -109,24 +117,27 @@ module.exports = configure(function (ctx) {
       // viteVuePluginOptions: {},
 
       vitePlugins: [
-        ['@intlify/vite-plugin-vue-i18n', {
-          // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
-          // compositionOnly: false,
+        [
+          "@intlify/vite-plugin-vue-i18n",
+          {
+            // if you want to use Vue I18n Legacy API, you need to set `compositionOnly: false`
+            // compositionOnly: false,
 
-          // if you want to use named tokens in your Vue I18n messages, such as 'Hello {name}',
-          // you need to set `runtimeOnly: false`
-          // runtimeOnly: false,
+            // if you want to use named tokens in your Vue I18n messages, such as 'Hello {name}',
+            // you need to set `runtimeOnly: false`
+            // runtimeOnly: false,
 
-          // you need to set i18n resource including paths !
-          include: path.resolve(__dirname, './src/i18n/**')
-        }]
-      ]
+            // you need to set i18n resource including paths !
+            include: path.resolve(__dirname, "./src/i18n/**"),
+          },
+        ],
+      ],
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true // opens browser window automatically
+      open: false, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -156,10 +167,7 @@ module.exports = configure(function (ctx) {
 
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: [
-      'bounceInLeft',
-      'bounceOutRight'
-    ],
+    animations: ["bounceInLeft", "bounceOutRight"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#property-sourcefiles
     // sourceFiles: {
@@ -176,7 +184,7 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli-vite/developing-ssr/configuring-ssr
     ssr: {
       // ssrPwaHtmlFilename: 'offline.html', // do NOT use index.html as name!
-                                          // will mess up SSR
+      // will mess up SSR
 
       // extendSSRWebserverConf (esbuildConf) {},
       // extendPackageJson (json) {},
@@ -187,19 +195,19 @@ module.exports = configure(function (ctx) {
       // manualPostHydrationTrigger: true,
 
       prodPort: 3000, // The default port that the production server should use
-                      // (gets superseded if process.env.PORT is specified at runtime)
+      // (gets superseded if process.env.PORT is specified at runtime)
 
       middlewares: [
-        'render' // keep this as last one
-      ]
+        "render", // keep this as last one
+      ],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'generateSW', // or 'injectManifest'
+      workboxMode: "generateSW", // or 'injectManifest'
       injectPwaMetaTags: true,
-      swFilename: 'sw.js',
-      manifestFilename: 'manifest.json',
+      swFilename: "sw.js",
+      manifestFilename: "manifest.json",
       useCredentialsForManifestTag: false,
       // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
@@ -215,7 +223,7 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
-      hideSplashscreen: true
+      hideSplashscreen: true,
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
@@ -226,17 +234,15 @@ module.exports = configure(function (ctx) {
       // specify the debugging port to use for the Electron app when running in development mode
       inspectPort: 5858,
 
-      bundler: 'packager', // 'packager' or 'builder'
+      bundler: "packager", // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-
         // OS X / Mac App Store
         // appBundleId: '',
         // appCategoryType: '',
         // osxSign: '',
         // protocol: 'myapp://path',
-
         // Windows only
         // win32metadata: { ... }
       },
@@ -244,19 +250,16 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'itservices'
-      }
+        appId: "itservices",
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
     bex: {
-      contentScripts: [
-        'my-content-script'
-      ],
+      contentScripts: ["my-content-script"],
 
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
-    }
-  }
+    },
+  };
 });
-

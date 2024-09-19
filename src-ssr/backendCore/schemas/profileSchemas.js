@@ -1,13 +1,15 @@
 
-//import _permission from "src/hooks/_permission";
+//import threeaSchema from "src/hooks/threeaSchema";
 import { mongoose } from "mongoose";
 import { ref } from "vue";
 var Schema = mongoose.Schema
-var ObjectId = Schema.ObjectId;
+// var ObjectId = Schema.ObjectId;
+var ObjectId = mongoose.Types.ObjectId; //use this for objectID of reference models
+
 
 var todday = () => new Date().toLocaleDateString();//.split("T")[0];
 //{'profileMeta':'clients','profile':'clients','saleit':'clients'}
-const _permission ={
+const threeaSchema ={
   group:{ type: String,  default: "client"},
   profile: {
     group:{
@@ -58,7 +60,49 @@ const _permission ={
        default:[],
      }
    },
-   saleclient: {
+   saleitClient: {
+    group:{
+      type: String,
+       default: "client",
+       role:{'xrole':[],'client':['likes','comments','clients'],'upgraded':['clients','likes','comments'],'creatorrw':2001,'creator':2001,'admin':2001},
+       enum: ["upgraded","client","creator","admin","xrole"],
+     },
+     role:[{
+      type: String,
+      default: "",
+      enum: ["likes","comments",'clients',"*","***",""],
+    }],
+    capability: {
+      type: String,
+       default: '1010',
+     },
+     accstage: {
+      type: Array,
+       default:[],
+     }
+   },
+   saleitChat: {
+    group:{
+      type: String,
+       default: "client",
+       role:{'xrole':[],'client':['likes','comments','clients'],'upgraded':['clients','likes','comments'],'creatorrw':2001,'creator':2001,'admin':2001},
+       enum: ["upgraded","client","creator","admin","xrole"],
+     },
+     role:[{
+      type: String,
+      default: "",
+      enum: ["likes","comments",'clients',"*","***",""],
+    }],
+    capability: {
+      type: String,
+       default: '1010',
+     },
+     accstage: {
+      type: Array,
+       default:[],
+     }
+   },
+   publicChat: {
     group:{
       type: String,
        default: "client",
@@ -140,7 +184,13 @@ const profileSchema = {
        //index: { unique: true, dropDups: true },
  
      },
- 
+     secretKey: {
+      type: String,vtype:"String",
+       default: 0,
+       $ifNull: 0,
+      //  required:true,
+      //  index: { unique: true, dropDups: true,length:10 },
+     },
      phone: {
       type: Number,vtype:"Number",
        default: 0,
@@ -200,6 +250,12 @@ location: {
        default: [],
        $ifNull: [],
      },
+     contacts:{
+        type: Array,vtype:"Array",
+        default: [],
+        $ifNull: [],
+        index: { length:10 },
+       },
      queryWeight: {
       '1':{ type: Array,Vtype:"Array", ///userProfile for saleit_contents
             default: [1,50,50,50],
@@ -212,7 +268,8 @@ location: {
             $ifNull: "1.1.1.1",}
      },
     //--------------------------------
-      acckey:{ type:ObjectId, ref: "acctypes" }, //"acctype"/"_id": ObjectId("62d01d17cdd1b7c8a5f945b9")
+      acckey:{ type:ObjectId, ref: "threeas" }, //"acctype"/"_id": ObjectId("62d01d17cdd1b7c8a5f945b9")
+      acckey2:{ type:ObjectId, ref: "threeas" }, //"acctype"/"_id": ObjectId("62d01d17cdd1b7c8a5f945b9")
     //---------------------------------
   }
 const profileMetaSchema = {
@@ -242,7 +299,7 @@ const profileMetaSchema = {
     //---------------------------------s
   }
 
-export { profileSchema,profileMetaSchema,_permission,_userPermissions}
+export { profileSchema,profileMetaSchema,threeaSchema,_userPermissions}
 
 
 

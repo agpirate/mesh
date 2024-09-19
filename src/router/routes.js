@@ -18,7 +18,7 @@ const routes = [
     children: [
       //-------------------------------
       { path: "", 
-        component: () => import("pages/signPage.vue"),
+        component: () => import("pages/logins/signPage.vue"),
         name:"sign",
         meta: {
           _isauthenticated: false,
@@ -41,82 +41,97 @@ const routes = [
       //-------------------------------
       { path: "profile",   
         component: () => import("pages/profilePage.vue"), 
-        name:"play",
+        name:"profile",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['saleit'],
+          //_resource3AWall:_acctype['saleit'],
         }, 
       },
       //-------------------------------
-      {
-        path: "resource",
-        component: () => import("pages/resourcePage.vue"),
-        name:"resource",
-        meta: {
-          _isauthenticated: false,
-          _groups: false,
-          _resource3AWall:_acctype['saleit'],
-        }, 
-      },
+
       //------------------------------
-      //-------------------------------
+      //----Main Routes
       {
-        path: "strend", //page for smartphone V.
-        component: () => import("pages/playsPage.vue"),
-        name:"playsTrends",
+        path: "ssaleit", //page for smartphone V.
+        component: () => import("pages/splayPage.vue"),
+        name:"ssaleit",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['saleit'],
+          //_resource3AWall:_acctype['saleit'],
         }, 
       },
       {
-        path: "trend", //page for PCs V.
+        path: "saleit", //page for PCs V.
         component: () => import("pages/playPage.vue"),
-        name:"playTrends",
+        name:"saleit",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['saleit'],
+          //_resource3AWall:_acctype['saleit'],
         }, 
       },
 
       //------------------------------
-      //-----------------------------
+      //Derivative Routes
       {
-        path: "playcart",
+        path: "ssaleitclient",
+        component: () => import("pages/splaycartPage.vue"),
+        name:"ssaleitclient",
+        meta: {
+          _isauthenticated: false,
+          _groups: false,
+          //_resource3AWall:_acctype['saleit'],
+        }, 
+      },
+      {
+        path: "saleitclient",
         component: () => import("pages/playcartPage.vue"),
-        name:"playcart",
+        name:"saleitclient",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['saleit'],
+          //_resource3AWall:_acctype['saleit'],
+        }, 
+      },
+      //-----------------------------
+      //Service Routes==============
+      {
+        path: "sstore",
+        component: () => import("pages/splayservicePage.vue"),
+        name:"sstore",
+        meta: {
+          _isauthenticated: false,
+          _groups: false,
+          //_resource3AWall:_acctype['saleit'],
         }, 
       },
       {
-        path: "playservice",
+        path: "store",
         component: () => import("pages/playservicePage.vue"),
-        name:"playservice",
+        name:"store",
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _resource3AWall:_acctype['saleit'],
+          //_resource3AWall:_acctype['saleit'],
         }, 
       },
+
     ],
   },
 
   {
-    path: '/itservices',
-    component: () => import('layouts/PlayLayout.vue'),
+    path: '/admin',
+    component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: 'user', component: () => import('pages/user.vue') },
+      { path: "profile", component: () => import('pages/userPage.vue') },
     ]
   },
-
   // Always leave this as last one,
   // but you can also remove it,
+  //main for 
+  
   {
     path: "/:catchAll(.*)*",
     //name:'errorPage',

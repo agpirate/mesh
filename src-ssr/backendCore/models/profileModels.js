@@ -1,31 +1,31 @@
 //import { mongoose } from "mongoose";
 import { profileDBs } from "../dbConns";
 import {_userPermissions,
-        _permission,profileSchema,
+  threeaSchema,profileSchema,
         profileMetaSchema } 
   from "../schemas/profileSchemas";
 import { _dateformating } from "../../services/modalServices/dateServices.js";
 //import { saleitSchema } from "../schemas/saleitSchema";
 import { mongoose } from "mongoose";
 var Schema = mongoose.Schema
-var ObjectId = Schema.ObjectId;
+// var ObjectId = mongoose.Types.ObjectId;
 
 //-------new Date().toLocaleString()
 var todday = (sampledate=null) => new Date(sampledate).toLocaleString()
-//------------------------------------------------------------------
-let acctypeSchema = new Schema(
-  _permission,
+//---------------------------------------------------------------------
+let _threeaSchema = new Schema(
+  threeaSchema,
   {
     timestamps: todday,
-  }
+  }  
 );
-acctypeSchema.method("toJSON", function () {
+_threeaSchema.method("toJSON", function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
   return object;
 });
 
-//-----------
+//-----------  ----------------
 let _profileSchema = new Schema(
   profileSchema,
   {
@@ -56,12 +56,13 @@ _profileMetaSchema.method("toJSON", function () {
 
 
 //----------------------modeling Schemass
-//----------------------------------------------------------------------acctypeSchema _userPermissions
-var acctypeModel;
-if (profileDBs.model.acctypeModel) {
-  console.log("assets Collections already existed on Procurment");
+//----------------------------------------------------------------------_threeaSchema _userPermissions
+var threeaModel;
+if (profileDBs.models['threeas'] ?? false) {
+  console.log("Collections alread existed on");
 } else {
-  acctypeModel = profileDBs.model("acctypes", acctypeSchema);
+  threeaModel = profileDBs.model("threeas", _threeaSchema);
+  console.log(threeaModel,'New Created !');
 }
 
 var profileModel;
@@ -69,6 +70,7 @@ if (profileDBs.model.profileModel) {
   console.log("assets Collections already existed on Procurment");
 } else {
   profileModel = profileDBs.model("profiles", _profileSchema);
+  console.log(profileModel,'New Created !');
 }
 /**/
 var profileMetaModel;
@@ -77,6 +79,8 @@ if (profileDBs.model.profileMetaModel) {
   console.log("assets Collections already existed on Procurment");
 } else {
   profileMetaModel = profileDBs.model("profileMetas", _profileMetaSchema);
+  console.log(profileMetaModel,'New Created !');
+
 }
 
 //--------------------Initializing Databasess (and Create permissions)
@@ -109,8 +113,8 @@ const _acc = [
  },
 ];  
 //Once Permission Rules Created ---Cooment both_Below Lines....
-//acctypeModel.create(_acc).then((createdProducts) => {console.log('Products created:', createdProducts); })
+//threeaModel.create(_acc).then((createdProducts) => {console.log('Products created:', createdProducts); })
 //  .catch((error) => {console.error('Error creating products:', error); });
 
 //-------------------- exporting schemas
-export { acctypeModel,profileModel,profileMetaModel }; //,rawmatterialModel,supplierModel };
+export { threeaModel,profileModel,profileMetaModel }; //,rawmatterialModel,supplierModel };

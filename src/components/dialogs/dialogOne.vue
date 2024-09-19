@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isOpen" class="overlay z-top" @click="click0(null)">
+    <div v-if="isOpen" class="overlay z-top" @click="click0(null)" >
       <div class="q-gutter-md">
       <div class="column  col" @click.stop>
         <slot class="col"></slot>
@@ -8,9 +8,8 @@
 
       </div>
    
-
-      <div  class="row" >
-        <q-btn  class="col-grow fontestyle" label="close" @click="click0(false)" color="red" />
+      <div  class="row" v-if="enableCloser">
+        <q-btn rounded :dense="true" class="col-auto fontestyle" label="close" @click="click0(false)" color="red" />
       </div>
       </div>
     </div>
@@ -21,6 +20,8 @@
   
   const props = defineProps({
     isOpen: null,
+    // eslint-disable-next-line vue/require-prop-type-constructor
+    enableCloser: false,
   });
   
   const emit = defineEmits(['emitClick0']);
