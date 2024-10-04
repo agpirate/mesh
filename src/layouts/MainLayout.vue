@@ -1,22 +1,16 @@
 <template>
   <q-layout view="lHh Lpr lFf">
- 
-
     <q-page-container style="" class="col-grow transparent row">
       <router-view
         :_profile="_this"
-        :_threeaSchema="_threeaSchema"
+        :__permission="__permission"
         :_acctype="_this['acctype']"
-
-        
         :lytCreatRow="lytCreatRow"
         :lytSearchRow="lytSearchRow"
         :_thisMedia2="_thisMedia"
         :_pageSetting="_pageSettings"
       />
     </q-page-container>
-
-    
   </q-layout>
 </template>
 
@@ -34,7 +28,6 @@ import { timeStore } from "src/stores/jstStores/serviceStore.js";
 import { useRouter } from "vue-router";
 
 import { profileStore } from "src/stores/authenticatedStore/profileStore";
-import { profile2Store } from "src/stores/authenticatedStore/profile2Store";
 //import {chatStore} from "src/stores/authenticatedStore/chatStore"
 import { authenticatingStore } from "src/stores/authenticatedStore/authenticatingStore";
 
@@ -42,7 +35,7 @@ import { authenticatingStore } from "src/stores/authenticatedStore/authenticatin
 import _localStorage from "src/services/storeService";
 //var socket = new WebSocket('ws://127.0.0.1:9100');
 import debugCard from "@/components/debugCards.vue";
-import useDebugMixin from "@/composables/debugMixin";
+import useDebugMixin from "@/composables/mixins/debugMixin";
 const {
   Loadingpage,
   Loadingevent,
@@ -63,7 +56,7 @@ const {
   timerError,
 } = useDebugMixin();
 
-import useStatusMixin from "@/composables/statusMixin";
+import useStatusMixin from "@/composables/mixins/statusMixin";
 const {
   status_Loading,
   status_DoneMessage,
@@ -76,7 +69,7 @@ const {
   status_timerError,
 } = useStatusMixin();
 
-import usefileMixin from "src/composables/fileserviceMixin";
+import usefileMixin from "src/composables/mixins/fileserviceMixin";
 var {
   _thisMedia,
   _fileAttributeName,
@@ -110,7 +103,6 @@ const $q = useQuasar();
 //-----------Store & Service
 
 const profileService = profileStore();
-const publicchatService = profile2Store();
 //-----------
 const _theService = profileService;
 const authService = authenticatingStore(); //it(storeToRefs) is like computed_ reactive_variable
@@ -181,12 +173,12 @@ iservicei_Menu.value = {
 //------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2----ModalSkeltone [ profileSchema]
 //-----user Schema
 // import { profileSchema } from "src/composables/schemas/profileSchemas";
-import { threeaSchema } from "src/composables/schemas/profileSchemas";
+import { _permission } from "src/composables/schemas/profileSchemas";
 //import { isArray } from "chart.js/dist/helpers/helpers.core";
 
 let _thisModel = "profile";
 let _profile_iss = ref(null);
-var _threeaSchema = reactive(threeaSchema ?? null);
+var __permission = reactive(_permission ?? null);
 
 //-------------USER PROFILE_Variables..
 //===============================================-----------------------------------------
@@ -216,7 +208,7 @@ async function _thisDefaulting() {
 
   return true;
 }
-_thisDefaulting()
+_thisDefaulting();
 //===============================================-----------------------
 watch(_this, async (_newV, _oldV) => {
   let _requestHeader = {};
@@ -253,13 +245,15 @@ async function updateUser(_isFileCapsulated = false) {
       if (response) {
         timerDone(5000, "Item Updated", "Succefully Updated");
         _this.value = Object.assign({}, response);
-        __thisOps.value = false
-      } else{timerDone(5000, "Error Updating", "Error Updating"); }
+        __thisOps.value = false;
+      } else {
+        timerDone(5000, "Error Updating", "Error Updating");
+      }
       return true;
     })
     .catch((error) => {
       timerDone(5000, "Error Updating", "Error Updating");
-      __thisOps.value = false
+      __thisOps.value = false;
       // __thisOpsStatus.value = false;
       return false;
     });
@@ -296,7 +290,7 @@ class _locationDevices {
           var _geolat = parseFloat(geodata.coords?.latitude ?? 0);
           var _geolong = parseFloat(geodata.coords?.longitude ?? 0);
           if (_geolat && _geolat != _this.value.geolocation.lat) {
-            _this.value.geolocation = {'lat':_geolat,'long':_geolong};
+            _this.value.geolocation = { lat: _geolat, long: _geolong };
             _location.value = { country: "", city: "", street: "" };
           }
           return this;
@@ -312,7 +306,7 @@ class _locationDevices {
           var _geolat = parseFloat(geodata.coords?.latitude ?? 0);
           var _geolong = parseFloat(geodata.coords?.longitude ?? 0);
           if (_geolat && _geolat != _this.value.geolocation.lat) {
-            _this.value.geolocation = {'lat':_geolat,'long':_geolong};
+            _this.value.geolocation = { lat: _geolat, long: _geolong };
             _location.value = { country: "", city: "", street: "" };
           }
           return this;
@@ -412,21 +406,26 @@ const Crud_this = {
       }
       //-----------Calling for Store Services  (_suburl, formData, objParam)
       return await _theService
-        .createData( _this.value, objParam)
+        .createData(_this.value, objParam)
         .then((response) => {
           if (response.status) {
             return response.data;
           } else {
-            timerLoadevent({ 'createData': 5000 }, 5000, 'Error'+response.data);
+            timerLoadevent({ createData: 5000 }, 5000, "Error" + response.data);
             return false;
           }
         })
         .catch((e) => {
-          timerLoadevent({ 'createData': 5000 }, 5000, 'Error createData', '...'+e);
+          timerLoadevent(
+            { createData: 5000 },
+            5000,
+            "Error createData",
+            "..." + e
+          );
           return false;
         });
-    } catch(e) {
-      timerLoadevent({ 'createData': 5000 }, 5000, 'Error createData', '...'+e);
+    } catch (e) {
+      timerLoadevent({ createData: 5000 }, 5000, "Error createData", "..." + e);
       return false;
     }
   },
@@ -444,69 +443,79 @@ const Crud_this = {
           if (response.status) {
             return response.data;
           } else {
-            timerLoadevent({ 'updateData': 5000 }, 5000, 'Error'+response.data);
+            timerLoadevent({ updateData: 5000 }, 5000, "Error" + response.data);
             return false;
           }
         })
         .catch((e) => {
-          timerLoadevent({ 'updateData': 5000 }, 5000, 'Error updateData', '...'+e);
+          timerLoadevent(
+            { updateData: 5000 },
+            5000,
+            "Error updateData",
+            "..." + e
+          );
           return false;
         });
-    } catch(e) {
-      timerLoadevent({ 'updateData': 5000 }, 5000, 'Error updateData', '...'+e);
+    } catch (e) {
+      timerLoadevent({ updateData: 5000 }, 5000, "Error updateData", "..." + e);
       return false;
     }
   },
 
   readData: async function () {
-    timerLoadevent({ 'readData': 0 }, 0, "Searching...");
+    timerLoadevent({ readData: 0 }, 0, "Searching...");
     return await _theService
       .readData()
       .then((response) => {
         if (response.status) {
           return response.data;
         } else {
-          timerLoadevent({ 'readData': 5000 }, 0, ' Error '+response.data);
+          timerLoadevent({ readData: 5000 }, 0, " Error " + response.data);
           return false;
         }
       })
       .catch((e) => {
-        timerLoadevent({ 'readData': 5000 }, 5000, 'Error Deleting', '...'+e);
+        timerLoadevent({ readData: 5000 }, 5000, "Error Deleting", "..." + e);
         return false;
       });
   },
   //---------------------------------------------------------------
   readFData: async function (objParam = {}) {
     //-------Check for Param_Requirents
-    timerLoadevent({ 'readFData': 0 }, 0, "Searching...");
+    timerLoadevent({ readFData: 0 }, 0, "Searching...");
     try {
       if (Object.keys(objParam ?? {}).length == 0) {
         return false;
       }
       //-----------Calling for Store Services
       return await _theService
-        .readFData( objParam)
+        .readFData(objParam)
         .then((response) => {
           if (response.status) {
             return response.data;
           } else {
-            timerLoadevent({ 'readFData': 5000 }, 0, ' Error'+response.data);
+            timerLoadevent({ readFData: 5000 }, 0, " Error" + response.data);
             return false;
           }
         })
         .catch((e) => {
-          timerLoadevent({ 'readFData': 5000 }, 5000, 'Error Deleting', '...'+e);
+          timerLoadevent(
+            { readFData: 5000 },
+            5000,
+            "Error Deleting",
+            "..." + e
+          );
           return false;
         });
-    } catch(e) {
-      timerLoadevent({ 'readFData': 5000 }, 5000, 'Error Deleting', '...'+e);
+    } catch (e) {
+      timerLoadevent({ readFData: 5000 }, 5000, "Error Deleting", "..." + e);
       return false;
     }
   },
 
   deleteData: async function () {
     //-------Check for Param_Requirents
-    timerLoadevent({ 'deleteData': 0 }, 0, "Searching...");
+    timerLoadevent({ deleteData: 0 }, 0, "Searching...");
     try {
       if (_this.value[delKey] == null) {
         return false;
@@ -516,22 +525,27 @@ const Crud_this = {
       objParam[delKey] = _this.value[delKey];
       //---------
       return await _theService
-        .deleteData( objParam)
+        .deleteData(objParam)
         .then((response) => {
           if (response.status) {
             // timerDone(5000, 'Deleted', '...');
             return response.data;
           } else {
-            timerLoadevent({ 'deleteData': 5000 }, 0, ' Error'+response.data);
+            timerLoadevent({ deleteData: 5000 }, 0, " Error" + response.data);
             return false;
           }
         })
         .catch((e) => {
-            timerLoadevent({ 'deleteData': 5000 }, 5000, 'Error Deleting', '...'+e);
+          timerLoadevent(
+            { deleteData: 5000 },
+            5000,
+            "Error Deleting",
+            "..." + e
+          );
           return false;
         });
     } catch {
-      timerLoadevent({ 'deleteData': 5000 }, 5000, 'Error Deleting', '...'+e);
+      timerLoadevent({ deleteData: 5000 }, 5000, "Error Deleting", "..." + e);
       return false;
     }
   },
@@ -547,30 +561,35 @@ var { getLogStatus, getLogUser, getLogisREgistered, clearlogStatus } =
   storeToRefs(authService); //is like making reactive(ref)_variable
 //--------------------------------------------------------------------Profiling (CHECK AUTHENTICATIONS &&& USER INFORMATIONS)
 
-var _manageStoreLogin = async function() {
-  console.log('\n\nFunction - _manageStoreLogin --STORE Authentication Initializing [Phone,Stored_ID]---- \n')
+var _manageStoreLogin = async function () {
+  console.log(
+    "\n\nFunction - _manageStoreLogin --STORE Authentication Initializing [Phone,Stored_ID]---- \n"
+  );
   return await authService
     .useLogin(_this.value)
     .then(async (resp) => {
-      console.log(`\n LoginStatus = ${resp.status} \n`)
+      console.log(`\n LoginStatus = ${resp.status} \n`);
       if (!(resp.status ?? false) || !(resp["data"] ?? false)) {
-        //------------1st is not loged, 2nd 
-        await timerLoadevent({ main: 0 }, 5000, "Authentication Error")
+        //------------1st is not loged, 2nd
+        await timerLoadevent({ main: 0 }, 5000, "Authentication Error");
         return router.push("/");
       }
       //----------- Succefully Registered
       _this.value = Object.assign({}, resp.data);
-      console.log(`\n User Acctype = ${_this.value["acctype"]} \n`)
+      console.log(`\n User Acctype = ${_this.value["acctype"]} \n`);
       //------------ Validate Acctype ?
-      if(!(_this.value["acctype"] ?? false)){ await timerLoadevent({ main: 5000 }, 0, "Access Error, Retrying..");return router.push("/")}
+      if (!(_this.value["acctype"] ?? false)) {
+        await timerLoadevent({ main: 5000 }, 0, "Access Error, Retrying..");
+        return router.push("/");
+      }
       //----------- Loading Messages
-      _profile_iss.value =  _this.value['acctype']["profile"] ?? null;
+      _profile_iss.value = _this.value["acctype"]["profile"] ?? null;
       return true;
     })
     .catch(async (e) => {
       return await timerLoadevent({ main: 0 }, 0, "Error Connecting.." + e);
     });
-}
+};
 
 //-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-----------ON-Mouted Operations and Authentications
 //-----------Intializing....first functions and required datas
@@ -578,39 +597,42 @@ var _navClass = new _locationDevices(); //constructorialize navigator class
 var _cameraInstance = new _cameraDevice();
 // let _informthis=ref(false)
 timerLoadevent({ main: 0 }, 0, "Loading...");
-onMounted(async () => { //onMounted
+onMounted(async () => {
+  //onMounted
   // await timerLoadevent({ main: 7000 }, 0, "Please Wait..");
-    // _cameraInstance = new _cameraDevice();
-  console.log(`\n <==> Mining UserDevice Informations \n`)
+  // _cameraInstance = new _cameraDevice();
+  console.log(`\n <==> Mining UserDevice Informations \n`);
   _cameraInstance._navigateDevice();
-  console.log(`\n <==> Mining UserDevice Informations == _cameraInstance END ==\n`)
+  console.log(
+    `\n <==> Mining UserDevice Informations == _cameraInstance END ==\n`
+  );
   // console.error("Navigating mediaDevice.0ww");
   //--------------ON MOUNT
-  console.log(`\n <==> Mining UserDevice Informations \n`)
+  console.log(`\n <==> Mining UserDevice Informations \n`);
   await _navClass._navigateDevice();
   await _navClass._navigateGeo();
-  console.log(`\n <==> Mining UserDevice Informations == _navClass END == \n`)
+  console.log(`\n <==> Mining UserDevice Informations == _navClass END == \n`);
 
   return await _manageStoreLogin()
     .then(async (resp) => {
       return true;
     })
     .catch(async (e) => {
-      await timerLoadevent({ main: 0 }, 5000, "scrumbled privilege detected")
+      await timerLoadevent({ main: 0 }, 5000, "scrumbled privilege detected");
       return router.push("/");
     });
 });
 
 // timerLoadpage(15000,"Loading...")
 //Loadingpage.value = [{ content: "Loading..." }]; //it
-onBeforeMount(async() => {
-    //--------------ON MOUNT
-  console.log('\n\n<---------Defaulting Profile <--this--> ---- \n')
+onBeforeMount(async () => {
+  //--------------ON MOUNT
+  console.log("\n\n<---------Defaulting Profile <--this--> ---- \n");
   // await _thisDefaulting(); //Build Basic _this_default Schema ( same to columns)
-  console.log('\n\n---------Mining User Device Informations [Phones, GeoLocations]---- \n')
-
+  console.log(
+    "\n\n---------Mining User Device Informations [Phones, GeoLocations]---- \n"
+  );
 });
-
 
 //------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@------------Modal CRUD_OPs
 </script>

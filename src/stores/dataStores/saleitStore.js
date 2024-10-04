@@ -5,7 +5,7 @@ import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { toRaw } from "vue";
 
 //const $q = useQuasar();              //{[[[[   .get(   url,{params:{},headers:{}})  ]]]]}....received as obj_req.params || response.data/staus/
-const API_URL = process.env.API_IP_PORT + "/saleitapi"; //const API_URL = `${import.meta.env.API_URL}/users`;
+const API_URL = process.env.Client_IP_PORT + "/saleitapi"; //const API_URL = `${import.meta.env.API_URL}/users`;
 const modalApi = axios.create({ baseURL: API_URL, timeout: 7000 });
 const procApiWrap = {
   get: request("GET"),
@@ -237,6 +237,7 @@ export const saleitStore = defineStore(STORE_NAME, () => {
   async function set_syncQuery(objParams) {
     status_Rows.value = "Loading..."; //for new Searching set status ='loading'
     syncQuery.value = objParams;
+    Datas.value = [];
     // syncNew.value = objParams != syncQuery.value
     return true;
   }
@@ -275,6 +276,7 @@ export const saleitStore = defineStore(STORE_NAME, () => {
               let _diff = Datas.value.length - response.data.length; //has different in numbers
               if (_diff || status_Rows.value == "Loading...") {
                 Datas.value = response.data;
+                status_Rows.value = true;
                 return true;
               } else if (status_Rows.value != "noupdates") {
               } //incoming same data  //status_Rows.value=noupdates

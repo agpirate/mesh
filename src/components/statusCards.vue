@@ -13,21 +13,12 @@
 
     <!-- <q-btn  :dense="true" color="green" icon="done"  > </q-btn>     -->
     <div
-      class="notification q-pa-sm column font0astyle"
+      class="notification"
       :style="'color:' + message.color"
       v-for="(message, index) in messages"
       :key="index"
     >
-      <div
-        class="row justify-between"
-        style="
-          background-color: #fff;
-          border-radius: 8px;
-          padding: 15px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          min-width: 300px;
-        "
-      >
+      <div class="row justify-between">
         <!-- <span style="font-size: 16px; font-weight: bold;">{{ message.title ?? '' }}</span> -->
         <p style="font-size: 14px; color: #555">{{ message.content ?? "" }}</p>
         <!-- <q-btn size="sm" icon="close" @click="emitPress('close',index)" style="color:red; position: absolute; top: 10px; right: 10px; background-color: whitesmoke; border: none; font-size: 18px; cursor: pointer;">
@@ -60,54 +51,6 @@ function emitPress(_action, index) {
 </script>
 
 <style scoped>
-.notification {
-  display: flex;
-  flex-flow: column nowrap;
-  /* justify-content: flex-start; */
-  /* padding: 2px; */
-  /* margin-bottom: 10px; */
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-
-  transform: translateY(-40px);
-  animation: slideIn 0.9s forwards;
-}
-.notification.mobile {
-  min-width: 90%;
-  min-height: 10vh;
-  margin-bottom: 15%;
-}
-.notification.desktop {
-  margin-bottom: 15%;
-  max-width: 40vw;
-  min-width: 20vw;
-  min-height: 5vh;
-
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  color: black;
-}
-.notification.info {
-  background-color: #007bff;
-  color: white;
-}
-
-.notification.error {
-  background-color: #ff3b30;
-  color: white;
-}
-
-.notification h4 {
-  margin: 0 0 2px 0;
-  font-size: 16px;
-}
-
-.notification p {
-  margin: 0;
-  font-size: 14px;
-}
-
 @keyframes slideIn {
   to {
     opacity: 1;

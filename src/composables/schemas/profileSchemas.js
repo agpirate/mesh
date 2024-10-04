@@ -187,11 +187,19 @@ const profileSchema = {
     //required: true,
     //index: { unique: true, dropDups: true },
   },
-  secretKey: {
+  enrollKey: {
     type: String,
     vtype: "String",
-    default: 0,
-    $ifNull: 0,
+    default: "",
+    $ifNull: "",
+    //  required:true,
+    //  index: { unique: true, dropDups: true,length:10 },
+  },
+  password: {
+    type: String,
+    vtype: "String",
+    default: "",
+    $ifNull: "",
     //  required:true,
     //  index: { unique: true, dropDups: true,length:10 },
   },
@@ -205,8 +213,8 @@ const profileSchema = {
     rules: [
       { type: "required" },
       { type: "minLength", value: 9 },
-      { type: "maxLength", value: 9 },
-      { type: "pattern", value: "^[0-9]+$" },
+      { type: "maxLength", value: 10 },
+      { type: "pattern", value: "^0[97]\\d+|^[97]\\d+$" },
     ],
   },
   phoneCode: {

@@ -1,0 +1,165 @@
+/* Flex container for the image */
+.imgContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Make the image responsive */
+.imgContainer img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover; /* Ensures the image covers the entire container while maintaining its aspect ratio */
+  border-radius: 10px;
+
+  transition: transform 0.3s ease-in-out;
+}
+.imgContainer img:hover {
+  transform: scale(1.1); /* Zooms the image slightly */
+}
+
+.imgSlideContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.imgSlideContainer img {
+  transition: transform 0.5s ease;
+  transform: translateX(0);
+}
+
+.imgSlideContainer img:hover {
+  transform: translateX(20px); /* Slide the image to the right */
+}
+
+/* Card container */
+.card {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  background-color: #ffffff;
+}
+
+/* Image in the card */
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Card content (title, description, etc.) */
+.card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  color: white;
+  padding: 20px;
+  transition: transform 0.5s ease-in-out;
+  transform: translateY(100%);
+}
+
+/* Show content on hover */
+.card:hover .card-content {
+  transform: translateY(0);
+}
+
+/* Hover effect for the card */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Carousel container */
+.carousel {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+/* Carousel track */
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(0); /* Slide images by changing this value */
+}
+
+/* Each image item */
+.carousel-item {
+  min-width: 100%;
+  transition: transform 0.5s ease;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Navigation buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Applying fade-in effect */
+.image-fade-in img {
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Applying slide-in effect */
+.image-slide-in img {
+  animation: slideIn 1s ease-in-out;
+}

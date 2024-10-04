@@ -1,0 +1,30 @@
+/* _cards.scss */
+
+.card {
+  background-color: var(--background-light);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-dark);
+  transform: translateY(-10px);
+}
+
+.card-header {
+  font-size: var(--font-heading);
+  font-weight: 700;
+}
+
+.card-content {
+  margin-top: var(--spacing-sm);
+}
+
+.card-close {
+  margin-top: var(--spacing-sm);
+  color: var(--warning-color);
+}

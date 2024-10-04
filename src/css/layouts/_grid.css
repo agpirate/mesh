@@ -1,0 +1,22 @@
+/* _grid.scss */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.col-6 {
+  grid-column: span 6;
+}
+
+.col-4 {
+  grid-column: span 4;
+}
+
+@media (max-width: 768px) {
+  .col-6,
+  .col-4 {
+    grid-column: span 12;
+  }
+}

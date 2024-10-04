@@ -1,0 +1,100 @@
+/* _typography.scss */
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: var(--font-base);
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+h1 {
+  line-height: var(--lineheight-small);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+h2 {
+  line-height: var(--lineheight-base);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+h3 {
+  line-height: var(--lineheight-base);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+h4 {
+  line-height: var(--lineheight-base);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+h5 {
+  line-height: var(--lineheight-large);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+h6 {
+  line-height: var(--lineheight-large);
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+}
+p {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-light);
+}
+
+/* Text alignment */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+/* Text alignment */
+.text-dark {
+  color: var(--text-dark);
+}
+.text-light {
+  color: var(--text-light);
+}
+.text-grey {
+  color: var(--text-grey);
+}
+/* Responsive Typography */
+
+.fontstylea {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: var(--font-small);
+  color: var(--primary);
+
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight);
+}
+.fontstyleb {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: var(--font-small);
+  color: var(--primary);
+
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight);
+}
+
+.fontstylec {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: var(--font-small);
+  color: var(--primary);
+
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight);
+}
+
+.fontstyled {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: var(--font-small);
+  color: var(--primary);
+
+  border-radius: var(--border-radius);
+  font-weight: var(--font-weight);
+}

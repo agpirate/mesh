@@ -9,15 +9,10 @@ import { mongoose } from "mongoose";
 var ObjectId = mongoose.Types.ObjectId;
 
 import { Router } from "express";
-import multer from "multer";
-
-import path from "path";
-import fs from "fs";
-
 import {
-  rOrp,
-  rOp,
-  rOps,
+  rOrp, //OR Operator ( with query Must)
+  rOp, //AND Operator
+  rOps, //OR Operator ( with query Optional)
   dOps,
 } from "app/src-ssr/services/apiServices/documentRead.js"; //
 import { _getdeleteParams } from "app/src-ssr/services/apiServices/queryBuilder.js"; //
@@ -134,21 +129,29 @@ router.get(modelIName + "s", async (req, res) => {
     //return res.status(401).send({ message: "NullData(P) Received." });
   }
   //--------------------
-  let reqParams = req.query ?? req.params ?? {};
-  if (Object.keys(reqParams).length == 0) {
-    return res.status(404).send("Search Query is null ?");
-  } else {
-  }
+  //--------------------
+  let reqParams = req.query ?? req.params;
   //------------------------
-  let [findBy = [], returnWat = [], limits = 100] = await _getdeleteParams(
-    reqParams
-  );
+  let [
+    findBy = {},
+    returnWat = [],
+    limits = 100,
+    sortBy = { createdAt: -1 },
+    skips = 0,
+  ] = await _getdeleteParams(reqParams);
+  if (!Object.keys(findBy).length) {
+    // return res.status(404).send({ message: "NullData(P) Received." });
+  }
+  //-----------
+  let searchType = (reqParams["queryOperator"] ?? "-or").split("-");
+  //---
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
   //---------
-  let sortBy = { createdAt: -1 };
-  //-----------
   try {
-    let modelData = await rOps(modelI, findBy, returnWat, limits, sortBy);
+    let modelData =
+      searchType[1] == "and" //queries Combinations ( ored or anded)
+        ? await rOp(modelI, findBy, returnWat, limits, sortBy)
+        : await rOps(modelI, findBy, returnWat, limits, sortBy);
     // let modelData = await rOrp(modelI, findBy, returnWat, limits,sortBy);ZZ
     res.set(_setResponseHeader);
     return res.status(modelData.status).json(modelData["data"]);
@@ -169,22 +172,30 @@ router.get(modelIName, async (req, res) => {
     //return res.status(401).send({ message: "NullData(P) Received." });
   }
   //--------------------
-  let reqParams = req.query ?? req.params ?? {};
-  if (Object.keys(reqParams).length == 0) {
-    return res.status(404).send("Search Query is null ?");
-  } else {
-  }
+  //--------------------
+  let reqParams = req.query ?? req.params;
   //------------------------
-  let [findBy = [], returnWat = [], limits = 100] = await _getdeleteParams(
-    reqParams
-  );
+  let [
+    findBy = {},
+    returnWat = [],
+    limits = 100,
+    sortBy = { createdAt: -1 },
+    skips = 0,
+  ] = await _getdeleteParams(reqParams);
+  if (!Object.keys(findBy).length) {
+    return res.status(404).send({ message: "NullData(P) Received." });
+  }
+  //-----------
+  let searchType = (reqParams["queryOperator"] ?? "-or").split("-");
+  //---
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
   //---------
-  let sortBy = { createdAt: -1 };
-  //-----------
+
   try {
-    // let modelData = await rOp(modelI, findBy, returnWat, limits,sortBy);
-    let modelData = await rOp(modelI, findBy, returnWat, limits, sortBy);
+    let modelData =
+      searchType[1] == "and" //queries Combinations ( ored or anded)
+        ? await rOp(modelI, findBy, returnWat, limits, sortBy)
+        : await rOrp(modelI, findBy, returnWat, limits, sortBy);
     res.set(_setResponseHeader);
     return res.status(modelData.status).json(modelData["data"]);
   } catch (error) {

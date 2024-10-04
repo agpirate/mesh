@@ -1,0 +1,147 @@
+/* Scrollable menu container */
+.scroll-menu {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 5px 5px;
+
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
+
+  background-color: transparent; /* Dark background (similar to YouTube) */
+  padding: var(--spacing-base) 0; /* Add padding for spacing */
+
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+/* Hide scrollbar in WebKit browsers like Chrome, Safari, and Opera */
+.scroll-menu::-webkit-scrollbar {
+  display: none;
+}
+
+/* Menu items */
+.menu-item {
+  display: inline-block;
+  color: #ccc; /* Light grey color for text */
+  padding: 0 15px; /* Horizontal spacing */
+  font-size: 16px; /* Font size similar to YouTube's style */
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap; /* Keep each item on a single line */
+  transition: color 0.3s ease-in-out; /* Smooth hover transition */
+}
+
+/* Hover effect */
+.menu-item:hover {
+  color: #fff; /* Change color to white on hover */
+}
+
+/* Optional: Active item styling */
+.menu-item.active {
+  color: #0f62fe; /* Bright blue for the active item (similar to YouTube) */
+}
+
+.scrollx {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
+
+  background-color: transparent; /* Dark background (similar to YouTube) */
+
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+/* Hide scrollbar in WebKit browsers like Chrome, Safari, and Opera */
+.scrollx::-webkit-scrollbar {
+  display: none;
+}
+
+/* Menu items */
+.scrollx-item {
+  display: inline-block;
+  color: #ccc; /* Light grey color for text */
+  padding: 0 15px; /* Horizontal spacing */
+
+  cursor: pointer;
+  white-space: nowrap; /* Keep each item on a single line */
+  transition: color 0.3s ease-in-out; /* Smooth hover transition */
+}
+
+/* Hover effect */
+.scrollx-item:hover {
+  color: #fff; /* Change color to white on hover */
+}
+
+/* Optional: Active item styling */
+.scrollx-item.active {
+  color: #0f62fe; /* Bright blue for the active item (similar to YouTube) */
+}
+
+.scrolly {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
+
+  background-color: transparent; /* Dark background (similar to YouTube) */
+
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+/* Hide scrollbar in WebKit browsers like Chrome, Safari, and Opera */
+.scrolly::-webkit-scrollbar {
+  display: none;
+}
+
+/* Menu items */
+.scrolly-item {
+  display: inline-block;
+  color: #ccc; /* Light grey color for text */
+
+  cursor: pointer;
+  white-space: nowrap; /* Keep each item on a single line */
+  transition: color 0.3s ease-in-out; /* Smooth hover transition */
+}
+
+/* Hover effect */
+.scrolly-item:hover {
+  color: #fff; /* Change color to white on hover */
+}
+.scrollx {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent items from wrapping to the next line */
+
+  background-color: transparent; /* Dark background (similar to YouTube) */
+
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+/* Hide scrollbar in WebKit browsers like Chrome, Safari, and Opera */
+.scrollx::-webkit-scrollbar {
+  display: none;
+}
+
+/* Menu items */
+.scrollx-item {
+  display: inline-block;
+  color: #ccc; /* Light grey color for text */
+  padding: 0 15px; /* Horizontal spacing */
+
+  cursor: pointer;
+  white-space: nowrap; /* Keep each item on a single line */
+  transition: color 0.3s ease-in-out; /* Smooth hover transition */
+}
+
+/* Hover effect */
+.scrollx-item:hover {
+  color: #fff; /* Change color to white on hover */
+}
+
+/* Optional: Active item styling */
+.scrollx-item.active {
+  color: #0f62fe; /* Bright blue for the active item (similar to YouTube) */
+}
+/* Optional: Active item styling */
+.scrolly-item.active {
+  color: #0f62fe; /* Bright blue for the active item (similar to YouTube) */
+}

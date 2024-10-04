@@ -1,0 +1,14 @@
+/* _light.scss */
+
+body {
+  background-color: var(--background-light);
+  color: var(--text-light);
+}
+
+.btn {
+  background-color: var(--primary);
+}
+
+.card {
+  background-color: var(--background-light);
+}

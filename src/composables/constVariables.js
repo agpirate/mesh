@@ -12,6 +12,36 @@ export const saleCatagory = {
 };
 export const saleUsage = { New: "100", Used: "75", All: "1" };
 
+export const iservicei_Menu = {
+  Home: {
+    content: "Shoping",
+    icon: "home",
+    title: "Home",
+    checked: false,
+    path: "mesh",
+    model: "saleit",
+    _auth: false,
+  },
+  MyShops: {
+    content: "what did i bought ?",
+    icon: "shop",
+    title: "MyShops",
+    checked: false,
+    path: "MyShops",
+    model: "saleitClient",
+    _auth: false,
+  },
+  MyServices: {
+    content: "Shoping",
+    icon: "store",
+    title: "MyServices",
+    checked: false,
+    path: "MyServices",
+    model: "saleit",
+    _auth: true,
+  },
+};
+
 export const _createTitle = [
   "Creating Product & Services",
   "Succefully Created",

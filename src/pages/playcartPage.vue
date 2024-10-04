@@ -1,4 +1,552 @@
 <template>
+  <dialogOne
+    :isOpen="__thisBox"
+    @emitClick0="__thisBox = $event"
+    class="fit shadow-5 column"
+  >
+    <q-card style="min-width: 30vw; max-width: 40vw" v-if="_this ?? false">
+      <!----HEADER-TOP Begin-->
+      <!-- {{ _this.currency }} {{ Objprops._profile.curreny }} -->
+      <q-linear-progress :value="0.8" color="orange" />
+
+      <q-card-section class="row items-center no-wrap q-pa-none">
+        <div class="col q-pa-none q-ma-none">
+          <q-img
+            loading="lazy"
+            class=""
+            style="aspect-ratio: 1/1; max-width: 40"
+            :src="
+              _fileAttributeName
+                ? _fileAsSRC[_fileAsSRCIndex]
+                : _this['saleitgr'][_fileAsSRCIndex]
+            "
+          >
+            <div class="absolute-full transparent column justify-between">
+              <div class="row q-ma-sm">
+                <div class="col fontdstyle text-dark"></div>
+                <div class="column col-auto q-gutter-xs" style="width: 5vw">
+                  <q-item-label class="text-orange">Upload Via </q-item-label>
+                  <input
+                    type="file"
+                    multiple
+                    ref="openFolder"
+                    style="display: none"
+                    @change="_fileSourceFolder($event, 'saleitgr')"
+                  />
+                  <q-btn
+                    class="bg-orange"
+                    icon="folder"
+                    @click="$refs.openFolder.click()"
+                    :dense="true"
+                  />
+                  <q-btn
+                    class="bg-orange"
+                    icon="add_a_photo"
+                    @click="_cameraInstance._openCamera('saleitgr')"
+                    :dense="true"
+                  />
+                </div>
+              </div>
+
+              <!-- <div class="flex fontestyle">
+                <q-item-label> {{ _this["header"] }}</q-item-label>
+              </div> -->
+
+              <div class="col row justify-between q-py-sm">
+                <div
+                  class="self-end justify-left col-auto"
+                  style="max-width: 4vw"
+                >
+                  <div v-if="__thisOps == 'CreateRowItem'">
+                    <q-btn
+                      no-caps
+                      :dense="true"
+                      :loading="__thisOpsStatus"
+                      class="apple-button"
+                      flat
+                      :label="_pageSettings.language ? 'ሽጥ' : 'Create'"
+                      @click="_thisValidator('Create_this')"
+                    >
+                      <!--template v-slot:__thisOpsStatus>
+                                                      uploading...
+                                                      <q-spinner-radio class="on-left" />
+                                                      uploading...
+                                                    </template-->
+                    </q-btn>
+                  </div>
+
+                  <div v-else>
+                    <q-btn
+                      flat
+                      :loading="__thisOpsStatus"
+                      class="bg-orange shadow-7 fontbstyle q-pa-xs"
+                      color="white"
+                      :label="_pageSettings.language ? 'ሽጥ' : 'Update'"
+                      icon="upload"
+                      @click="_thisValidator('Update_this')"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  class="self-end justify-right col-grow column q-pa-xs"
+                  v-if="_fileAsSRC?.length ?? false"
+                  style="max-height: 100%"
+                >
+                  <div
+                    class="self-end justify-right col row bg-orange fontastyle q-pa-xs"
+                    v-if="_fileAsSRC.length > 1"
+                  >
+                    <q-checkbox
+                      left-label
+                      v-model="_fileAsSRCOps"
+                      :label="_pageSettings.language ? 'መደምሰሲ' : 'Delete'"
+                      checked-icon="task_alt"
+                      unchecked-icon="highlight_off"
+                      :dense="true"
+                    />
+                    <q-tooltip class="fontastyle bg-black text-white"
+                      >Check Enable Delete & Click The Image ?</q-tooltip
+                    >
+                  </div>
+
+                  <div
+                    class="self-end justify-right col row shadow-1 q-pa-sm transparent"
+                    style="
+                      max-height: 100%;
+                      max-width: 100%;
+                      position: absolute;
+                      bottom: 100px;
+                      right: 2px;
+                      width: 5vw;
+                      height: 5vh;
+                    "
+                    v-if="_fileAttributeName ?? false"
+                  >
+                    <div
+                      v-for="(item, fileIndx) in _fileAsSRC"
+                      :key="fileIndx"
+                      class="col row q-px-xs"
+                      style="
+                        position: absolute;
+                        right: 2px;
+                        width: 5vw;
+                        height: 5vh;
+                      "
+                      :style="`bottom:${fileIndx * 25}px`"
+                    >
+                      <q-btn
+                        round
+                        @click="_fileAsSRCOpsCall(fileIndx)"
+                        class="col-auto"
+                      >
+                        <q-avatar size="42px">
+                          <img :src="item" />
+                        </q-avatar>
+                      </q-btn>
+                    </div>
+                  </div>
+                  <div
+                    class="self-end justify-right col row shadow-5 q-pa-xs"
+                    style="max-height: 100%; max-width: 100%"
+                    v-else
+                  >
+                    <div
+                      v-for="(item, fileIndx) in _this['saleitgr']"
+                      :key="fileIndx"
+                      class="col row inset-shadow q-px-xs"
+                      style="max-height: 100%"
+                    >
+                      <q-btn
+                        round
+                        @click="_fileAsSRCOpsCall(fileIndx)"
+                        class="col-auto"
+                      >
+                        <q-avatar size="42px">
+                          <img :src="item" />
+                        </q-avatar>
+                      </q-btn>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </q-img>
+        </div>
+      </q-card-section>
+      <q-card-section
+        class="column text-dark bg-white fontbstyle"
+        v-if="__thisOps == 'CreateRowItem'"
+      >
+        <fieldset
+          class="col fontastyle q-gutter-xs column"
+          style="border-radius: 5px; border: 0px solid white"
+        >
+          <div class="col-auto row q-gutter-md">
+            <fieldset
+              class="col-grow"
+              style="border: 0px solid black; max-width: 10vw"
+            >
+              <legend>
+                Quantity
+
+                <div
+                  v-if="_debugObj['quantity']"
+                  class="boxvalidStyle text-red"
+                >
+                  ( {{ _debugObj["quantity"] }})
+                </div>
+              </legend>
+              <input
+                type="Number"
+                class="col fontestyle boxbstyle"
+                v-model="_this['quantity']"
+                @update:model-value="
+                  _validateThis('quantity', _this['quantity'])
+                "
+                style="max-width: 10vw"
+              />
+            </fieldset>
+
+            <fieldset class="col-grow" style="border: 0px solid black">
+              <legend>
+                Price
+
+                <div v-if="_debugObj['price']" class="boxvalidStyle text-red">
+                  ( {{ _debugObj["price"] }})
+                </div>
+              </legend>
+              <input
+                type="Number"
+                class="col fontestyle boxbstyle"
+                v-model="_this['price']"
+                @input="_validateThis('price', _this['price'])"
+                @update:model-value="_validateThis('price', _this['price'])"
+                style="max-width: 10vw"
+              />
+            </fieldset>
+
+            <fieldset class="col" style="border: 0px solid black">
+              <legend>
+                <p>{{ _pageSettings.language ? "ምድብ" : "currency" }}</p>
+
+                <div
+                  v-if="_debugObj['currency']"
+                  class="boxvalidStyle text-red"
+                >
+                  ( {{ _debugObj["currency"] }})
+                </div>
+              </legend>
+              <select
+                outlined
+                class="col-md col-xs q-pa-none boxbstyle"
+                style=""
+                color="purple-12"
+                v-model="_this['currency']"
+                @input="_validateThis('currency', _this['currency'])"
+              >
+                <option
+                  v-for="key in _this_Schema['currency']['enum']"
+                  :key="key"
+                >
+                  {{ key }}
+                </option>
+              </select>
+            </fieldset>
+          </div>
+
+          <div>
+            <fieldset class="col" style="border: 0px solid black">
+              <legend>
+                <p>{{ _pageSettings.language ? "ምድብ" : "catagory" }}</p>
+
+                <div
+                  v-if="_debugObj['catagory']"
+                  class="boxvalidStyle text-red"
+                >
+                  ( {{ _debugObj["catagory"] }})
+                </div>
+              </legend>
+              <select
+                outlined
+                class="col-md col-xs q-pa-none boxbstyle"
+                style=""
+                color="purple-12"
+                v-model="_this['catagory']"
+                @input="_validateThis('catagory', _this['catagory'])"
+              >
+                <option
+                  v-for="key in _this_Schema['catagory']['enum']"
+                  :key="key"
+                >
+                  {{ key }}
+                </option>
+              </select>
+            </fieldset>
+          </div>
+
+          <div v-if="['Vehicles', 'Households'].includes(_this['catagory'])">
+            <q-radio
+              keep-color
+              left-label
+              size="md"
+              v-model="_this['usage']"
+              :val="usage"
+              :label="usage"
+              color="black"
+              v-for="usage in _this_Schema['usage']['enum']"
+              :key="usage"
+              @update:model-value="_validateThis('usage', _this['usage'])"
+            />
+            <div v-if="_debugObj['usage']" class="boxvalidStyle">
+              {{ _debugObj["usage"] }}
+            </div>
+          </div>
+
+          <q-item-label caption> What are You Saling !</q-item-label>
+          <q-separator inset />
+        </fieldset>
+      </q-card-section>
+
+      <q-card-section class="column text-dark bg-white fontbstyle" v-else>
+        <fieldset
+          class="col fontastyle q-gutter-xs column"
+          style="border-radius: 5px; border: 0px solid white"
+        >
+          <div class="row q-gutter-md">
+            <fieldset class="col-auto" style="border: 0px solid black">
+              <legend>
+                Quantity
+
+                <div
+                  v-if="_debugObj['quantity']"
+                  class="boxvalidStyle text-red"
+                >
+                  ( {{ _debugObj["quantity"] }})
+                </div>
+              </legend>
+              <input
+                type="Number"
+                class="fontestyle boxbstyle"
+                v-model="_this['quantity']"
+                @update:model-value="
+                  _validateThis('quantity', _this['quantity'])
+                "
+                style="max-width: 95%"
+              />
+            </fieldset>
+
+            <fieldset class="col-auto" style="border: 0px solid black">
+              <legend>
+                Price
+
+                <div v-if="_debugObj['price']" class="boxvalidStyle text-red">
+                  ( {{ _debugObj["price"] }})
+                </div>
+              </legend>
+              <input
+                type="Number"
+                class="col fontestyle boxbstyle"
+                v-model="_this['price']"
+                @input="_validateThis('price', _this['price'])"
+                @update:model-value="_validateThis('price', _this['price'])"
+                style="max-width: 95%"
+              />
+            </fieldset>
+            <fieldset class="col-auto" style="border: 0px solid black">
+              <legend>
+                New Price
+
+                <div
+                  v-if="_debugObj['discount']"
+                  class="boxvalidStyle text-red"
+                >
+                  ( {{ _debugObj["discount"] }})
+                </div>
+              </legend>
+              <input
+                type="Number"
+                class="col fontestyle boxbstyle"
+                v-model="_this['discount']"
+                @input="_validateThis('discount', _this['discount'])"
+                @update:model-value="
+                  _validateThis('discount', _this['discount'])
+                "
+                style="max-width: 95%"
+              />
+              <p>(Happy Hours Price)</p>
+            </fieldset>
+          </div>
+
+          <q-separator inset />
+          <div class="column q-gutter-sm">
+            <q-input
+              class="col-md col-xs q-pa-sm"
+              style=""
+              outlined
+              v-model="_this['header']"
+              label="Name"
+              @update:model-value="_validateThis('header', _this['header'])"
+              stack-label
+            >
+              <div v-if="_debugObj['header']" class="boxvalidStyle">
+                {{ _debugObj["header"] }}
+              </div>
+            </q-input>
+            <q-input
+              outlined
+              v-model="_this['content']"
+              @update:model-value="_validateThis('content', _this['content'])"
+              label="decscriptions"
+              style=""
+              filled
+              autogrow
+            >
+              <div v-if="_debugObj['content']" class="boxvalidStyle">
+                {{ _debugObj["content"] }}
+              </div>
+            </q-input>
+          </div>
+          <q-separator inset />
+          <q-item-label caption> Notes to be displayed !</q-item-label>
+          <q-separator inset />
+        </fieldset>
+      </q-card-section>
+    </q-card>
+  </dialogOne>
+  <!-- _cameraBox Shown -->
+  <dialogOne
+    :isOpen="_cameraBox"
+    @emitClick0="_cameraBox = $event"
+    class="column overlay-Glass rounded-borders bg-orange"
+  >
+    <!--CameraFeeds  @Picture-taken="imageSrc = $event" / -->
+    <div
+      class="column"
+      style="
+        background-color: whitesmoke;
+        border: 1px dashed #d6d6d6;
+        border-radius: 4px;
+        padding: 2px;
+      "
+    >
+      <div v-if="_fileSourceFoCam == 'folder'"></div>
+      <div v-else-if="_fileSourceFoCam == 'camera'">
+        <div v-if="_thisMedia">
+          <div class="col bg-white row fit">
+            <video
+              clas="col-2"
+              ref="_liveFeedRawStreaming"
+              autoplay
+              playsinline
+              style="width: 100%"
+            ></video>
+            <canvas
+              id="_liveFeedSRC"
+              ref="_liveFeedSRC"
+              width="200px"
+              height="200px"
+              style="display: none"
+            >
+            </canvas>
+            <q-list class="row q-gutter-xs">
+              <q-item v-for="_src in _fileAsSRC" :key="_src">
+                <q-img :src="_src" style="width: 100px; height: 100px" />
+              </q-item>
+            </q-list>
+          </div>
+
+          <div class="q-pa-sm q-gutter-sm row justify-between">
+            <div>
+              <q-btn
+                rounded
+                color="negative"
+                size="sm"
+                label="close"
+                @click="_cameraInstance._stopCamera()"
+              />
+              <q-btn
+                rounded
+                color="green"
+                size="sm"
+                label="save"
+                @click="_cameraInstance._saveScreenShoots()"
+              />
+              <q-btn
+                rounded
+                color="primary"
+                size="sm"
+                label="capture"
+                icon="camera"
+                @click="_cameraInstance._screenShoot()"
+              />
+            </div>
+
+            <div size="col-auto row">
+              <q-expansion-item
+                switch-toggle-side
+                expand-separator
+                icon="camera"
+                size="xs"
+                v-if="_listCameraSource.length"
+              >
+                <q-item
+                  v-for="camera in _listCameraSource"
+                  :key="camera"
+                  class="row q-gutter-sm"
+                >
+                  <q-btn
+                    style="height: 100%"
+                    no-caps
+                    size="sm"
+                    :dense="true"
+                    :color="
+                      _selectedCameraById == camera.deviceId ? 'blue' : 'black'
+                    "
+                    :label="camera.label ? camera.label.split('_')[1] : 'cam'"
+                    @click="
+                      _cameraInstance._setCameraParam(camera.deviceId, false)
+                    "
+                  />
+                  <q-btn
+                    style="height: 100%"
+                    no-caps
+                    size="sm"
+                    :dense="true"
+                    :color="
+                      _selectedCameraById == camera.deviceId
+                        ? 'orange'
+                        : 'black'
+                    "
+                    :label="_selectedCameraByface ? 'Front Cam' : 'Back Cam'"
+                    @click="
+                      _cameraInstance._setCameraParam(
+                        camera.deviceId,
+                        !_selectedCameraByface
+                      )
+                    "
+                  />
+                </q-item>
+              </q-expansion-item>
+            </div>
+            <!--div size="col-auto row"> {{  _listMicSource }}
+                    <q-item v-for="mic in _listMicSource" :key=mic class="column">                                                     
+                      <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedMicById == mic.deviceId ? 'blue':'black'" :label="mic.label.split('_')[1]" @click="_cameraModule._selectedMicId(mic.deviceId)" />
+                    </q-item>
+                </div-->
+          </div>
+        </div>
+        <div v-else class="col bg-white row fit fontestyle">
+          Error Connecting to Camera
+        </div>
+      </div>
+      <div v-else>
+        Error Accessing System, please allow on settting for Location and Media
+        Devices
+      </div>
+    </div>
+  </dialogOne>
+
   <q-dialog v-model="_fileAsPathSlide" class="column saleitContentOps-Glass">
     <div class="col" v-if="onplayRowItem?.['saleitgr'] ?? false">
       <q-carousel
@@ -83,7 +631,7 @@
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="__this_foreignBoxDialog == 'neworder'">
       <div
         class="boxastyle text-black"
         style="padding: 3%; min-width: 30vw"
@@ -417,7 +965,7 @@
                       no-caps
                       color="blue"
                       label="Show Detail"
-                      icon="more"
+                      icon="details"
                       @click="
                         _this_foreignOperation.selectedIndex_RowDetail(
                           props.row['saleitID'],
@@ -447,7 +995,7 @@
                     <template
                       v-if="
                         __this_foreignBoxIndex == props.rowIndex &&
-                        __this_foreignBoxsubOps == 'edit'
+                        __this_foreignBoxOps == 'edit'
                       "
                     >
                       <div class="q-gutter-xs row">
@@ -725,6 +1273,7 @@
         <q-btn
           icon="edit"
           color="green"
+          no-caps
           rounded
           @click="__this_foreignBoxDialog = 'fromcart'"
           :dense="true"
@@ -734,13 +1283,13 @@
           <q-tooltip> Edit On Cart Items !</q-tooltip>
         </q-btn>
 
-        <template v-if="__this_foreignBoxsubOps == 'view'">
+        <template v-if="__this_foreignBoxOps == 'view'">
           <q-btn
             icon="add"
             color="orange"
             rounded
             :dense="true"
-            @click="__this_foreignBoxDialog = 'buy'"
+            @click="__this_foreignBoxDialog = 'neworder'"
             style="background-size: 5px"
           >
             New Order
@@ -816,7 +1365,7 @@ let confirmMessage = ref("Are You Sure ?");
 import dialogOne from "src/components/dialogs/dialogOne.vue";
 
 import debugCard from "@/components/debugCards.vue";
-import useDebugMixin from "@/composables/debugMixin";
+import useDebugMixin from "@/composables/mixins/debugMixin";
 const {
   Loadingpage,
   Loadingevent,
@@ -831,14 +1380,14 @@ const {
 } = useDebugMixin();
 
 import statusCard from "@/components/statusCards.vue";
-import useStatusMixin from "@/composables/statusMixin";
+import useStatusMixin from "@/composables/mixins/statusMixin";
 const {
   status_KnowthisMessage,
   //----------returning values
   status_timerInformthis,
 } = useStatusMixin();
 
-import usefileMixin from "@/composables/fileserviceMixin";
+import usefileMixin from "@/composables/mixins/fileserviceMixin";
 var {
   _thisMedia,
   _fileAttributeName,
@@ -899,7 +1448,7 @@ let Objprops = defineProps({
   visibleColumnsM: { type: Object, default: () => ({}) },
 });
 
-import useThisMixin from "src/composables/thisMixin";
+import useThisMixin from "src/composables/mixins/thisAndForeignMixin";
 var {
   //----------//-- settings
   _is_modelOneOwner,
@@ -929,13 +1478,17 @@ var {
   // set_this,
 } = useThisMixin();
 
-import useDefaulMixin from "@/composables/myMixin";
+import useDefaulMixin from "@/composables/mixins/schemaDefaultingMixin";
 let {
   Objprops_,
   //----------------functions
-  // _allColumnName,
-  // _rolesColumn,
-  // visibleColumn,
+  _allColumnName,
+  _rolesColumn,
+  visibleColumn,
+
+  _allColumnNames,
+  _rolesColumns,
+  visibleColumns,
 
   // modal_iss,
   // //------preparing the main default and table_design.
@@ -950,9 +1503,9 @@ let {
 
 //===========================================================================////////////////////
 //---------Main Model ( columns(visible_,all_),default_Values,),(thisRows,),(),
-import useMainMixin from "@/composables/thisMainMixin";
+import useMainMixin from "@/composables/mixins/thisMainMixin";
 let {
-  visibleColumns,
+  // visibleColumns,
   //---------settings
   // Objprops_,
   _thisModel,
@@ -970,7 +1523,7 @@ let {
   //------
 } = useMainMixin();
 
-import useClientMixin from "@/composables/thisClientMixin";
+import useClientMixin from "@/composables/mixins/thisClientMixin";
 var {
   _this_modelOneSchema,
 
@@ -988,7 +1541,7 @@ var {
   _is_modelOneOwner,
 } = useClientMixin();
 
-import useChatMixin from "@/composables/thisChatMixin";
+import useChatMixin from "@/composables/mixins/thisChatMixin";
 var {
   _this_chatSchema,
 
@@ -1031,7 +1584,7 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas";
+thisSchemaPath.value = "saleitSchemas.js";
 thisSchemaFile.value = "saleitSchema";
 import("../composables/schemas/" + thisSchemaPath.value)
   .then((module) => {
@@ -1095,16 +1648,30 @@ _this_acctype = computed(() => {
     return null;
   }
 });
-columns = computed(() => {
-  if (Objprops.columnsM ?? false) {
+let columnswatcher = ref(null);
+watch(columnswatcher, (_nowValue, ov) => {
+  if (_nowValue ?? false) {
+    //--------------
+    columns.value = _nowValue ?? null;
     //-----------
     _this_foreignDefault();
-    //--------------
-    return Objprops.visibleColumnsM ?? null;
+    //---------------
+    return true;
   } else {
     return null;
   }
 });
+columnswatcher.value = Objprops.columnsM;
+// columns = computed(() => {
+//   if (Objprops.columnsM ?? false) {
+//     //-----------
+//     _this_foreignDefault();
+//     //--------------
+//     return Objprops.columnsM ?? null;
+//   } else {
+//     return null;
+//   }
+// });
 invisibleColumns_client.value.push(
   "paymentMethod",
   "saleitID",
@@ -1156,6 +1723,7 @@ visibleColumns = computed(() => {
 });
 // _thisMedia.value = Objprops._thisMedia2;
 //------- Objprops.lytSearchRow
+let _pageSettings = ref({ geoSearch: { state: false, value: "off" } });
 watch(Objprops._pageSetting, (_nowValue, ov) => {
   _pageSettings.value = Object.assign(_pageSettings.value, _nowValue);
   return true;
@@ -1231,162 +1799,6 @@ watch(watch_Rows, async (StatusRows, ov) => {
   return true;
 });
 
-//-----while selecting different saleit Content
-async function set_this(Ops = null, rowIndex = null, stopSync = null) {
-  if (stopSync) {
-    stopSync.set_syncLock(true);
-  }
-  //----------Must Reseting Variable _ In every calls
-  _fileAttributeName.value = null;
-  _fileAsPathIndex.value = null;
-  __thisBox.value = false; //OPen the Box
-  __thissubOps.value = false;
-  __thissubOpsStatus.value = false;
-  //------------Operational Variable Setting
-  __thisIndex.value = rowIndex;
-  __thisOps.value = Ops;
-  //------------Operational Variable _ Status Managment
-  if (rowIndex == null) {
-    __thisOpsStatus.value = false; //turnofff active stauts
-  } else {
-    //------------ oprationa status ( new existing, set for existed value or default('selected'))
-    __thisOpsStatus.value = __thisOpsStatus.value
-      ? __thisOpsStatus.value
-      : "selected";
-  }
-
-  try {
-    _this.value = Object.assign(
-      {},
-      rowIndex == null ? _thisDefault.value : _this_Rows.value[rowIndex]
-    );
-  } catch {}
-  //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
-  if (rowIndex == null) {
-    _this.value["geolocation"] = Objprops._profile.geolocation;
-    _this.value["location"] = Objprops._profile.location;
-    _this.value["currency"] = Objprops._profile.currency ?? "";
-    //--------
-    _this.value["currency"] = Objprops._profile.currency; //
-    _this.value["userID"] = Objprops._profile.id;
-    _this.value["phoneCode"] = Objprops._profile.phoneCode;
-    _this.value["phone"] = Objprops._profile.phone;
-  }
-  return true;
-}
-
-async function set_this_foreign(foreignOps, _foreignIndex, stopSync = null) {
-  if (stopSync) {
-    stopSync.set_syncLock(true);
-  }
-  //----------Must Reseting Variable _ In every calls
-  __this_foreignBox.value = true; //disasble sideBox
-  __this_foreignBoxDialog.value = null;
-  __this_foreignBoxsubOps.value = false;
-  //------------Operational Variable Setting
-  __this_foreignBoxIndex.value = _foreignIndex; //? _foreignIndex : null;
-  __this_foreignBoxOps.value = foreignOps; //diable andy operations
-  //------------Operational Variable _ Status Managment
-  if (_foreignIndex == null) {
-    __this_foreignBoxOpsStatus.value = false; //turnofff active stauts
-  } else {
-    //------------ oprationa status ( new existing, set for existed value or default('selected'))
-    __this_foreignBoxOpsStatus.value = __this_foreignBoxOpsStatus.value
-      ? __this_foreignBoxOpsStatus.value
-      : "selected";
-  }
-
-  try {
-    if (foreignOps == "comments") {
-      //------------ Main Data Sckeltons
-      _this_chatforeign.value = Object.assign(
-        {},
-        _foreignIndex == null
-          ? _thisDefault_chat.value
-          : _this_modelTwoRows.value[_foreignIndex]
-      );
-      //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
-      if (_foreignIndex == null) {
-        _this_chatforeign.value["userID"] = Objprops._profile.id;
-        _this_chatforeign.value["saleitID"] = _this.value?.["id"] ?? "";
-      }
-    } else {
-      if (foreignOps == "clients") {
-        //------------ Main Data Sckeltons
-        _this_modelOneforeign.value = Object.assign(
-          {},
-          _foreignIndex == null
-            ? _thisDefault_client.value
-            : _this_modelOneRows.value[_foreignIndex]
-        );
-      } else if (foreignOps == "details") {
-        //------------ Main Data Sckeltons
-        _this_modelOneforeign.value = Object.assign(
-          {},
-          _thisDefault_client.value
-        );
-      }
-      //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
-      if (_foreignIndex == null) {
-        _this_modelOneforeign.value["userID"] = Objprops._profile.id;
-        _this_modelOneforeign.value["phoneCode"] = Objprops._profile.phoneCode;
-        //---------
-        _this_modelOneforeign.value["currency"] = _this.value.currency;
-        _this_modelOneforeign.value["location"] = _this.value.location;
-        _this_modelOneforeign.value["geolocation"] = _this.value.geolocation;
-        _this_modelOneforeign.value["saleitID"] = _this.value?.["id"] ?? "";
-        _this_modelOneforeign.value["orderID"] = await _genOrderID();
-      }
-    }
-  } catch {}
-  return true;
-}
-
-const _resetBoth = async function (resetforeign = null, resumeSync = null) {
-  //reset_default if same_index and Ops occured
-  try {
-    await set_this(resetforeign, null);
-  } catch {}
-  try {
-    await set_this_foreign(resetforeign, null);
-  } catch {}
-  if (resumeSync) {
-    resumeSync.set_syncLock(false);
-  }
-  return true;
-};
-
-const _setBoth = async function (
-  setforeign = null,
-  _thisindex = null,
-  _foreignIndex = null,
-  stopSync = null
-) {
-  //reset_default if same_index and Ops occured
-  if (_thisindex == null) return true;
-  await set_this(setforeign, _thisindex);
-  await set_this_foreign(setforeign, _foreignIndex);
-
-  if (stopSync) {
-    stopSync.set_syncLock(true);
-  }
-  return true;
-};
-const _setthis_Resetforeign = async function (
-  setforeign = null,
-  _thisindex = null,
-  _foreignIndex = null,
-  stopSync = null
-) {
-  //reset_default if same_index and Ops occured
-  await set_this(setforeign, _thisindex);
-  await set_this_foreign(setforeign, _foreignIndex);
-
-  if (stopSync) {
-    stopSync.set_syncLock(true);
-  }
-  return true;
-};
 //==============================================------------------------------------
 let enableflscreen = ref(true);
 //--------------
@@ -1452,6 +1864,7 @@ async function _this_modelOneQuery() {
   // if (_rows) {
   //   // _this_modelOneRows.value = _rows;
   // }
+  _modelOneQuery.value["queryOperator"] = "-and"; //_queryOperator
   // await Sync_this(modelOneService, _modelOneQuery.value);
   let _rows = await Fetch_this(modelOneService, _modelOneQuery.value);
   if (_rows) {
@@ -1463,25 +1876,168 @@ async function _this_modelOneQuery() {
   _this_modelOneforeign.value["orderID"] = await _genOrderID();
   return true;
 }
+
+//===CHAT_QUERY=========================(Requesting Fetch)
+async function _this_modelTwoQuery() {
+  //-----------------Reseting Rows
+  _this_modelOneRows.value = null; //mean waiting result
+  //-------------------- Reseting Rows
+  // await set_this_foreign("comments", null);
+  //-----------Building Queries
+  if (!_is_modelTwoOwner.value) {
+    // _chatQuery.value["userID"] = Objprops._profile.id;
+  }
+  _chatQuery.value["saleitID"] = _this.value["id"];
+  //-----------------Fetching Queried Rows
+  _chatQuery.value["queryOperator"] = "-and"; //_queryOperator
+
+  // _this_modelTwoRows_Sync()
+  let _rows = await Fetch_this(modelTwoService, _chatQuery.value);
+  if (_rows) {
+    _this_modelTwoRows.value = _rows;
+    set_this_foreign(__this_foreignBoxOps.value, null);
+  }
+  //----------------Preparing Default Rows (New Row Skelton)
+  return true;
+}
 //==============Q3
 
-let _orderBox = ref([]);
 //---------------ACTIVE Operating on Row
-//Operating without setting onplayrowItem ( directlly calling for effect) === active _operations
+//====================ROW OPerations================
+async function set_this(Ops = null, rowIndex = null, stopSync = null) {
+  if (stopSync) {
+    stopSync.set_syncLock(true);
+    // clearInterval()
+  }
+  //----------Must Reseting Variable _ In every calls
+  // [
+  _fileAttributeName.value = null;
+  _fileAsPathIndex.value = null;
+  __thisBox.value = null;
+  __thissubOps.value = null;
+  __thissubOpsStatus.value = null;
+  // ] = null;
+  //------------ oprationa status ( new existing, set for existed value or default('selected'))
+  __thisOpsStatus.value = __thisOpsStatus.value ? __thisOpsStatus.value : null;
+  //------------Operational Variable Setting
+  __thisIndex.value = rowIndex;
+  __thisOps.value = Ops;
+  //------------Operational Variable _ Status Managment
+  //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
+  if (rowIndex == null) {
+    _this.value = Object.assign({}, _thisDefault.value);
+    _this.value["geolocation"] = Objprops._profile.geolocation;
+    _this.value["location"] = Objprops._profile.location;
+    _this.value["currency"] = Objprops._profile.currency ?? "";
+    //--------
+    _this.value["userID"] = Objprops._profile.id;
+    _this.value["phoneCode"] = Objprops._profile.phoneCode;
+    _this.value["phone"] = Objprops._profile.phone;
+  } else {
+    try {
+      _this.value = Object.assign({}, _this_Rows.value[rowIndex]);
+    } catch {}
+  }
+  return true;
+}
+
+async function set_this_foreign(foreignOps, _foreignIndex, stopSync = null) {
+  if (stopSync) {
+    stopSync.set_syncLock(true);
+  }
+  //----------Must Reseting Variable _ In every calls
+  // [
+  __this_foreignBox.value = null;
+  __this_foreignBoxDialog.value = null;
+  __this_foreignBoxsubOps.value = null;
+  // ] = [null, null, null];
+  //------------ oprationa status ( new existing, set for existed value or default('selected'))
+  __this_foreignBoxOpsStatus.value = __this_foreignBoxOpsStatus.value
+    ? __this_foreignBoxOpsStatus.value
+    : null;
+  //------------Operational Variable Setting
+  __this_foreignBoxIndex.value = _foreignIndex; //? _foreignIndex : null;
+  __this_foreignBoxOps.value = foreignOps; //__thisOps.value; //diable andy operations
+  //------------Operational Variable _ Status Managment
+  try {
+    if (__thisOps.value == "comments") {
+      //------------ Main Data Sckeltons
+      //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
+      if (_foreignIndex == null) {
+        _this_chatforeign.value = Object.assign({}, _thisDefault_chat.value);
+        _this_chatforeign.value["userID"] = Objprops._profile.id;
+        _this_chatforeign.value["saleitID"] = _this.value?.["id"] ?? "";
+      } else {
+        _this_chatforeign.value = Object.assign(
+          {},
+          _this_modelTwoRows.value[_foreignIndex]
+        );
+      }
+    } else {
+      //--------Injecting _Updating New Data   [[[ for Default / New Item]]]
+      if (_foreignIndex == null || __thisOps.value == "details") {
+        _this_modelOneforeign.value = Object.assign(
+          {},
+          _thisDefault_client.value
+        );
+
+        _this_modelOneforeign.value["userID"] = Objprops._profile.id;
+        _this_modelOneforeign.value["phoneCode"] = Objprops._profile.phoneCode;
+        //---------
+        _this_modelOneforeign.value["currency"] = _this.value.currency;
+        _this_modelOneforeign.value["location"] = _this.value.location;
+        _this_modelOneforeign.value["geolocation"] = _this.value.geolocation;
+        _this_modelOneforeign.value["saleitID"] = _this.value?.["id"] ?? "";
+        _this_modelOneforeign.value["orderID"] = await _genOrderID();
+      } else {
+        try {
+          _this_modelOneforeign.value = Object.assign(
+            {},
+            _this_modelOneRows.value[_foreignIndex]
+          );
+        } catch {}
+      }
+    }
+  } catch {}
+  return true;
+}
+
+const _resetBoth = async function (
+  resetforeign = null,
+  resumeSync = null,
+  resumeSync2 = null
+) {
+  //reset_default if same_index and Ops occured
+  try {
+    await set_this(resetforeign, null);
+  } catch {}
+  try {
+    await set_this_foreign(resetforeign, null);
+  } catch {}
+  if (resumeSync) {
+    resumeSync.set_syncLock(false);
+  }
+  if (resumeSync2) {
+    resumeSync2.set_syncLock(true);
+  }
+  return true;
+};
 //__this_foreignBoxsubOps
 const ifRowDoublePressed = async function (_thisindex, _thisOps) {
   let _existed_this = __thisIndex.value == _thisindex;
-  if (
-    _thisindex == null ||
-    (_existed_this && __this_foreignBoxOps.value == _thisOps)
-  ) {
+  if (_thisindex == null || (_existed_this && __thisOps.value == _thisOps)) {
     await set_this(_thisOps, null, _thisModelService);
-    await set_this_foreign(_thisOps, null, modelOneService);
+    await set_this_foreign(
+      null,
+      null,
+      _thisOps == "clients" ? modelOneService : ""
+    );
     return true;
   } else {
     return false;
   }
 };
+
 const ifForeignDoublePressed = async function (
   _foreignindex,
   _foreignOps,
@@ -1490,18 +2046,24 @@ const ifForeignDoublePressed = async function (
   let _existed_this = __this_foreignBoxIndex.value == _foreignindex;
   if (
     _foreignindex == null ||
-    (_existed_this && __this_foreignBoxsubOps.value == _foreignOps)
+    (_existed_this && __this_foreignBoxOps.value == _foreignOps)
   ) {
     await set_this(_thisOps, null, _thisModelService);
-    await set_this_foreign(_thisOps, null, modelOneService);
+    await set_this_foreign(
+      null,
+      null,
+      _thisOps == "clients" ? modelOneService : ""
+    );
     return true;
   } else {
     return false;
   }
 };
+//-------Listening for SideBox Operations & Visualizing
+///--------Order_Intiations Stage
+let _orderDebuger = ref("Orders List..");
+let _orderBox = ref([]);
 
-// __this_foreignBoxOps.value = "clients";
-//------operations OVer POP_Up_Box
 //------operations OVer POP_Up_Box
 let _this_foreignOperation = {
   //--------------------------
@@ -1514,32 +2076,34 @@ let _this_foreignOperation = {
   //---Enabling Array_Index_For Operations (Select_Index)_For ---Editing:Deleting--Applying--
   selectedIndex_: async (
     _foreignIndex = null,
-    foreignSuboperation = null,
+    _thisforeignOps = null,
     _thisOps = null
   ) => {
+    __this_foreignBoxOpsStatus.value = _thisforeignOps;
     //---------- IS Duplicated Actions
     if (
-      await ifForeignDoublePressed(_foreignIndex, foreignSuboperation, _thisOps)
+      await ifForeignDoublePressed(_foreignIndex, _thisforeignOps, _thisOps)
     ) {
       return false;
     }
     //---------- IS Duplicated Actions
     _thisService.set_syncLock(true);
-    await set_this_foreign(_thisOps, _foreignIndex, modelOneService);
+    await set_this_foreign(_thisforeignOps, _foreignIndex, modelOneService);
     //---
-    __this_foreignBoxsubOps.value = foreignSuboperation;
+    __this_foreignBoxOps.value = _thisforeignOps;
     return true;
   },
   //---Enabling Array_Index_For Operations (Select_Index)_For ---Editing:Deleting--Applying--
   selectedIndex_RowDetail: async (
     _thisID,
     _foreignIndex = null,
-    foreignSuboperation = null
+    _thisforeignOps = null
   ) => {
     let _thisOps = "clients";
+    __this_foreignBoxOps.value = _thisforeignOps;
     //---------- IS Duplicated Actions
     if (
-      await ifForeignDoublePressed(_foreignIndex, foreignSuboperation, _thisOps)
+      await ifForeignDoublePressed(_foreignIndex, _thisforeignOps, _thisOps)
     ) {
       return false;
     }
@@ -1549,21 +2113,21 @@ let _this_foreignOperation = {
       if (res) {
         _this_Rows.value[__thisIndex.value] = res[__thisIndex.value];
         await set_this(_thisOps, __thisIndex.value);
-        await set_this_foreign(_thisOps, _foreignIndex);
+        await set_this_foreign(_thisforeignOps, _foreignIndex);
       } else {
       }
     });
     // __this_foreignBoxIndex.value = _foreignIndex;
-    __this_foreignBoxsubOps.value = foreignSuboperation;
+    // __this_foreignBoxsubOps.value = foreignSuboperation;
     //----Defaulting foreign Links for main
     return true;
   },
   //-----------Operations on selected array
   _remove: async () => {
-    if (__this_foreignBoxOps.value == "comments") {
+    if (__thisOps.value == "comments") {
       let fthis = { id: _this.value["id"], comments: _this_chatforeign.value };
-      fthis["onplayOps"] = __this_foreignBoxOps.value;
-      fthis["onplaySubops"] = "delete";
+      fthis["thisOps"] = __thisOps.value;
+      fthis["thisSubOps"] = "delete";
 
       let _chatResp = await modelTwoService.deleteData(fthis, {}); //[0],[1]
       if (!_chatResp.status) {
@@ -1576,15 +2140,15 @@ let _this_foreignOperation = {
       _this_Rows.value[__thisIndex.value] = _chatResp.data.data;
       _this_modelTwoRows.value.splice(__this_foreignBoxIndex.value, 1);
       //----updating saleitcontent
-      set_this(__this_foreignBoxOps.value, null);
-      set_this_foreign(__this_foreignBoxOps.value, null);
+      set_this(__thisOps.value, __thisIndex.value);
+      set_this_foreign(__thisOps.value, null);
     } else {
       let fthis = {
         id: _this.value["id"],
         clients: _this_modelOneforeign.value,
       };
-      fthis["onplayOps"] = __this_foreignBoxOps.value;
-      fthis["onplaySubops"] = "delete";
+      fthis["thisOps"] = __thisOps.value;
+      fthis["thisSubOps"] = "delete";
 
       let _clientResp = await modelOneService.deleteData(fthis); //[0],[1]
 
@@ -1598,16 +2162,17 @@ let _this_foreignOperation = {
       _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
       _this_modelOneRows.value.splice(__this_foreignBoxIndex.value, 1);
       //----updating saleitcontent
-      await set_this(__this_foreignBoxOps.value, __thisIndex.value);
-      await set_this_foreign(__this_foreignBoxOps.value, null);
+      await set_this(__thisOps.value, __thisIndex.value);
+      await set_this_foreign(null, null);
     }
     return true;
   },
   _update_foreign: async () => {
-    if (__this_foreignBoxOps.value == "comments") {
+    __this_foreignBoxIndex.value = null;
+    if (__thisOps.value == "comments") {
       let fthis = { id: _this.value["id"], comments: _this_chatforeign.value };
-      fthis["onplayOps"] = __this_foreignBoxOps.value;
-      fthis["onplaySubops"] = "update";
+      fthis["thisOps"] = __thisOps.value;
+      fthis["thisSubOps"] = "update";
 
       let _chatResp = await modelTwoService.updateData(fthis, {}); //[0],[1]
       if (!_chatResp.status) {
@@ -1622,19 +2187,21 @@ let _this_foreignOperation = {
       if (typeof __this_foreignBoxIndex.value == "number") {
         _this_modelTwoRows.value[__this_foreignBoxIndex.value] =
           _chatResp.data.foreignData;
+        __this_foreignBoxIndex.value = null;
+      } else {
       }
       //--------Reseting
       // await _this_modelOneQuery();
       // await set_this("clients", __thisIndex.value);
-      await set_this_foreign("comments", __this_foreignBoxIndex.value);
+      await set_this_foreign("update", __this_foreignBoxIndex.value);
       return true;
     } else {
       let fthis = {
         id: _this.value["id"],
         clients: _this_modelOneforeign.value,
       };
-      fthis["onplayOps"] = __this_foreignBoxOps.value;
-      fthis["onplaySubops"] = "update";
+      fthis["thisOps"] = __thisOps.value;
+      fthis["thisSubOps"] = "update";
 
       let _clientResp = await modelOneService.updateData(fthis, {}); //[0],[1]
       if (!_clientResp.status) {
@@ -1650,21 +2217,23 @@ let _this_foreignOperation = {
       if (typeof __this_foreignBoxIndex.value == "number") {
         _this_modelOneRows.value[__this_foreignBoxIndex.value] =
           _clientResp.data.foreignData;
+        __this_foreignBoxIndex.value = null;
+      } else {
       }
       //--------Reseting
-      // await _this_modelOneQuery();
+      await _this_modelOneQuery();
       await set_this("clients", __thisIndex.value);
-      await set_this_foreign("clients", __this_foreignBoxIndex.value);
+      await set_this_foreign("update", __this_foreignBoxIndex.value);
       return true;
     }
 
     return true;
   },
   _create_foreign: async () => {
-    if (__this_foreignBoxOps.value == "comments") {
+    if (__thisOps.value == "comments") {
       let fthis = { id: _this.value["id"], comments: _this_chatforeign.value };
-      fthis["onplayOps"] = __this_foreignBoxOps.value;
-      fthis["onplaySubops"] = "create";
+      fthis["thisOps"] = __thisOps.value;
+      fthis["thisSubOps"] = "create";
       console.log("commenting", fthis);
       let _chatResp = await modelTwoService.createData(fthis, {}); //[0],[1]
       if (!_chatResp.status) {
@@ -1676,8 +2245,8 @@ let _this_foreignOperation = {
       // _this_Rows.value[__thisIndex.value] = _chatResp.data.data;
 
       // set_this_foreign("comments", null);
-      await set_this(__this_foreignBoxOps.value, __thisIndex.value);
-      await set_this_foreign(__this_foreignBoxOps.value, null);
+      await set_this(__thisOps.value, __thisIndex.value);
+      await set_this_foreign(null, null);
       await _this_modelTwoQuery();
       //----updating saleitcontent
       // _this_Rows.value[__thisIndex.value] =_chatResp.data
@@ -1685,8 +2254,8 @@ let _this_foreignOperation = {
       let a = { id: _this.value["id"], clients: _this_modelOneforeign.value };
       a["clients"]["store"] = "buy";
 
-      a["onplayOps"] = __this_foreignBoxOps.value;
-      a["onplaySubops"] = "create";
+      a["thisOps"] = __thisOps.value;
+      a["thisSubOps"] = "create";
 
       let _clientResp = await modelOneService.createData(a, {}); //[0],[1]
       if (!_clientResp.status) {
@@ -1698,8 +2267,8 @@ let _this_foreignOperation = {
       _orderBox.value.push(_clientResp.data.data["id"] ?? null);
       _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
 
-      await set_this(__this_foreignBoxOps.value, __thisIndex.value);
-      await set_this_foreign(__this_foreignBoxOps.value, null);
+      await set_this(__thisOps.value, __thisIndex.value);
+      await set_this_foreign(null, null);
       await _this_modelOneQuery();
       //----updating saleitcontent
     }
@@ -1712,9 +2281,8 @@ let _this_foreignOperation = {
     // _this_modelOneforeign.value['userID'] = Objprops._profile.id
     let fthis = { id: _this.value["id"], clients: _this_modelOneforeign.value };
     fthis["clients"]["store"] = _store;
-
-    // fthis["onplayOps"] = __this_foreignBoxOps.value;
-    // fthis["onplaySubops"] = "create";
+    // fthis["thisOps"] = __thisOps.value;
+    // fthis["thisSubOps"] = "create";
     let _clientResp;
     if (_isnewBuyer) {
       _clientResp = await modelOneService.createData(fthis, {});
@@ -1730,13 +2298,19 @@ let _this_foreignOperation = {
 
     _orderBox.value.push(_clientResp.data.data["id"] ?? null);
     _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
-    if (typeof __this_foreignBoxIndex.value == "number") {
+    //&&!__this_foreignBoxDialog.value
+    if (
+      typeof __this_foreignBoxIndex.value == "number" &&
+      !__this_foreignBoxDialog.value
+    ) {
       _this_modelOneRows.value[__this_foreignBoxIndex.value] =
         _clientResp.data.foreignData;
+    } else {
+      __this_foreignBoxIndex.value = null;
+      await _this_modelOneQuery();
     }
-    // await _this_modelOneQuery();
     await set_this("clients", __thisIndex.value);
-    await set_this_foreign("clients", __this_foreignBoxIndex.value);
+    await set_this_foreign(null, __this_foreignBoxIndex.value);
     return true;
   },
 };
@@ -1744,34 +2318,37 @@ let _this_foreignOperation = {
 //---------------ACTIVE Operating on Row
 //Operating without setting onplayrowItem ( directlly calling for effect) === active _operations
 let _this_ActiveOperation = {
-  _removeItem: async function (_thisindex) {
+  _removeItem: async function (_thisindex = null, _thisOps = null) {
     __thisIndex.value = null;
+    __thisOps.value = _thisOps;
     delete _this_Rows.value[_thisindex];
     return true;
   },
   _detailView: async (
     _thisid = null,
     _thisindex = null,
-    _thisOps = "clients",
-    _thisOpsStatus = "hover"
+    _thisOps = null,
+    _thisOpsStatus = null,
+    _this_foreignBoxOps = null
   ) => {
     //---------- IS Duplicated Actions
     // if(await ifRowDoublePressed(_thisindex,_thisOps)) return false
     //---------- IS Duplicated Actions
     __thisOpsStatus.value = _thisOpsStatus;
-    if (["hover", "", null, false].includes(_thisOpsStatus)) {
+    // __this_foreignBoxOpsStatus.value = _this_foreignBoxOpsStatus;
+    if (["hover", "", null, false].includes(_thisOps)) {
     } else {
       await set_this(_thisOps, _thisindex);
-      await set_this_foreign(_thisOps, null);
+      await set_this_foreign(_this_foreignBoxOps, null);
       return true;
     }
     //----------------------------------- ;
     await set_this(_thisOps, _thisindex, _thisModelService);
-    await set_this_foreign(
-      _thisOps,
-      null,
-      _thisOps == "clients" ? modelOneService : modelTwoService
-    );
+    // await set_this_foreign(
+    //   _thisOps,
+    //   null,
+    //   _thisOps == "clients" ? modelOneService : modelTwoService
+    // );
     return true;
     await Fetch_this(_thisModelService, { id: _thisid }).then(async (res) => {
       if (res) {
@@ -1782,21 +2359,29 @@ let _this_ActiveOperation = {
     });
     return true;
   },
-  selectedRow_ForeignRows: async (_thisindex = null, _thisOps = null) => {
+  selectedRow_ForeignRows: async (
+    _thisindex = null,
+    _thisOps = null,
+    _this_foreignBoxOps = null
+  ) => {
     //---------- IS Duplicated Actions
     if (await ifRowDoublePressed(_thisindex, _thisOps)) return false;
     //---------- IS Duplicated Actions
     // _setBoth(_thisOps, _thisindex, null, _thisModelService);
     await set_this(_thisOps, _thisindex, _thisModelService);
     await set_this_foreign(
-      _thisOps,
+      _this_foreignBoxOps,
       null,
       _thisOps == "clients" ? modelOneService : modelTwoService
     );
     // _thisModelService.set_syncLock(true);
     // await set_this(null, _thisindex);
+    __this_foreignBoxOps.value = _this_foreignBoxOps;
     __thissubOpsStatus.value = true;
-    _thisOps == "clients" ? _this_modelOneQuery() : _this_modelTwoQuery();
+    if (_this_foreignBoxOps != "direct") {
+      // for direct buy ( default) perparations
+      _thisOps == "clients" ? _this_modelOneQuery() : _this_modelTwoQuery();
+    }
     return true;
   },
   //===================
@@ -1808,8 +2393,8 @@ let _this_ActiveOperation = {
     }; //DeepCopy Handle Reactivity
 
     //create object operational command
-    _this.value["onplayOps"] = "_itServiceRating";
-    _this.value["onplaySubops"] = "increase";
+    _this.value["thisOps"] = "_itServiceRating";
+    _this.value["thisSubOps"] = "increase";
     //---set--loading row operation
     return await Crud_this.updateData()
       .then(async (response) => {
@@ -1831,8 +2416,8 @@ let _this_ActiveOperation = {
     //build dynamic object
     _this.value = { id: _this_Rows.value[_thisindex]["id"] }; //DeepCopy Handle Reactivity
     //create object operational command
-    _this.value["onplayOps"] = "likes";
-    _this.value["onplaySubops"] = "increase";
+    _this.value["thisOps"] = "likes";
+    _this.value["thisSubOps"] = "increase";
     //---set--loading row operation
 
     return await Crud_this.updateData()
@@ -1853,8 +2438,8 @@ let _this_ActiveOperation = {
     //build dynamic object
     _this.value = { id: _this_Rows.value[_thisindex]["id"] }; //DeepCopy Handle Reactivity
     //create object operational command
-    _this.value["onplayOps"] = "following";
-    _this.value["onplaySubops"] = "increase";
+    _this.value["thisOps"] = "following";
+    _this.value["thisSubOps"] = "increase";
     //---set--loading row operation
 
     return await Crud_this.updateData()
@@ -1903,15 +2488,15 @@ let _this_ActiveOperation = {
       });
   },
   //------------special Operations
-  _toCart: async (tocartID = null) => {
+  _toCart: async (tocartID = null, _thisOps = null) => {
     _this.value = {
       id: tocartID,
       clients: Object.assign({}, _thisDefault_client.value ?? {}),
     }; //.push(_onplay); //or use below
     _this.value["clients"]["store"] = "cart";
 
-    _this.value["onplayOps"] = "clients";
-    _this.value["onplaySubops"] = "create";
+    _this.value["thisOps"] = _thisOps;
+    _this.value["thisSubOps"] = "create";
 
     let _clientResp = await modelOneService.createData(_this.value, {}); //[0],[1]
     // console.log('creating client',_clientResp,_this.value,_this_modelOneforeign.value)
@@ -1922,7 +2507,7 @@ let _this_ActiveOperation = {
 
     timerDone(5000, "Product Saved", "");
     _orderBox.value.push(_clientResp.data.data["id"] ?? null);
-    await _this_modelOneQuery();
+    // await _this_modelOneQuery();
     //----updating saleitcontent
     // _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
     return true;
@@ -1938,6 +2523,8 @@ async function _thisValidator(formtype) {
     (value) => value == null
   );
   if (!_isCompleted) {
+    return false;
+  } else if (!_this.value.price) {
     return false;
   }
   //-----
@@ -1961,26 +2548,27 @@ async function Create_this() {
     }
   }
   //--------set Operational parameters
-  _this.value["onplayOps"] = "CreateRowItem";
-  _this.value["onplaySubops"] = "new";
+  _this.value["thisOps"] = __thisOps;
+  _this.value["thisSubOps"] = "new";
   //---Creat the Content... which is with/out of file encapsulations
   return await Crud_this.createData()
     .then(async (response) => {
       timerLoadevent({ createData: 1 }, 1, "Updating...");
       if (response) {
-        timerDone(5000, "Item Created", "Succefully Created");
-        __thisBox.value = false;
-        return this_Query("id", Objprops._profile.id);
+        // timerDone(5000, "Item Created", "Succefully Created");
+        // __thisBox.value = false;
+        // this_Query("userID", Objprops._profile.id);
+        return router.push("/play/MyServices");
       } else {
       }
       __thisOpsStatus.value = false;
-      // _fileAttributeName.value=null;
+      _fileAttributeName.value = null;
       return true;
     })
     .catch((e) => {
       timerError(5000, "Error Creating", "Error Creating" + e);
       _fileAttributeName.value = null;
-      __thisOpsStatus.value = false;
+      // __thisOpsStatus.value = false;
       __thisBox.value = false;
       return false;
     });
@@ -2002,8 +2590,8 @@ async function Update_this() {
     }
   }
   //----------set Operational parameters
-  _this.value["onplayOps"] = "UpdateRowItem";
-  _this.value["onplaySubops"] = "update";
+  _this.value["thisOps"] = __thisOps;
+  _this.value["thisSubOps"] = "update";
   //--------
   return await Crud_this.updateData()
     .then(async (response) => {
@@ -2012,11 +2600,11 @@ async function Update_this() {
         timerDone(5000, "Item Updated", "Succefully Updated");
         _this_Rows.value[__thisIndex.value] = Object.assign({}, response);
         __thisBox.value = false;
-        this_Query("id", Objprops._profile.id);
+        // this_Query("userID", Objprops._profile.id);
       } else {
       }
       __thisOpsStatus.value = false;
-      // _fileAttributeName.value=null;
+      _fileAttributeName.value = null;
       return true;
     })
     .catch((e) => {
@@ -2047,8 +2635,8 @@ const Crud_this = {
       return await _thisService
         .createData(_thisapiUrl, _this.value, objParam)
         .then((response) => {
-          if (response[0]) {
-            return response[1];
+          if (response.status) {
+            return response.data;
           } else {
             timerError(5000, "Error createData", "..." + response.data);
             return false;
@@ -2109,6 +2697,7 @@ const Crud_this = {
         return false;
       });
   },
+
   //---------------------------------------------------------------
   readFData: async function (objParam = {}) {
     //-------Check for Param_Requirents
@@ -2211,7 +2800,7 @@ let _fileAsPathOps = ref(false); //this is for selecting only
 async function _fileAsPathOpsCall(StrIndex, index = null) {
   //calling for selections
   __thisIndex.value = index;
-  //__this_foreignBoxOps.value=null
+  //__thisOps.value=null
   _fileAsPathIndex.value = StrIndex;
   return true;
 }
@@ -2228,24 +2817,23 @@ async function _fileAsPathSlideCall(_thisindex = null) {
   return true;
 }
 
-// var _cameraInstance = new _cameraDevice();
+var _cameraInstance = new _cameraDevice();
 onMounted(() => {
-  // clearInterval(sync_thisInstante);
-  // modelOneService.set_syncLock(true);
-  // modelTwoService.set_syncLock(true);
-  // _thisModelService.set_syncLock(true);
+  clearInterval(sync_thisInstante);
+  set_this(null, null, _thisModelService);
+  set_this_foreign(null, null, modelOneService);
+  set_this_foreign(null, null, modelTwoService);
   //-------
-  _resetBoth();
 });
 // this_Query();
 _this_modelOneQuery();
 onUnmounted(async () => {
   // Clear the interval when the component is destroyed to avoid memory leaks
-  clearInterval(sync_thisInstante);
-  modelOneService.set_syncLock(true);
-  modelTwoService.set_syncLock(true);
-  _thisModelService.set_syncLock(true);
-  // alert("Sure, Exiing Shops Page ?");
+  // clearInterval(sync_thisInstante);
+  // alert("Sure, Exiing Main Page ?");
+  set_this(null, null, _thisModelService);
+  set_this_foreign(null, null, modelOneService);
+  set_this_foreign(null, null, modelTwoService);
   return true;
 });
 //----------------------------Utilities Funtions

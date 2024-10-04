@@ -1,30 +1,110 @@
 <template>
-  <q-dialog v-model="_Supports" class="column">
-    <q-card v-if="customerSupport" class="fontbstyle flex column">
-      <q-card-section>
-        <div class="fontdstyle">Service Usage Manual</div>
-      </q-card-section>
+  <template v-if="gpsStatus == 'permiting_gpsservice'">
+    <dialogOne
+      class="fit shadow-5 column"
+      :isOpen="askForGPS"
+      @emitClick0="allowGPS($event)"
+    >
+      <div class="boxastyle text-orange bg-orange">
+        <p class="text-white">Allow Location Access.</p>
+        <div class="text-orange boxcstyle" style="max-width: 80vw">
+          Would you like to
+          <ul>
+            <li>Get product before any one</li>
+            <li>Get product near you</li>
+          </ul>
+          then, we need locations acccess to provide you with best exprience.
+        </div>
+        <div class="justify-end row">
+          <q-btn flat color="green" @click="allowGPS(true)"> Allow </q-btn>
+        </div>
+      </div>
+    </dialogOne>
+  </template>
+  <!-- _thisOps -->
+  <template
+    v-if="
+      ['customerSupport', 'cameraPermission', 'createPermission'].includes(
+        _thisOps
+      )
+    "
+  >
+    <dialogOne
+      :isOpen="_thisOps"
+      @emitClick0="_thisOps = $event"
+      class="column"
+    >
+      <q-card
+        v-if="_thisOps == 'customerSupport'"
+        class="fontbstyle flex column"
+      >
+        <q-card-section>
+          <div class="fontdstyle">Service Usage Manual</div>
+        </q-card-section>
 
-      <q-separator />
+        <q-separator />
 
-      <q-card-section style="max-height: 50vh; min-width: 20vw" class="scroll">
-        <p v-for="n in 100" :key="n">
-          {{ n }} Notices dslkff sodkfw pwef wp fpweof pefwepf pwope.
-        </p>
-      </q-card-section>
+        <q-card-section
+          style="max-height: 50vh; min-width: 20vw"
+          class="scroll"
+        >
+          <p v-for="n in 100" :key="n">
+            {{ n }} Notices dslkff sodkfw pwef wp fpweof pefwepf pwope.
+          </p>
+        </q-card-section>
 
-      <q-separator />
+        <q-separator />
 
-      <q-card-actions>
-        <!--q-btn flat label="Decline" color="primary" v-close-popup /-->
-        <q-btn flat label="Ok" color="primary" v-close-popup />
-      </q-card-actions>
-    </q-card>
+        <q-card-actions>
+          <!--q-btn flat label="Decline" color="primary" v-close-popup /-->
+          <q-btn flat label="Ok" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
 
-    <q-card v-else-if="deviceSupport">
-      Please Allow GPS && Camera Device, on Your Device
-    </q-card>
-  </q-dialog>
+      <q-card v-else-if="_thisOps == 'cameraPermission'">
+        Please Allow GPS && Camera Device, on Your Device
+      </q-card>
+
+      <q-card
+        v-else-if="_thisOps == 'createPermission'"
+        class="column boxbstyle fontestyle q-pa-md q-gutter-sm text-white justify-between"
+        style="
+          background-color: rgb(255, 8, 0);
+          color: white;
+          border-radius: 10px;
+          box-shadow: 5px;
+          min-width: 40vw;
+          min-height: 30vh;
+        "
+      >
+        <h2 class="fontcstyle text-white">For Safety Reasons</h2>
+        <h2 class="fontcstyle text-white">Please, Login with key, to sell</h2>
+        <div class="row q-gutter-sm">
+          <input
+            style="border-radius: 5px"
+            type="password"
+            v-model="_this.enrollKey"
+          />
+          <button class="text-red" @click="_enroll()">Login</button>
+        </div>
+        <div class="text-white fontbstyle">
+          <hr style="height: 0px; border: 0.1px solid orangered" />
+
+          <p class="text-white">For Registration Or Reseting ?</p>
+          Contact us : On
+          <p class="text-white"><q-icon name="phone" /> +251 91232342424</p>
+          <p class="text-white"><q-icon name="phone" /> +251 91232342424</p>
+          <hr style="height: 0px; border: 0.1px solid orangered" />
+        </div>
+        <div
+          class="text-orange fontbstyle row justify-end items-center q-px-md bg-black"
+        >
+          <q-icon name="telegram" /> t.me/mesh | <q-icon name="facebook" /> mesh
+          | <q-icon name="whatsapp" /> mesh
+        </div>
+      </q-card>
+    </dialogOne>
+  </template>
 
   <q-dialog v-model="_cameraBox" class="column overlay-Glass rounded-borders">
     <!--CameraFeeds  @Picture-taken="imageSrc = $event" / -->
@@ -37,7 +117,6 @@
         padding: 2px;
       "
     >
-      {{ _this.geolocation ?? false }}
       <div v-if="_fileSourceFoCam == 'folder'"></div>
       <div v-else-if="_fileSourceFoCam == 'camera'">
         <div v-if="_thisMedia">
@@ -288,10 +367,18 @@
     <div class="col-grow layout-Glass"></div>
   </div>
 
-  <q-layout v-if="Loadingevent.main ?? false" class="column">
-    <div class="fit bg-white text-bold text-orange boxbstyle">
-      <!-- {{ Loadingpage.content ?? "..." }} -->
-      itservices Loading...
+  <q-layout
+    v-if="Loadingevent.main ?? false"
+    class="column"
+    style="background-color: rgb(255, 8, 0)"
+  >
+    <div
+      style="position: fixed; top: 50%; left: 50%"
+      class="fontestyle text-white"
+    >
+      <!-- <div>{{ _pageSettings.path }}</div> -->
+      <!-- <p class="fontastyle">mesh</p> -->
+      ....
     </div>
   </q-layout>
 
@@ -301,6 +388,42 @@
     class="no-padding no-margine"
     style="max-width: 100svw; height: 100svh"
   >
+    <div
+      style="position: fixed; top: 82vh; left: 86vw; z-index: 100"
+      class="fontbstyle text-white text-orange"
+    >
+      <div
+        v-if="
+          (_pageSettings.geoSearch ?? false) && _pageSettings.path != 'MyShops'
+        "
+      >
+        <div style="display: flex; flex-flow: column nowrap">
+          Find Near ?
+          <select v-model="_pageSettings.geoSearch.value">
+            <option selected>off</option>
+            <option>nearMe</option>
+            <option>myCity</option>
+            <option>myCountry</option>
+          </select>
+        </div>
+        <!-- <button @click="_pageSettings.geoSearch.state = true">
+          Find Near You.
+        </button> -->
+      </div>
+      <!-- <div>{{ _pageSettings.path }}</div> -->
+      <!-- <p class="fontastyle">mesh</p> -->
+      ....
+      <q-btn
+        @click="openpubChat(true)"
+        icon="chat"
+        :dense="true"
+        flat
+        class="text-white"
+        ><q-tooltip>Join Public Chats</q-tooltip>
+      </q-btn>
+      <div class="fontastyle row"><q-icon name="phone" />{{ _this.phone }}</div>
+    </div>
+
     <!--Headers-->
     <q-header
       v-if="!isScrolledUp"
@@ -317,33 +440,33 @@
         style="backdrop-filter: blur(500px)"
       >
         <q-btn
-          flat
-          densebg-white
           round
-          color="white"
+          color="orange"
           size="xs"
           @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Menu"
-          icon="menu"
+          icon="more_vert"
         />
 
         <q-space />
 
         <div
           class="boxastyle row items-center"
-          style="width: 60vw; height: 40px; border-radius: 12px"
+          style="width: 60vw; height: 40px; border-radius: 5px"
         >
           <q-icon
             name="clear"
-            color="red"
+            style="color: rgb(255, 8, 0)"
             class="col-auto cursor-pointer q-pa-xs"
             size="xs"
+            @click="lytSearchRow = null"
           />
           <input
             class="col font0astyle"
             type="text"
+            v-model="lytSearchRow"
             placeholder="search"
-            style="border-radius: 12px; height: 100%; border: 1px solid white"
+            style="border-radius: 5px; height: 100%; border: 1px solid white"
           />
         </div>
 
@@ -376,7 +499,8 @@
           icon="upload"
           no-caps
           class="q-ml-sm q-px-md fontastyle text-white"
-          style="background-color: rgb(255, 81, 0)"
+          style="background-color: rgb(255, 8, 0)"
+          v-if="_this?.enrolled ?? false"
         >
         </q-btn>
       </q-toolbar>
@@ -387,10 +511,10 @@
           dense
           round
           @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
-          class="fontbstyle bg-white"
+          class="bg-orange q-pa-md"
+          style="color: rgb(255, 8, 0)"
           no-caps
-          label="is"
+          label=" mesh "
         />
 
         <!-- <label>saleIt </label>  -->
@@ -404,14 +528,15 @@
             :style="
               _pageSettings['path'] == iservice.path
                 ? 'color:orangered'
-                : 'color:white'
+                : 'color:grey'
             "
             v-for="(iservice, key) in iservicei_Menu"
             :key="key"
-            @click="routeIt(iservice.path)"
+            @click="routeIt(iservice.title, iservice.path, iservice.model)"
           >
             <q-icon size="sm" :name="iservice.icon" />
-            <p style="color: white">{{ key }}</p>
+            <p style="color: grey">{{ key }}</p>
+            {{ iservice.path }}
             <q-tooltip
               style="background-color: black; color: white; font-weight: bolder"
             >
@@ -473,16 +598,9 @@
           no-caps
           label="Create Content"
           class="q-ml-sm q-px-md fontastyle text-white"
-          style="background-color: rgb(255, 81, 0)"
+          style="background-color: rgb(255, 8, 0)"
+          v-if="_this?.enrolled ?? false"
         >
-        </q-btn>
-        <q-btn
-          @click="openpubChat(true)"
-          icon="chat"
-          :dense="true"
-          flat
-          class="text-white"
-          ><q-tooltip>Join Public Chats</q-tooltip>
         </q-btn>
 
         <div class="q-gutter-sm row items-center no-wrap">
@@ -490,7 +608,7 @@
             {{ _this.userName }}
           </q-item-label> -->
           <!--q-btn round dense flat color="text-grey-7" icon="apps">
-           <q-tooltip>itService Apps</q-tooltip>
+           <q-tooltip>mesh Apps</q-tooltip>
          </q-btn-->
 
           <!--q-btn round dense flat color="grey-8" icon="notifications">
@@ -698,7 +816,7 @@
                     />
                     <q-btn
                       flat
-                      class="fontastyle text-blue"
+                      class="fontastyle text-black"
                       round
                       label="Edit Profile"
                       :dense="true"
@@ -762,13 +880,13 @@
             <div class="col-auto q-px-sm row justify-between row">
               <div class="fontcstyle">Contacts</div>
 
-              <q-item-label>
+              <!-- <q-item-label>
                 <q-btn icon="add" :dense="true">Contact</q-btn>
-                <!-- Incomplete Profile -->
+             
                 <q-tooltip style="background-color: black">
                   Add Contacts to follow</q-tooltip
                 >
-              </q-item-label>
+              </q-item-label> -->
             </div>
             <q-separator spaced inset="item" />
             <q-scroll-area class="col-grow column">
@@ -788,9 +906,9 @@
 
           <q-separator spaced inset="item" />
           <q-list class="col-2">
-            <q-item class="items-center q-gutter-sm">
-              <q-item-label> Language: </q-item-label>
-              <q-item-label>
+            <q-item class="items-center q-gutter-sm justify-between">
+              <div>
+                Language:
                 <q-btn
                   :dense="true"
                   no-caps
@@ -802,16 +920,21 @@
                     _pageSettings.language = _pageSettings.language ? 0 : 1
                   "
                 />
-              </q-item-label>
+              </div>
+              <q-btn color="red" size="sm" @click="_logOut()" :dense="true"
+                >Logout
+              </q-btn>
             </q-item>
 
             <q-item class="row">
               <q-item-label
                 class="col boxastyle q-pa-sm row justify-between bg-grey text-dark"
               >
-                itService
-
-                <q-item-label>&copy;2023 </q-item-label>
+                mesh
+                <p>{{ _this.enrollKey ?? false }}</p>
+                <q-item-label
+                  >&copy;{{ new Date().getFullYear() }}
+                </q-item-label>
               </q-item-label>
             </q-item>
           </q-list>
@@ -832,9 +955,8 @@
 
         <q-scroll-area
           v-else
-          class="column"
+          class="column justify-between bg-white"
           style="height: 100%; scrollbar-width: 0px; scrollbar-color: green"
-          color="green"
         >
           <!----profile graphics/imaging-->
 
@@ -864,7 +986,7 @@
               v-if="_thisOps ?? false"
             >
               <!---profile_update-->
-              <div class="q-gutter-xs justify-end">
+              <div class="q-gutter-xs justify-end text-black">
                 <div>
                   <input
                     type="file"
@@ -876,13 +998,14 @@
                   <q-btn
                     icon="folder"
                     class=""
+                    color="grey"
                     size="md"
                     flat
                     @click="$refs.filep.click()"
                     :dense="true"
                   />
                   <q-btn
-                    color="grey-4"
+                    color=""
                     class=""
                     size="md"
                     flat
@@ -905,7 +1028,7 @@
                   :dense="true"
                   @click="updateUser()"
                 >
-                  <h1 class="text-black font0astyle">Apply</h1>
+                  <h1 class="text-black fontastyle text-green">Apply</h1>
                 </q-btn>
               </div>
             </q-card>
@@ -950,7 +1073,7 @@
                     />
                     <q-btn
                       flat
-                      class="fontastyle text-blue"
+                      class="fontastyle text-black"
                       round
                       size="sm"
                       label="Edit Profile"
@@ -1020,13 +1143,12 @@
             <div class="col-auto q-px-sm row justify-between row">
               <div class="fontastyle">Contacts</div>
 
-              <q-item-label>
+              <!-- <q-item-label>
                 <q-btn icon="add" size="xs" :dense="true">Contact</q-btn>
-                <!-- Incomplete Profile -->
                 <q-tooltip style="background-color: black">
                   Add Contacts to follow</q-tooltip
                 >
-              </q-item-label>
+              </q-item-label> -->
             </div>
             <q-separator spaced inset="item" />
             <q-scroll-area class="col-grow column">
@@ -1045,18 +1167,25 @@
           </q-list>
 
           <q-separator spaced inset="item" />
-          <q-list class="col-2">
-            <q-item class="items-center fontastyle row q-gutter-sm">
-              <div>Language:</div>
-              <q-btn
-                :dense="true"
-                no-caps
-                class="q-pa-none"
-                flat
-                size="sm"
-                :label="_pageSettings.languageOptions[_pageSettings.language]"
-                @click="_pageSettings.language = _pageSettings.language ? 0 : 1"
-              />
+          <q-list class="col bg-white">
+            <q-item class="items-center q-gutter-sm justify-between">
+              <div>
+                Language:
+                <q-btn
+                  :dense="true"
+                  no-caps
+                  class="q-pa-none"
+                  flat
+                  size="sm"
+                  :label="_pageSettings.languageOptions[_pageSettings.language]"
+                  @click="
+                    _pageSettings.language = _pageSettings.language ? 0 : 1
+                  "
+                />
+              </div>
+              <q-btn color="red" size="sm" @click="_logOut()" :dense="true"
+                >Logout
+              </q-btn>
             </q-item>
 
             <q-item class="row">
@@ -1064,9 +1193,11 @@
                 class="col boxbstyle row justify-between text-dark"
                 style="background-color: whitesmoke"
               >
-                itService
-
-                <q-item-label>&copy;2023 </q-item-label>
+                mesh
+                <p>{{ _this.enrollKey ?? false }}</p>
+                <q-item-label
+                  >&copy;{{ new Date().getFullYear() }}
+                </q-item-label>
               </q-item-label>
             </q-item>
           </q-list>
@@ -1142,9 +1273,9 @@
           @mouseleave="iservice[3] = false"
           v-for="(iservice, index) in iservicei_Menu"
           :key="iservice"
-          @click="routeIt(iservice.path)"
+          @click="routeIt(iservice.title, iservice.path, iservice.model)"
         >
-          {{ index }} sss
+          {{ index }}
           <!--q-item-label v-if="iservice[3]" caption >{{ iservice.title }} </q-item-label-->
           <q-icon size="xs" :name="iservice.icon" />
           <div>My</div>
@@ -1215,7 +1346,7 @@
           stack
           no-caps
           class="row col-grow q-ma-none q-pa-none"
-          @click="routeIt(iservice.path)"
+          @click="routeIt(iservice.title, iservice.path, iservice.model)"
         >
           <q-icon size="xs" :name="iservice.icon" />
           <h1>{{ key }}</h1>
@@ -1257,6 +1388,9 @@ import { useLocalStorage } from "@vueuse/core";
 //import { notifyit } from "src/composables/transducer";
 import { getCountry, getState, countries } from "src/services/geotimezone";
 
+import { iservicei_Menu } from "src/composables/constVariables";
+var showsideMenu = ref(false);
+
 import { exportFile, useQuasar, useMeta } from "quasar";
 import { screenSize } from "src/services/utils";
 //import userProfile from "src/components/userProfile.vue"
@@ -1275,8 +1409,10 @@ const { isScrolled, isScrolledUp } = useScroll(1000); // Adjust threshold as nee
 
 // import _localStorage from "src/services/storeService"; //_localStorage._clear()
 //var socket = new WebSocket('ws://127.0.0.1:9100');
+import dialogOne from "src/components/dialogs/dialogOne.vue";
+
 import debugCard from "src/components/debugCards.vue";
-import useDebugMixin from "src/composables/debugMixin";
+import useDebugMixin from "src/composables/mixins/debugMixin";
 const {
   Loading, //
   Loadingevent,
@@ -1295,7 +1431,7 @@ const {
   timerError,
 } = useDebugMixin();
 
-import useStatusMixin from "@/composables/statusMixin";
+import useStatusMixin from "@/composables/mixins/statusMixin";
 const {
   status_Loading,
   status_DoneMessage,
@@ -1308,7 +1444,7 @@ const {
   status_timerError,
 } = useStatusMixin();
 
-import usefileMixin from "src/composables/fileserviceMixin";
+import usefileMixin from "src/composables/mixins/fileserviceMixin";
 var {
   _thisMedia,
   _fileAttributeName,
@@ -1374,6 +1510,7 @@ const metaData = {
 useMeta(metaData);
 //--------------------
 //$q.dark.toggle()
+
 //-------
 var lytSearchRow = ref("");
 
@@ -1390,31 +1527,6 @@ var lytCreatRow = ref(false);
 // let _cameraBox =ref(false)
 //lytCreatRow
 //-----------------------Local Varialbles
-var iservicei_Menu = ref();
-var showsideMenu = ref(false);
-iservicei_Menu.value = {
-  Home: {
-    content: "Shoping",
-    icon: "home",
-    title: "saleIt",
-    checked: false,
-    path: "saleit",
-  },
-  MyStore: {
-    content: "what did i bought ?",
-    icon: "shop",
-    title: "Shop",
-    checked: false,
-    path: "saleitclient",
-  },
-  MyService: {
-    content: "Shoping",
-    icon: "store",
-    title: "saleIt",
-    checked: false,
-    path: "store",
-  },
-};
 
 //-----Layout_Style & behaviors
 let _profile_iss = ref(null);
@@ -1674,102 +1786,39 @@ const Crud_this = {
 //_____________________________________________________Functions Definitions
 
 //-----------------------------------Loading...process...showOFF
-
 let init_navObj = ref(false);
 let _location = ref(null);
 let _Country = ref([]); //computed(() => getCountry());
-
 let _State = ref(null);
-let askForGPS = ref(false);
-let _activeService = ref("listening");
+// let gpsStatus = ref(null);
+//_thislocation
+import _thisPosition from "src/composables/mixins/geolocMixin";
+const {
+  askForGPS,
+  _thislocation,
+  gpsStatus,
+  allowGPS,
+  _initGeo,
+  getCurrentPosition,
+} = _thisPosition();
 
-var _thisPosition = function () {
-  return {
-    _init: async function () {
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then(async function (permissionStatus) {
-          if (permissionStatus.state === "granted") {
-            await positionInstance.allowGPS(true);
-          } else {
-            // _activeService.value = "permiting_gpsservice";
-            _activeService.value = null;
-            askForGPS.value = permissionStatus.state;
-          }
-        });
-      return true;
-    },
-    allowGPS: async function (allow = false) {
-      askForGPS.value = false;
-      if (!allow) {
-        init_navObj.value = false;
-        _activeService.value = null;
-      } else {
-        try {
-          if (navigator.geolocation ?? false) {
-            init_navObj.value = navigator.geolocation;
-            await positionInstance.watchCurrentPosition();
-            _activeService.value = "finish";
-            return true;
-          }
-        } catch (e) {}
-        _activeService.value = null;
-      }
-      _activeService.value = null;
-      return false;
-    },
-
-    watchCurrentPosition: async function () {
-      try {
-        await init_navObj.value.watchPosition(
-          (geodata) => {
-            var _geolat = parseFloat(geodata.coords.latitude ?? 0);
-            var _geolong = parseFloat(geodata.coords.longitude ?? 0);
-            if (_geolat && _geolat != _this.value.geolocation.lat) {
-              _this.value.geolocation = { lat: _geolat, long: _geolong };
-              // _location.value = { country:null, city: null, street: null };
-            }
-            _activeService.value = "active_gpsservice";
-
-            return this;
-          },
-          (e) => {
-            _activeService.value = "granted_,but gpsservice";
-
-            return this;
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 100 * 60 * 24,
-            maximumAge: 60000,
-          }
-        );
-      } catch (e) {
-        _activeService.value = "active_gpsservice";
-      }
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(true);
-        }, 4000);
-      });
-    },
-    getCurrentPosition: async function () {
-      // Access geolocation
-      init_navObj.value.getCurrentPosition(
-        (position) => console.log(position),
-        (error) => console.error(error)
-      );
-    },
-  };
-};
-watch(_activeService, (_nowValue, ov) => {
+watch(gpsStatus, (_nowValue, ov) => {
   if (_nowValue == "finish" || _nowValue == null) {
-    setLocations();
+    resetUserAddress();
   }
   return true;
 });
-async function setLocations() {
+watch(_thislocation, (_nowValue, ov) => {
+  console.log(_nowValue, "updating thisloc");
+  if (_nowValue) {
+    _this.value.geolocation = _nowValue;
+    _updateStorage("lat", toRaw(_nowValue.lat ?? null));
+    _updateStorage("long", toRaw(_nowValue.long ?? null));
+  }
+  return true;
+});
+
+async function resetUserAddress() {
   //extract geoData
   console.log(
     "Setting Locations =<> GPS = ",
@@ -1782,12 +1831,14 @@ async function setLocations() {
   }
   //---------------
   //------ If GPS is Active(GOOD), Else use the timezone GPSLocation
-  if (!(_this.value.geolocation.lat ?? false)) {
+  if (!(_thislocation.value ?? false)) {
     let geoLoc = (_State.value.loc ?? "").split(",");
     console.error(geoLoc, "GPS ACESS IS BLOCKED, timeZone API OPtions ....");
     if (geoLoc[1]) {
       _this.value.geolocation = { lat: geoLoc[0], long: geoLoc[1] };
     }
+  } else {
+    _this.value.geolocation = _thislocation.value;
   }
   //always use the timezone/apitime zone data to locationsInformations
   _this.value.phoneCode = _Country.value;
@@ -1808,7 +1859,7 @@ async function setLocations() {
     " && Locations = ",
     _this.value.location
   );
-  _activeService.value = null;
+  gpsStatus.value == null ? "" : (gpsStatus.value = null);
   return true;
 }
 //-----------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@---- authentication Auditors and Setup
@@ -1856,7 +1907,7 @@ var _manageStoreLogin = async function () {
 //-----------Intializing....first functions and required datas
 // var positionInstance = new _locationDevices(); //constructorialize navigator class
 var _cameraInstance = new _cameraDevice();
-var positionInstance = new _thisPosition(); //constructorialize navigator class
+// var positionInstance = new _thisPosition(); //constructorialize navigator class
 // let _informthis=ref(false)
 timerLoadevent({ main: 0 }, 0, "Loading...");
 onMounted(async () => {
@@ -1876,7 +1927,7 @@ onMounted(async () => {
       console.error(
         "Terminating the API or TimeZone Locations System, && INIT GeoData Mining using GPS or TimeZone GeoData !!! !"
       );
-      positionInstance._init();
+      _initGeo();
       //-----------------------
       console.log(
         `\n <==> Mining UserDevice Informations == positionInstance END, with Object == \n`,
@@ -1906,42 +1957,60 @@ _thisDefaulting();
 //----------------------------------------
 let excludedModals = ["user", "group", null, "", "home"];
 
-let routeIt = async (_accDefault = null) => {
-  if (
-    excludedModals.includes(_accDefault) ||
-    !(_this.value["acctype"] ?? false)
-  ) {
+let routeIt = async (_name = null, _path = null, _accModel = true) => {
+  if (!_name || !(_this.value["acctype"] ?? false)) {
     return false;
   }
-  // await timerLoadevent({ main: 3000 }, 3000, "Loading " + _accDefault); //Message  [ wait 3 sec ] [reset]
-  await timerLoadevent({ main: 0 }, 0, "Loading " + _accDefault); //Message display for unlimited sec,but  wait && don reset it
-
+  if (iservicei_Menu[_name]._auth) {
+    if (!(_this.value.enrolled ?? false)) {
+      _thisOps.value = "createPermission";
+      return false;
+    }
+  }
+  // await timerLoadevent({ main: 3000 }, 3000, "Loading " + _path); //Message  [ wait 3 sec ] [reset]
+  await timerLoadevent({ main: 0 }, 0, "Loading " + _name); //Message display for unlimited sec,but  wait && don reset it
   try {
     let routePath = Object.assign(
-      { acctype: _this.value["acctype"][_accDefault] ?? "" },
-      _localStorage._reroute(
-        _accDefault,
-        _accDefault,
-        screenSize.value == "Small"
-      )
+      { acctype: _this.value["acctype"][_accModel] ?? "" },
+      _localStorage._reroute(_name, _path, screenSize.value == "Small")
     );
-    _updateStorage("path", _accDefault);
+    _updateStorage("path", _path);
     await router.push(routePath);
-    timerLoadevent({ main: 1 }, 1, "Ok, Loading " + _accDefault); //Message display for 3sec,but don wait && reset it
+    timerLoadevent({ main: 1 }, 1, "Ok, Loading " + _name); //Message display for 3sec,but don wait && reset it
     return true; //
   } catch (e) {
     console.log(
-      `\n\n</Routing Functions of pathName = ${_accDefault}  == >> ${e} == >>  \n`
+      `\n\n</Routing Functions of pathName = ${_name}  == >> ${e} == >>  \n`
     );
     timerLoadevent({ main: 3000 }, 3000, e);
     return false;
   }
 };
 
-let _logOut = async () => router.push(clearlogStatus());
+let _logOut = async () => router.push(_localStorage._clear());
 let _logIn = async () => router.push("/");
-
+let _enroll = async (key = null) => {
+  if (_this.value.enrollKey ?? false) {
+    let isregistered = await Crud_this.readFData({
+      enrollKey: _this.value.enrollKey,
+      phone: _this.value.phone,
+      queryOperator: "-and",
+    });
+    if (isregistered && isregistered.length) {
+      _this.value.enrolled = true;
+      _thisOps.value = null;
+      routeIt("MyServices", "MyServices", "saleitClient");
+      return true;
+    } else {
+      _this.value.enrollKey = null;
+      _this.value.enrolled = null;
+    }
+  }
+  timerDone(5000, "Incorrect keys", "Incorrect keys");
+  return false;
+};
 //----------
+let _opengeoSearch = ref(false);
 let _pageSettings = ref({});
 async function _setPageSetting(currency) {
   _pageSettings.value["tableView"] = _localStorage._get("tableView", "main");
@@ -1953,6 +2022,11 @@ async function _setPageSetting(currency) {
   // _pageSettings.value['screenSize'] =screenSize.value
   //---
   _pageSettings.value["path"] = _localStorage._get("path", "saleit");
+  //-----
+  _pageSettings.value["geoSearch"] = {
+    state: "off",
+    value: await _localStorage._get("geoSearch", "off"),
+  };
 }
 
 async function _updateStorage(key, value) {
@@ -1962,7 +2036,6 @@ async function _updateStorage(key, value) {
   }
   return true;
 }
-
 //------------------------
 let _openpubChat = ref(false);
 let _chatting = ref({
@@ -2030,23 +2103,22 @@ async function _liveChatting(period) {
 //   }
 // });
 //----STORE & SERVICES
-import useMainMixin from "@/composables/thisMainMixin";
+import useMainMixin from "@/composables/mixins/thisMainMixin";
 let {
   count,
   //------------
   //----------returning values
-  _allColumnNames,
-  _rolesColumns,
-  visibleColumns,
+  // _allColumnNames,
+  // _rolesColumns,
+  // visibleColumns,
+  lockedColumns,
+  invisibleColumns,
+  // //----------------functions
 
   //---------settings
   // Objprops_,
   _thisModel,
   _this_Schema,
-
-  lockedColumns,
-  invisibleColumns,
-  //----------------functions
 
   // _this_Rows,
   // status_thisDetail,
@@ -2064,7 +2136,7 @@ let {
   // visible_clientColumns,
 } = useMainMixin();
 
-import useDefaulMixin from "@/composables/myMixin";
+import useDefaulMixin from "@/composables/mixins/schemaDefaultingMixin";
 let {
   Objprops_,
   //----------------functions
@@ -2072,10 +2144,14 @@ let {
   _rolesColumn,
   visibleColumn,
 
+  _allColumnNames,
+  _rolesColumns,
+  visibleColumns,
+  //----------------functions
+
   modal_iss,
   //------preparing the main default and table_design.
   _this_Defaulting,
-
   //------preparing the foreign default and table_design
   foreign_Columns,
   _this_foreignDefaulting,
@@ -2117,7 +2193,9 @@ if ($q.screen.lt.md) {
 if ($q.screen.lt.lg) {
 } //invisibleColumns.push("storeStatus");
 // _this_Schema.value = saleitSchema
-
+let rolesWall = null;
+let capabilityWall = null;
+let modelRole = null;
 //-------------Syncing Columns
 columns = computed(() => {
   //compute for _this_acctype.value
@@ -2131,9 +2209,9 @@ columns = computed(() => {
     let _visibleColsName = []; ////--HOLDING_ all the ---"Visible" Columns"---- of the Data_model ( TOTAL Columns)
 
     //-------<<<<>>>>-------Preparing this_model role_schemas
-    let rolesWall = _mainModal_iss.value.role ?? false;
-    let capabilityWall = _mainModal_iss.value.capability ?? false;
-    let modelRole = _mainModal_iss.value.roles ?? []; //accstage
+    rolesWall = _mainModal_iss.value.role ?? false;
+    capabilityWall = _mainModal_iss.value.capability ?? false;
+    modelRole = _mainModal_iss.value.roles ?? []; //accstage
     console.log(
       `\n\n User Role & Permissions:_ rolesWall = ${rolesWall} && capabilityWall = ${capabilityWall} && modelRole = ${modelRole}`
     );
@@ -2219,6 +2297,35 @@ async function _setDefaults() {
   _thisDefault.value["phoneCode"] = _this.value.phone; //
   //------==== building columns of thisMoel
   return true;
+}
+
+//-------------PWA Features
+var deferredPrompt = null; // Holds the beforeinstallprompt event
+var canInstallPWA = false; // Flag to show/hide install button
+// Listen for the beforeinstallprompt event
+try {
+  window.addEventListener("beforeinstallprompt", (event) => {
+    // Prevent the mini-infobar from appearing on mobile
+    // event.preventDefault();
+    // Store the event for later use
+    deferredPrompt = event;
+    // Show the install button
+    canInstallPWA = true;
+  });
+} catch {}
+async function installPWA() {
+  if (deferredPrompt) {
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+
+    // Reset the deferredPrompt variable, since it can only be used once.
+    deferredPrompt = null;
+    // Hide the install button
+    canInstallPWA = false;
+  }
 }
 </script>
 

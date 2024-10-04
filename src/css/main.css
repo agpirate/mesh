@@ -1,0 +1,24 @@
+/* main.scss */
+
+@import "base/_reset.css";
+@import "base/_typography.css";
+@import "base/_animations.css";
+@import "base/_utilities.css";
+
+/* @import "component/_buttons.css"; */
+/* @import "component/_cards.css";
+@import "component/_modals.css";
+@import "component/_scroll.css";
+@import "component/_backgrounds.css";
+
+@import "layouts/_grid.css";
+@import "layouts/_containers.css";
+@import "layouts/_positioning.css";
+*/
+
+@import "component/_scrollyt.css";
+@import "component/_notifications.css";
+
+@import "themes/_variables.css";
+@import "themes/_light.css";
+@import "themes/_dark.css";

@@ -1,0 +1,72 @@
+/* _buttons.scss */
+
+.btn {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--primary-color);
+  color: var(--text-dark);
+  text-transform: uppercase;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-light);
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: darken(var(--primary-color), 10%);
+  box-shadow: var(--shadow-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: var(--text-dark);
+}
+
+.btn {
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fff;
+
+  &:hover {
+    background-color: darken(var(--primary-color), 10%);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: #fff;
+
+  &:hover {
+    background-color: darken(var(--secondary-color), 10%);
+  }
+}
+
+.btn-close {
+  position: relative;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: #000;
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: #fff;
+
+  &:hover {
+    background-color: darken(var(--secondary-color), 10%);
+  }
+}

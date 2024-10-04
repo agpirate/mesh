@@ -1,0 +1,44 @@
+/* _utilities.scss */
+
+.mg-xs {
+  margin: var(--spacing-xs);
+}
+.mg-sm {
+  margin: var(--spacing-sm);
+}
+.mg-md {
+  margin: var(--spacing-md);
+}
+.mg-lg {
+  margin: var(--spacing-lg);
+}
+
+.pd-xs {
+  padding: var(--spacing-xs);
+}
+.pd-sm {
+  padding: var(--spacing-sm);
+}
+.pd-md {
+  padding: var(--spacing-md);
+}
+.pd-lg {
+  padding: var(--spacing-lg);
+}
+
+.fitv {
+  width: 100vw;
+  height: 100vh;
+}
+.fitvw {
+  width: 100vw;
+  height: 100%;
+}
+.fitvh {
+  width: 100%;
+  height: 100vh;
+}
+.fill {
+  width: 100%;
+  height: 100%;
+}

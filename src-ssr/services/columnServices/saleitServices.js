@@ -250,7 +250,13 @@ async function _primaryOperations(
     }
 
     modelQA = Object.assign(modelQA, reqData);
-    modelQA["_itServiceRating"] = reqData["_itServiceRating"]; //++
+    // Calculate new average incrementally
+    modelQA["_itServiceRating"] =
+      modelQA["_itServiceRating"] +
+      (reqData["_itServiceRating"] - modelQA["_itServiceRating"]) / 2;
+
+    // Ensure the score does not exceed 5
+    modelQA["_itServiceRating"] = Math.min(modelQA["_itServiceRating"], 5);
     cactivitiesResp["data"] = modelQA;
     return cactivitiesResp;
   } else if (operation == "CreateRowItem") {
@@ -294,7 +300,7 @@ async function _primaryOperations(
     _computedData["saleitID"] = new ObjectId(reqData["id"] ?? "");
     _computedData["weight"] = reqData["weight"] ?? "";
     _computedData["userID"] = reqData["userID"] ?? "";
-    // let _foreignOperation = (reqData["onplaySubops"] ?? false)
+    // let _foreignOperation = (reqData["thisSubOps"] ?? false)
     //------
     _computedData["weight"] = await _saleitWeight();
     let _cactivities = new _user_Und_foreign_Operations(
@@ -316,7 +322,7 @@ async function _primaryOperations(
 
     if (_foreignOperation == "delete") {
       return await _cactivities
-        .deleteItem() // _saveChat(_clientDatas['id'] ?? false,_onplaySubops =='delete' ? null : _clientDatas)
+        .deleteItem() // _saveChat(_clientDatas['id'] ?? false,_thisSubOps =='delete' ? null : _clientDatas)
         .then((res) => {
           console.log(
             _foreignOperation,
@@ -332,7 +338,7 @@ async function _primaryOperations(
         });
     } else {
       return await _cactivities
-        .saveItem(true) // _saveChat(_clientDatas['id'] ?? false,_onplaySubops =='delete' ? null : _clientDatas)
+        .saveItem(true) // _saveChat(_clientDatas['id'] ?? false,_thisSubOps =='delete' ? null : _clientDatas)
         .then((res) => {
           console.log(
             _foreignOperation,
@@ -351,7 +357,7 @@ async function _primaryOperations(
     //------------Computed Data 1
     let _computedData = Object.assign({}, reqData["clients"]);
 
-    // _computedData['operation'] =reqData['onplaySubops']//weight
+    // _computedData['operation'] =reqData['thisSubOps']//weight
 
     //------------------- OnStore Quantity Argument
     var totalOnstore = parseFloat(modelQA["quantity"] ?? 1); // (modelQA["quantity"] == 0) ? reqData["quantity"] : modelQA["quantity"];//?? 0; //unit price give as number or set_of_object like below
@@ -360,7 +366,7 @@ async function _primaryOperations(
     var _stage_ = parseFloat(modelQA["_stage_"] ?? 1); //  ?? 0 );
     //--------------------Total Quantity Argument
 
-    // let _foreignOperation = (reqData["onplaySubops"] ?? false)
+    // let _foreignOperation = (reqData["thisSubOps"] ?? false)
     // var _tocart = _clientDatas["store"] ?? false //if to cart don' computer value just save_topocket
     if (_foreignOperation == "delete") {
       //deleting Client ..

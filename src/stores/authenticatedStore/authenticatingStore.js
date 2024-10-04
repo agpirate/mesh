@@ -11,7 +11,7 @@ import { toRaw } from "vue";
 
 import _localStorage from "src/services/storeService"; //_localStorage._clear()
 
-const API_URL = process.env.API_IP_PORT + "/api"; //const API_URL = `${import.meta.env.API_URL}/authenticatings`;
+const API_URL = process.env.Client_IP_PORT + "/api"; //const API_URL = `${import.meta.env.API_URL}/authenticatings`;
 const modalApi = axios.create({ baseURL: API_URL, timeout: 7000 });
 
 const STORE_NAME = "authenticatingStore";
@@ -285,6 +285,7 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
     await clearlogStatus();
     // _localStorage._clear();
     console.error("Clearing Storage");
+    console.log(formData);
     try {
       return await procApiWrap
         .post("/login", formData)

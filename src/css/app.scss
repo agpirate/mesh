@@ -1,5 +1,5 @@
 // app global css in SCSS form
-
+@import "main.css";
 //add Dark as plugin then acess it as ...
 // @click="$q.dark.toggle()"
 //this only work for defined class_variables..
@@ -293,6 +293,31 @@
   cursor: not-allowed;
 }
 //----------
+.box0style {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: bolder;
+
+  color: rgb(66, 66, 66);
+  background-color: #ffa600da;
+  border-radius: 3px;
+  padding: 5px;
+  // margin:5%;
+  // min-height:5vh;
+}
+.box01style {
+  font-family: Ubuntu, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: bolder;
+
+  color: rgb(255, 255, 255);
+  background-color: #fcac19;
+  border-radius: 5px;
+  padding: 0px;
+  // margin:5%;
+  // min-height:5vh;
+}
+
 .boxastyle {
   font-family: Ubuntu, Helvetica, sans-serif;
   font-size: 1.1rem;
@@ -337,6 +362,8 @@
   padding: 5px;
   // margin:5%;
 }
+
+//-----------------
 .warnMessage {
   font-family: Ubuntu, Helvetica, sans-serif;
   font-size: 0.8rem;
@@ -964,6 +991,13 @@ p {
     color: black;
     line-height: 1.6;
   }
+
+  .box0style {
+    font-size: 0.8em;
+  }
+  .box01style {
+    font-size: 0.9em;
+  }
 }
 
 .tablet {
@@ -1038,4 +1072,19 @@ p {
     color: black;
     font-size: 1.2em;
   }
+}
+
+.thumbStyle {
+  right: 4px;
+  border-radius: 5px;
+  background-color: "#027be3";
+  width: 5px;
+  opacity: 0.75;
+}
+
+.barStyle {
+  right: 2px;
+  border-radius: 9px;
+  background-color: "#027be3";
+  width: 9px;
 }

@@ -4,12 +4,12 @@ let isEmpty = ["null", "undefined", "", null, undefined];
 var _localStorage = {
   _get: (_key = null, ifNotnewValue = null) => {
     try {
-      let fetchStore = localStorage.getItem(_key); //fetch if stored, or return & save default
-      if (isEmpty.includes(fetchStore)) {
+      // let fetchStore = localStorage.getItem(_key); //fetch if stored, or return & save default
+      if (isEmpty.includes(localStorage.getItem(_key))) {
         localStorage.setItem(_key, ifNotnewValue);
         return ifNotnewValue;
       } else {
-        return fetchStore;
+        return localStorage.getItem(_key);
       }
     } catch {
       return false;
@@ -29,7 +29,7 @@ var _localStorage = {
     _key ? localStorage.clear(_key) : localStorage.clear();
     return { path: "/", name: "", query: { userid: "" }, params: {} };
   },
-  _reroute: (_pathUrl, _pathName, deviceSmall) => {
+  _reroute: (_pathName, _pathUrl, deviceSmall) => {
     let _ismobile = deviceSmall
       ? [`/play/s${_pathUrl}`, "s" + _pathName]
       : [`/play/${_pathUrl}`, _pathName];

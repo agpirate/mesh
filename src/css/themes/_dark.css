@@ -1,0 +1,14 @@
+/* _dark.scss */
+
+body.dark-mode {
+  background-color: var(--background-dark);
+  color: va(--text-dark);
+}
+
+.btn {
+  background-color: lighten(var(--primary), 10%);
+}
+
+.card {
+  background-color: var(--background-dark);
+}

@@ -1,0 +1,200 @@
+:root {
+  /* _variables.scss */
+
+  /* Color Palette */
+  --primary: #fe5b0f; /* Blue */
+  --secondary: #ff0000; /* Green */
+  --accent: #ff7eb6; /* Pink */
+  --background-light: #f4f4f4;
+  --background-dark: #1f1f1f;
+  --background-grey: #1f1f1f;
+  --text-light: #333333;
+  --text-dark: #ffffff;
+  --text-grey: #a7a4a4;
+
+  --warning-color: #fe0f0f; /* Blue */
+  --info-color: #42be65; /* Green */
+
+  /* Spacing */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+
+  --spacing-base: 8px;
+
+  /* Font Sizes */
+  --font-small: 14px;
+  --font-base: 16px;
+  --font-large: 18px;
+  --font-heading: 32px;
+
+  --font-weight: bolder;
+
+  /* Font line height */
+  --lineheight-small: 14px;
+  --lineheight-base: 16px;
+  --lineheight-large: 18px;
+  --lineheight-heading: 32px;
+
+  /* Spacing */
+  --height-fit: 100vh;
+  --heifht-fill: 100%;
+  --height-auto: auto;
+  --width-fit: 100vw;
+  --width-fill: 100%;
+  --width-auto: auto;
+
+  /* Shadows */
+  --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 6px 12px rgba(0, 0, 0, 0.3);
+
+  --primary-color: #0f62fe;
+  --secondary-color: #2333;
+  --font-stack: "Helvetica, sans-serif";
+  /* Border Radius */
+  --border-radius: 5px;
+
+  /* Transition */
+  --transition-duration: 0.3s;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  /* Color Palette */
+  --primary: #0f62fe; /* Blue */
+  --secondary: #42be65; /* Green */
+  --accent: #ff7eb6; /* Pink */
+  --background-light: #f4f4f4;
+  --background-dark: #1f1f1f;
+  --text-light: #333333;
+  --text-dark: #ffffff;
+  /* Shadows */
+  --shadow-light: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-dark: 0 6px 12px rgba(0, 0, 0, 0.3);
+
+  --primary-color: #0f62fe;
+  --secondary-color: #2333;
+  --font-stack: "Helvetica, sans-serif";
+  --border-radius: 5px;
+}
+
+/* Media queries for different screen sizes */
+
+/* Small devices (mobile) */
+@media (max-width: 600px) {
+  :root {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+
+  [data-theme="dark"] {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+}
+
+/* Medium devices (tablet) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  :root {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+
+  [data-theme="dark"] {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+}
+
+/* Large devices (desktop) */
+@media (min-width: 1025px) {
+  :root {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+
+  [data-theme="dark"] {
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+
+    /* Font Sizes */
+    --font-small: 14px;
+    --font-base: 16px;
+    --font-large: 18px;
+    --font-heading: 32px;
+
+    /* Border Radius */
+    --border-radius: 8px;
+  }
+}

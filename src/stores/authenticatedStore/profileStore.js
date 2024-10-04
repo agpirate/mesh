@@ -7,7 +7,7 @@ import { toRaw } from "vue";
 //import { _wiseDating } from "src/composables/utilServices/datePeriod";
 
 //const $q = useQuasar();              //{[[[[   .get(   url,{params:{},headers:{}})  ]]]]}....received as obj_req.params || response.data/staus/
-const API_URL = process.env.API_IP_PORT + "/profileapi"; //const API_URL = `${import.meta.env.API_URL}/users`;
+const API_URL = process.env.Client_IP_PORT + "/profileapi"; //const API_URL = `${import.meta.env.API_URL}/users`;
 const modalApi = axios.create({ baseURL: API_URL, timeout: 7000 });
 const procApiWrap = {
   get: request("GET"),

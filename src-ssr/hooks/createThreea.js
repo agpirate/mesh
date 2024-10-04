@@ -1,6 +1,3 @@
-
-
-
 // Creating role and permissions tables
 // and let user assign permissions sets by ID
 
@@ -20,15 +17,18 @@ Permissions Rule;- like ubunut/linux file permissions schecma
                 role : to what part of the contents is the capability specified ( to all the documents or by column specified)
                             ['','columnNames']
 */
-import {documentCupdate,documentCupdateList} from "../services/dBServices/documentCupdate"
-import { threeaModel,profileModel } from "../backendCore/models/profileModels"
-let letRolePermissions =[
+import {
+  documentCupdate,
+  documentCupdateList,
+} from "../services/dBServices/documentCupdate";
+import { threeaModel, profileModel } from "../backendCore/models/profileModels";
+let letRolePermissions = [
   {
     group: "client",
     saleit: {
-      group: "upgraded",
+      group: "client",
       role: ["likes", "comments", "clients"],
-      capability: "22220",
+      capability: "02220",
       accstage: [1, 3, 4, 5],
     },
     profile: {
@@ -48,13 +48,13 @@ let letRolePermissions =[
       group: "client",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
     publicChat: {
       group: "client",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
   },
   {
@@ -76,13 +76,13 @@ let letRolePermissions =[
       group: "upgraded",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
     publicChat: {
       group: "upgraded",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
   },
   {
@@ -104,19 +104,19 @@ let letRolePermissions =[
       group: "creator",
       role: [""],
       capability: "22220",
-      accstage: [1,2,3,4,5],
+      accstage: [1, 2, 3, 4, 5],
     },
     saleitChat: {
       group: "creator",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
     publicChat: {
       group: "creator",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
   },
   {
@@ -139,48 +139,78 @@ let letRolePermissions =[
       group: "admin",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
     saleitChat: {
       group: "admin",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,8],
+      accstage: [1, 3, 8],
     },
     publicChat: {
       group: "admin",
       role: [""],
       capability: "22220",
-      accstage: [1, 3,2,3],
+      accstage: [1, 3, 2, 3],
     },
   },
-    ]
-let createUpdateKey = 'group'
-let userSampleRole ='creator'
-let createUpdatePKey = 'phone'
-async function createRolePermissions(){
+];
+let createUpdateKey = "group";
+let userSampleRole = "creator";
+let createUpdatePKey = "phone";
+async function createRolePermissions() {
   // let letRolePermissions =reqData.roles
-  console.log('\n\n-==--------------------------------Role & Permissions Managment---------------START')
+  console.log(
+    "\n\n-==--------------------------------Role & Permissions Managment---------------START"
+  );
 
-  return await documentCupdate(threeaModel,letRolePermissions,createUpdateKey).then(async (modelData)=>{
-    console.log('\n'+Object.keys(modelData.data),' = Sum of Role and Permissions <=>\n')
-    for(let i in modelData.data){console.log(`\n Role Name = ${i} && acckey = ${modelData.data[i]._id}\n`)}
+  return await documentCupdate(
+    threeaModel,
+    letRolePermissions,
+    createUpdateKey
+  ).then(async (modelData) => {
+    console.log(
+      "\n" + Object.keys(modelData.data),
+      " = Sum of Role and Permissions <=>\n"
+    );
+    for (let i in modelData.data) {
+      console.log(`\n Role Name = ${i} && acckey = ${modelData.data[i]._id}\n`);
+    }
     //---and Create sample users
-    let _sampleRole =null
-    if(modelData.status == 200){
-       _sampleRole= modelData.data[userSampleRole] ?? false
-    }else{return true}
-    console.log(`\n Creating Sample User = ${userSampleRole} && with accKey ${_sampleRole._id ?? null}`)
+    let _sampleRole = null;
+    if (modelData.status == 200) {
+      _sampleRole = modelData.data[userSampleRole] ?? false;
+    } else {
+      return true;
+    }
+    console.log(
+      `\n Creating Sample User = ${userSampleRole} && with accKey ${
+        _sampleRole._id ?? null
+      }`
+    );
     const letProfiles = [
-      {name:'root',lastName:'root',phone:'123456787','acckey':_sampleRole ? new ObjectId(_sampleRole._id) : null},
+      {
+        name: "root",
+        lastName: "root",
+        phone: "123456787",
+        acckey: _sampleRole ? new ObjectId(_sampleRole._id) : null,
+      },
       // {name:'admin3',lastName:'12345',phone:'12345899',companyID:'00029','acckey':_sampleRole ? new ObjectId(_sampleRole._id) : null},
-    ]
-    let modelData2 = await documentCupdate(profileModel,letProfiles,createUpdatePKey)
-    console.log(`User Creating  ====>> ${modelData2.status ==200 ? 'success' : 'Error'}`)
+    ];
+    let modelData2 = await documentCupdate(
+      profileModel,
+      letProfiles,
+      createUpdatePKey
+    );
+    console.log(
+      `User Creating  ====>> ${modelData2.status == 200 ? "success" : "Error"}`
+    );
     // console.log(modelData2.data['123456787'])
-    //-----   
-    console.log('---------------------------------Role & Permissions Managment---------------END\n\n')
-    return true                 
-  })   
+    //-----
+    console.log(
+      "---------------------------------Role & Permissions Managment---------------END\n\n"
+    );
+    return true;
+  });
 }
-   export {createRolePermissions}
+export { createRolePermissions };

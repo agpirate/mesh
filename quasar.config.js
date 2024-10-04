@@ -83,13 +83,20 @@ module.exports = configure(function (ctx) {
           ? "http://127.0.0.1:8080"
           : "http://127.0.0.1:8080",
         //-----------------------------
-        API_MNGDB: "mongodb://127.0.0.1:27017",
+
+        Client_IP_PORT: ctx.dev
+          ? "http://127.0.0.1:8080"
+          : "http://127.0.0.1:8080",
+
+        Client_IPI: "127.0.0.1",
+        Client_PORTI: "8080",
 
         Api_IPI: "127.0.0.1",
         Api_PORTI: "8080",
 
         Mongose_IPI: "127.0.0.1",
         Mongose_PORTI: "8080",
+        API_MNGDB: "mongodb://127.0.0.1:27017",
 
         TOKEN_SECRET: "itserviceKey",
         REFRESH_TOKEN_SECRET: "itserviceKey",
@@ -112,7 +119,8 @@ module.exports = configure(function (ctx) {
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
-
+      // publicPath: "meshbuild", // GitHub Pages repo name
+      distDir: __dirname + "/../meshbuild", // Or any custom directory you wish to use
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 

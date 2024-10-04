@@ -1,0 +1,17 @@
+/* _scroll.scss */
+
+.scroll-box {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--background-light);
+}
+
+.scroll-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: var(--border-radius);
+}

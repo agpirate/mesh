@@ -9,11 +9,9 @@ import { mongoose } from "mongoose";
 var ObjectId = mongoose.Types.ObjectId;
 
 import { Router } from "express";
+const router = Router();
 import multer from "multer";
 import path from "path";
-
-const router = Router();
-
 const fs = require("fs");
 
 //---middlewares
@@ -23,9 +21,9 @@ import authenticate from "app/src-ssr/middlewares/authenticate.js";
 import { _filesMeta } from "../../services/fileServices/fileMetas.js";
 import { _fileMeta } from "../../services/fileServices/fileMetas.js"; //_thefilePath
 import {
-  rOrp,
-  rOp,
-  rOps,
+  rOrp, //OR Operator ( with query Must)
+  rOp, //AND Operator
+  rOps, //OR Operator ( with query Optional)
   dOps,
 } from "app/src-ssr/services/apiServices/documentRead.js"; //
 import { _getdeleteParams } from "app/src-ssr/services/apiServices/queryBuilder.js"; //
@@ -156,7 +154,7 @@ router.post(modelIName, async (req, res) => {
           //----------------
           return await createSaleit(
             reqData,
-            reqData["onplayOps"] ?? "CreateRowItem"
+            reqData["thisOps"] ?? "CreateRowItem"
           ).then((modelData) => {
             res.set(_setResponseHeader);
             return res.status(modelData.status).send(modelData.data);
@@ -177,7 +175,7 @@ router.post(modelIName, async (req, res) => {
     try {
       return await createSaleit(
         reqData,
-        reqData["onplayOps"] ?? "CreateRowItem"
+        reqData["thisOps"] ?? "CreateRowItem"
       ).then((modelData) => {
         res.set(_setResponseHeader);
         return res.status(modelData.status).send(modelData.data);
@@ -240,7 +238,7 @@ router.put(modelIName, async (req, res) => {
           reqData["userID"] = userID;
           return await updateSaleit(
             reqData,
-            reqData["onplayOps"] ?? "UpdateRowItem",
+            reqData["thisOps"] ?? "UpdateRowItem",
             ""
           ).then((modelData) => {
             res.set(_setResponseHeader);
@@ -259,7 +257,7 @@ router.put(modelIName, async (req, res) => {
       reqData["userID"] = userID;
       return await updateSaleit(
         reqData,
-        reqData["onplayOps"] ?? "UpdateRowItem"
+        reqData["thisOps"] ?? "UpdateRowItem"
       ).then((modelData) => {
         res.set(_setResponseHeader);
         return res.status(modelData.status).send(modelData.data);
@@ -276,7 +274,7 @@ router.put(modelIName, async (req, res) => {
     try {
       return await updateSaleit(
         reqData,
-        reqData["onplayOps"] ?? "UpdateRowItem"
+        reqData["thisOps"] ?? "UpdateRowItem"
       ).then((modelData) => {
         res.set(_setResponseHeader);
         return res.status(modelData.status).send(modelData.data);
@@ -301,34 +299,35 @@ router.get(modelIName + "s", async (req, res) => {
   }
   //--------------------
   let reqParams = req.query ?? req.params ?? {};
-  if (Object.keys(reqParams).length == 0) {
-    return res.status(404).send("Search Query is null ?");
-  } else {
-  }
-  //---------
-  reqParams["lat"] = location.lat ?? "";
-  reqParams["long"] = location.long ?? "";
   //------------------------
-  let [findBy = [], returnWat = [], limits = 5] = await _getdeleteParams(
-    reqParams
-  );
+  let [
+    findBy = [],
+    returnWat = [],
+    limits = 5,
+    sortBy = { createdAt: -1 },
+    skips = 0,
+  ] = await _getdeleteParams(reqParams);
+  // if(!Object.keys(findBy).length){return res.status(404).send({ message: "NullData(P) Received." });}
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
+  if (location) {
+    reqParams["lat"] = location.lat ?? "";
+    reqParams["long"] = location.long ?? "";
+  }
   //------------
-  let sortBy = {};
   if (reqParams["trend"] ?? false) {
     //sorting By ( createdDate / TrendScore)
-    sortBy = { trendScore: -1 };
-  } else {
-    sortBy = { createdAt: -1 };
+    sortBy["trendScore"] = reqParams["trend"];
   }
   //-----------
+  let searchType = (reqParams["queryOperator"] ?? "-or").split("-");
+  //---
   try {
     let modelData =
-      reqParams["qweight"]?.[3] == "3" ?? false //queries Combinations ( ored or anded)
-        ? await rOps(modelI, findBy, returnWat, limits, sortBy)
-        : await rOrp(modelI, findBy, returnWat, limits, sortBy);
+      searchType[1] == "and" //queries Combinations ( ored or anded)
+        ? await rOp(modelI, findBy, returnWat, limits, sortBy, skips)
+        : await rOps(modelI, findBy, returnWat, limits, sortBy, skips);
     console.log(
-      "\nResult:_ Searching for saleitContent gets()\n",
+      "\nResult:_ Searching for saleitContent gets(s)\n",
       modelData.data.length ?? false,
       location
     );
@@ -353,34 +352,38 @@ router.get(modelIName, async (req, res) => {
   }
   //--------------------
   let reqParams = req.query ?? req.params ?? {};
-  if (Object.keys(reqParams).length == 0) {
-    return res.status(404).send("Search Query is null ?");
-  } else {
-  }
-  //---------
-  reqParams["lat"] = location.lat ?? "";
-  reqParams["long"] = location.long ?? "";
   //------------------------
-  let [findBy = [], returnWat = [], limits = 5] = await _getdeleteParams(
-    reqParams
-  );
+  let [
+    findBy = [],
+    returnWat = [],
+    limits = 5,
+    sortBy = { createdAt: -1 },
+    skips = 0,
+  ] = await _getdeleteParams(reqParams);
+  if (!Object.keys(findBy).length) {
+    return res.status(404).send({ message: "NullData(P) Received." });
+  }
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
+  if (location) {
+    reqParams["lat"] = location.lat ?? "";
+    reqParams["long"] = location.long ?? "";
+  }
   //------------
-  let sortBy = {};
+  // let sortBy = {};
   if (reqParams["trend"] ?? false) {
     //sorting By ( createdDate / TrendScore)
-    sortBy = { trendScore: -1 };
-  } else {
-    sortBy = { createdAt: -1 };
+    sortBy["trendScore"] = reqParams["trend"];
   }
   //-----------
+  let searchType = (reqParams["queryOperator"] ?? "-or").split("-");
+  //---
   try {
     let modelData =
-      (reqParams["qweight"]?.[3] ?? false) == "3" //queries Combinations ( ored or anded)
-        ? await rOp(modelI, findBy, returnWat, limits, sortBy)
-        : await rOrp(modelI, findBy, returnWat, limits, sortBy);
+      searchType[1] == "and" //queries Combinations ( ored or anded)
+        ? await rOp(modelI, findBy, returnWat, limits, sortBy, skips)
+        : await rOrp(modelI, findBy, returnWat, limits, sortBy, skips);
     console.log(
-      "\nResult:_ Searching for saleitContent get() \n",
+      "\nResult:_ Searching for saleitContent get(xs) \n",
       (reqParams["qweight"]?.[3] ?? false) == "3",
       modelData.data.length ?? false,
       location

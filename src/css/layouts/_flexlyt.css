@@ -1,0 +1,122 @@
+/* Flex Container */
+.flexlyt {
+  display: flex;
+}
+
+/* Row Layout */
+.rowitm {
+  flex-flow: row wrap;
+}
+
+/* Column Layout */
+.columnitm {
+  flex-flow: column wrap; /* Align children in a column */
+}
+
+/* Flex Item Styles */
+.flexitm {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: var(----spacing-base); /* Internal padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 0 0 calc(100% / 12 - var(----spacing-base)); /* Default to 1 column width */
+  margin: 8px; /* Spacing between items */
+}
+/* Responsive Adjustments */
+
+/* Column Sizing Classes */
+/* Column auto and grow behavior */
+.colauto {
+  flex: 0 0 auto; /* Shrinks or grows only as needed */
+}
+
+.colgrow {
+  flex: 1 1 auto; /* Grows to fill remaining space */
+}
+
+.colshrink {
+  flex: 0 1 auto; /* Shrinks if needed, but takes up minimum space */
+}
+
+.col1 {
+  flex: 0 0 calc(100% / 12 * 1 - var(----spacing-base)); /* 1/12 width */
+}
+
+.col2 {
+  flex: 0 0 calc(100% / 12 * 2 - var(----spacing-base)); /* 2/12 width */
+}
+
+.col3 {
+  flex: 0 0 calc(100% / 12 * 3 - var(----spacing-base)); /* 3/12 width */
+}
+
+.col4 {
+  flex: 0 0 calc(100% / 12 * 4 - var(----spacing-base)); /* 4/12 width */
+}
+
+.col5 {
+  flex: 0 0 calc(100% / 12 * 5 - var(----spacing-base)); /* 5/12 width */
+}
+
+.col6 {
+  flex: 0 0 calc(100% / 12 * 6 - var(----spacing-base)); /* 6/12 width */
+}
+
+.col7 {
+  flex: 0 0 calc(100% / 12 * 7 - var(----spacing-base)); /* 7/12 width */
+}
+
+.col8 {
+  flex: 0 0 calc(100% / 12 * 8 - var(----spacing-base)); /* 8/12 width */
+}
+
+.col9 {
+  flex: 0 0 calc(100% / 12 * 9 - var(----spacing-base)); /* 9/12 width */
+}
+
+.col10 {
+  flex: 0 0 calc(100% / 12 * 10 - var(----spacing-base)); /* 10/12 width */
+}
+
+.col11 {
+  flex: 0 0 calc(100% / 12 * 11 - var(----spacing-base)); /* 11/12 width */
+}
+
+.col12 {
+  flex: 0 0 calc(100% / 12 * 12 - var(----spacing-base)); /* 12/12 width */
+}
+
+/*  -- 0 of flex-flow */
+.jc-end {
+  justify-content: flex-end;
+}
+.jc-start {
+  justify-content: flex-start;
+}
+.jc-even {
+  justify-content: space-evenly;
+}
+.jc-around {
+  justify-content: space-around;
+}
+/* align-item -- 90 of flex-flow */
+.ai-start {
+  align-items: flex-start;
+}
+.ai-center {
+  align-items: center;
+}
+.ai-around {
+  align-items: flex-end;
+}
+
+.igap-xs {
+  gap: var(----spacing-xs); /* Default gap between items */
+}
+.igap-sm {
+  gap: var(----spacing-sm); /* Default gap between items */
+}
+.igap-md {
+  gap: var(----spacing-md); /* Default gap between items */
+}
