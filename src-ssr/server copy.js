@@ -33,58 +33,47 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv"; //to use the .env file ?
 dotenv.config(); //// Load environment variables
+
 const appport = process.env.API_PORT || 8080;
 const maxAge = process.env.DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      // callback(new Error("Not allowed by CORS"));
-      callback(null, true);
-    }
-  },
-};
 export const create = ssrCreate((/* { ... } */) => {
   const app = express();
-  //-----------Performance Boosting by compressing Response body
-  /*this MWare reduce the size of the response body, boost performance. */
-  if (process.env.PROD) {
-    app.use(compression());
-  } else {
-    app.use(compression());
-  }
   //------------------Express Security Configurations
   if (cors) {
     app.use(
-      cors(
-        corsOptions
-        //prevent csrf request ( requesting from other than the serverIP)
-      )
+      //prevent csrf request ( requesting from other than the serverIP)
+      cors(corsOptions)
     );
   }
   app.disable("x-powered-by"); // disable the engine informations on client
-
+  app.options("*", cors(corsOptions)); // Preflight requests
+  // absolutely need to run before anything else
+  if (process.env.PROD) {
+    //-----------Performance Boosting by compressing Response body
+    /*this MWare reduce the size of the response body, boost performance. */
+    app.use(compression());
+  }
   //-------------------Middleware to parse cookies
   app.use(cookieParser());
   app.set("view engine", "ejs");
   //------------------- Incoming request body data setting and organizations (bodyparser middleware)
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+
   //-------------------------serving statics
   //---------------serving statics
   app.use("/assets", express.static("src/assets")); //root_url/assets(..src/assets..)/files_path&filenames
   //--set browser handling static rules */
   app.use(
-    "/public",
-    express.static(path.join(__dirname, "public"), {
+    "/public", //virtual_url or ignore(it will take the actual folder_name)
+    cors(corsOptions),
+    express.static("public", {
       maxAge: "7d" /* Cache for 1 day,*/,
       etag: true /* Enable ETag headers..helps in efficient cache validation */,
       index: false /*disAllow express to  list directory contents.*/,
     })
   );
-
   //---------Incoming Request &.. must to pass Middlewares (due, next() being used at end)
   app.use((req, res, next) => {
     //every request goes through here
@@ -94,20 +83,27 @@ export const create = ssrCreate((/* { ... } */) => {
     //Accept: text/plain //Content-Types that are acceptable for the response
     //res.setHeader('Access-Control-Allow-Origin', '*') //Specifying which web sites can participate in cross-origin resource sharing
     // Set security headers
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN"); //Clickjacking protection:
-    res.setHeader("X-XSS-Protection", "1; mode=allow"); //Cross-site scripting (XSS) filter
-    // Prevent browser caching
+    // res.setHeader("X-Content-Type-Options", "nosniff");
+    // res.setHeader("X-Frame-Options", "SAMEORIGIN"); //Clickjacking protection:
+    // res.setHeader("X-XSS-Protection", "1; mode=allow"); //Cross-site scripting (XSS) filter
+    // // Prevent browser caching
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); //Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "4d");
     // Call the next middleware
+    // res.header("Access-Control-Allow-Origin", "*"); // Adjust this as needed for specific origins
+    // res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    // res.header(
+    //   "Access-Control-Allow-Headers",
+    //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    // );
+
     next();
     return true;
   });
   //----------------------------
   // Basic route
-  app.get("/helps", authenticate, (req, res) => {
+  app.get("/helps", (req, res) => {
     res.json({ message: "API is working!" });
     res.send("API is working!");
     res.status(200).json({ message: "API is working!" });
@@ -215,7 +211,20 @@ const woff2RE = /\.woff2$/;
 const gifRE = /\.gif$/;
 const jpgRE = /\.jpe?g$/;
 const pngRE = /\.png$/;
+
 const allowedOrigins = ["*"];
+const corsOptions = {
+  origin: function (origin, callback) {
+    callback(null, true);
+    return true;
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+      // return true;
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
 
 /**
  * Should return a String with HTML output

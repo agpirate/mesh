@@ -334,7 +334,7 @@ const {
   _initGeo,
   getCurrentPosition,
 } = _thisPosition();
-import useschemaValidator from "src/composables/utilServices/profileschemaValidator";
+import useschemaValidator from "src/composables/utilServices/profileschemaValidator.js";
 const {
   _debugObj,
   //-------
@@ -441,10 +441,17 @@ const Crud_ = {
 
 //------------------------authentications variables
 async function _thisValidator() {
-  let _isCompleted = Object.values(_debugObj.value).every(
-    (value) => value == null
-  );
-  _isCompleted ? _manageStoreLogin() : "";
+  console.log(_debugObj ?? false, "debugggggg");
+
+  if (_debugObj.value ?? false) {
+    let _isCompleted = Object.values(_debugObj.value).every(
+      (value) => value == null
+    );
+    _isCompleted ? _manageStoreLogin() : "";
+  } else {
+    _debugObj.value = null;
+    _manageStoreLogin();
+  }
   return true;
 }
 
@@ -587,7 +594,7 @@ async function resetUserAddress() {
   }
   //---------------
   //------ If GPS is Active(GOOD), Else use the timezone GPSLocation
-  if (!(_thislocation.value.lat ?? false)) {
+  if (!_thislocation.value) {
     let geoLoc = (_State.value.loc ?? "").split(",");
     console.error(geoLoc, "GPS ACESS IS BLOCKED, timeZone API OPtions ....");
     if (geoLoc[1]) {
@@ -596,6 +603,8 @@ async function resetUserAddress() {
   } else {
     _this.value.geolocation = _thislocation.value;
   }
+  _localStorage._set("lat", _this.value.geolocation.lat);
+  _localStorage._set("long", _this.value.geolocation.long);
   //always use the timezone/apitime zone data to locationsInformations
   _this.value.phoneCode = _Country.value;
   _this.value.location["country"] = _State.value.country ?? ""; //

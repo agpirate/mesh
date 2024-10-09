@@ -320,7 +320,7 @@
             style="border-radius: 5px; border: 0px solid white"
           >
             <!--legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
-                 Descriptions   :rules="[_valRules]" 
+                 Descriptions   :rules="[_valRules]"
              </legend -->
             <div class="row q-gutter-sm">
               <fieldset class="col" style="border: 0px solid black">
@@ -757,14 +757,14 @@
               </div>
             </q-card>
 
-            <!--fieldset class="q-gutter-md row items-center fontastyle q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
+            <!--fieldset class="q-gutter-md row items-center fontastyle q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>
 
                                                                 <q-item-label class="absolute-top-right q-px-md  ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_thisClientOperation._initiateOrder()"/>
-                                                                                                  
-                                                                </q-item-label>                                             
+
+                                                                </q-item-label>
                                                                 <legend class="flex justify-start q-py-none fontastyle">Your OrderID :<q-item-label caption> <q-badge >{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
-                                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
-                                                        
+                                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>
+
                                                               </fieldset-->
           </div>
 
@@ -946,7 +946,7 @@
 
                 <q-item-section>
                   <div class="text-orange row justify-between fontastyle">
-                    <!--q-item-label class="row justify-start items-center " >Remark: <q-item-label class="text-grey " > 
+                    <!--q-item-label class="row justify-start items-center " >Remark: <q-item-label class="text-grey " >
                                                                       {{item['description']   }} </q-item-label>
                                                                     </q-item-label-->
                     <div></div>
@@ -1007,7 +1007,7 @@
   </q-page>
 
   <q-page class="column rounded-borders fontastyle" v-else>
-    <!----------------                
+    <!----------------
                 :filterMethod="_thisFiltering"
                 :filter="filter"
                 -------------- ioio ----->
@@ -1747,7 +1747,7 @@
                       "
                     />
                   </div>
-                  <!-- <div class="col-auto  row justify-end q-pa-sm">  
+                  <!-- <div class="col-auto  row justify-end q-pa-sm">
                               <q-btn color="red" size="xs" @click="__thisIndex = null" icon="close" flat :dense="true"> </q-btn>
                             </div> -->
                   <div
@@ -2156,15 +2156,11 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
+thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((e) => {
-    console.error("Error importing schema:", e);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
+
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)

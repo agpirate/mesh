@@ -114,7 +114,7 @@ router.post("/login", async (req, res) => {
                   // path: '/',
                   secure: false,
                   signed: false,
-                  sameSite: "lax",
+                  sameSite: "Lax", // 'Strict' | 'Lax' | 'None'
                 }); //this Would Inject token into [cookie_storage && cookie_Header]
                 //---------Including Other Response Data
 

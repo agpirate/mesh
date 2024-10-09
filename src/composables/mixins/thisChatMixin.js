@@ -1,5 +1,5 @@
 import { ref, reactive, computed, watch, onUnmounted, onMounted } from "vue";
-import { saleChatSchema } from "src/composables/schemas/chatSchemas";
+import { saleChatSchema } from "src/schemas/chatSchemas";
 
 // Define your mixin-like functionality
 const useChatMixin = () => {

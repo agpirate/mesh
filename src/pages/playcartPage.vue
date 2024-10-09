@@ -530,7 +530,7 @@
               </q-expansion-item>
             </div>
             <!--div size="col-auto row"> {{  _listMicSource }}
-                    <q-item v-for="mic in _listMicSource" :key=mic class="column">                                                     
+                    <q-item v-for="mic in _listMicSource" :key=mic class="column">
                       <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedMicById == mic.deviceId ? 'blue':'black'" :label="mic.label.split('_')[1]" @click="_cameraModule._selectedMicId(mic.deviceId)" />
                     </q-item>
                 </div-->
@@ -859,7 +859,7 @@
 
       <div class="col column q-pa-sm q-ma-none">
         <!-- For enabling common reactivity -->
-        <!-- <q-table  
+        <!-- <q-table
                                style="height:0px;width: 0px;visibility: hidden;"
                                flat bordered
                               :rows="_this_modelOneRows"
@@ -1584,15 +1584,10 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
+thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((error) => {
-    console.error("Error importing schema:", error);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleitClient"; // the Vue_Page_DataModel (Listing Collection Name)

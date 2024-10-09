@@ -11,11 +11,15 @@
 const { configure } = require("quasar/wrappers");
 const path = require("path");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
+const server_PORT = ["9100", "8080"];
+const server_IP = ["192.168.100.8", "196.190.43.166"];
+const client_PORT = ["9100", "8080"];
+const client_IP = ["192.168.100.8", "196.190.43.166"];
 // const __dirname=""
-console.log(
-  path.resolve(__dirname, "src") + "/stores/jstStores/genapiStore",
-  "lllllllllllllllll"
-);
+
 module.exports = configure(function (ctx) {
   return {
     eslint: {
@@ -65,9 +69,6 @@ module.exports = configure(function (ctx) {
       target: {
         browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],
         node: "node20",
-        ApiIPI: "127.0.0.1:8080",
-        DBsIPI: "127.0.0.1:27017",
-
         SESSION_SECRET: "ABCVSDRGEHYRTRFGEHJD",
       },
 
@@ -77,25 +78,22 @@ module.exports = configure(function (ctx) {
       // passing down to UI code from the quasar.config file
 
       env: {
-        API: ctx.dev ? "127.0.0.1" : "127.0.0.1",
-        API_PORT: ctx.dev ? 8080 : 8080,
-        API_IP_PORT: ctx.dev
-          ? "http://127.0.0.1:8080"
-          : "http://127.0.0.1:8080",
+        API: ctx.dev ? server_IP[0] : server_IP[1],
+
+        Api_IPI: ctx.dev ? server_IP[0] : server_IP[1],
+        Api_PORTI: ctx.dev ? server_PORT[0] : server_PORT[1],
+        API_IP_PORT:
+          "http://" +
+          (ctx.dev ? server_IP[0] + ":9100" : server_IP[1] + ":8080"),
         //-----------------------------
-
-        Client_IP_PORT: ctx.dev
-          ? "http://127.0.0.1:8080"
-          : "http://127.0.0.1:8080",
-
-        Client_IPI: "127.0.0.1",
-        Client_PORTI: "8080",
-
-        Api_IPI: "127.0.0.1",
-        Api_PORTI: "8080",
+        Client_IPI: ctx.dev ? client_IP[0] : client_IP[1],
+        Client_PORTI: ctx.dev ? client_PORT[0] : client_PORT[1],
+        Client_IP_PORT:
+          "http://" +
+          (ctx.dev ? client_IP[0] + ":9100" : client_IP[1] + ":8080"),
 
         Mongose_IPI: "127.0.0.1",
-        Mongose_PORTI: "8080",
+        Mongose_PORTI: "27017",
         API_MNGDB: "mongodb://127.0.0.1:27017",
 
         TOKEN_SECRET: "itserviceKey",

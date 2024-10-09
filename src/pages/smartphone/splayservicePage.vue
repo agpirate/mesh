@@ -318,7 +318,7 @@
             style="border-radius: 5px; border: 0px solid white"
           >
             <!--legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
-                 Descriptions   :rules="[_valRules]" 
+                 Descriptions   :rules="[_valRules]"
              </legend -->
             <div class="row q-gutter-sm">
               <fieldset class="col" style="border: 0px solid black">
@@ -1392,10 +1392,10 @@
           style=""
           v-else
         >
-          <!-- <q-table 
-                                        
+          <!-- <q-table
+
                                         flat bordered
-                                          
+
                                           :rows="_this_modelOneRows"
                                           :columns="_this_modelOneColumns"
                                           /> -->
@@ -1697,15 +1697,10 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
+thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((error) => {
-    console.error("Error importing schema:", error);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)

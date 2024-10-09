@@ -838,7 +838,7 @@ import { profileStore } from "stores/authenticatedStore/profileStore"; //empy St
 import { thisStore } from "stores/dataStores/thisStore"; //Asset Store ( Main Store)
 // import { genapiStore } from "src/stores/jstStores/genapiStore";
 
-import { profileSchema } from "src/composables/schemas/profileSchemas";
+import { profileSchema } from "src/schemas/profileSchemas";
 
 import reportReceipant from "src/components/forms/reportReceipant.vue";
 

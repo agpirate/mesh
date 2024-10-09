@@ -625,13 +625,16 @@ const {
 
 thisSchemaPath.value = "profileSchemas";
 thisSchemaFile.value = "profileSchema";
-import("../../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((e) => {
-    console.error("Error importing schema:", e);
-  });
+import dynamicModular from "../../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
+
+// import("../../composables/schemas/" + thisSchemaPath.value)
+//   .then((module) => {
+//     _this_Schema.value = module[thisSchemaFile.value];
+//   })
+//   .catch((e) => {
+//     console.error("Error importing schema:", e);
+//   });
 
 //===-----_--------THE MODEL/ MAIN_DATA....
 _thisModel.value = "profile"; // the Vue_Page_DataModel (Listing Collection Name)

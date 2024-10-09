@@ -533,7 +533,7 @@
               </q-expansion-item>
             </div>
             <!--div size="col-auto row"> {{  _listMicSource }}
-                    <q-item v-for="mic in _listMicSource" :key=mic class="column">                                                     
+                    <q-item v-for="mic in _listMicSource" :key=mic class="column">
                       <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedMicById == mic.deviceId ? 'blue':'black'" :label="mic.label.split('_')[1]" @click="_cameraModule._selectedMicId(mic.deviceId)" />
                     </q-item>
                 </div-->
@@ -563,7 +563,7 @@
     transition: transform 0.5s ease;">
             <img style="width: 100%;
     border-radius: 10px;" :src="imggr" :img-src="imggr" v-for="imggr,imgindex in _this['saleitgr']" :key="imgindex"  alt="Image 1">
-           
+
         </div>
         <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
         <button class="next" onclick="moveSlide(1)">&#10095;</button>
@@ -588,7 +588,7 @@
         <q-carousel-control
           position="bottom-right"
           :offset="[18, 18]"
-        >{{imggr}} 
+        >{{imggr}}
           <q-btn
             push round dense color="white" text-color="primary"
             :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -883,7 +883,7 @@
     <div class="col fontestyle boxbstyle">Continue Mobile Mode</div>
   </q-page>
   <q-page class="column rounded-borders fontastyle" v-else>
-    <!----------------                
+    <!----------------
                 :filterMethod="_thisFiltering"
                 :filter="filter"
                 -------------- ioio ----->
@@ -1543,8 +1543,8 @@
                           <!--q-tooltip :dense="true" class="bg-black text-white fontbstyle"  self="left middle">comments</q-tooltip-->
                         </q-btn>
 
-                        <!--q-btn  flat icon="map"  :dense="true"  @click="__thisBox_UDialog(props.rowIndex)"> 
-                                                            <q-tooltip class="bg-black text-white fontcstyle"  self="top middle">   map </q-tooltip>  
+                        <!--q-btn  flat icon="map"  :dense="true"  @click="__thisBox_UDialog(props.rowIndex)">
+                                                            <q-tooltip class="bg-black text-white fontcstyle"  self="top middle">   map </q-tooltip>
                                                           </q-btn -->
                         <div
                           v-if="Objprops._profile.phone == props.row.phone"
@@ -1998,14 +1998,14 @@
                             </div>
                           </q-card>
 
-                          <!--fieldset class="q-gutter-md row items-center fontastyle q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>  
+                          <!--fieldset class="q-gutter-md row items-center fontastyle q-px-sm q-py-none" style="border-radius: 5px;border:0px" v-else>
 
                                                                 <q-item-label class="absolute-top-right q-px-md  ">Just Ordered. <q-btn rounded size="sm" no-caps label="New Order"  @click="_thisClientOperation._initiateOrder()"/>
-                                                                                                  
-                                                                </q-item-label>                                             
+
+                                                                </q-item-label>
                                                                 <legend class="flex justify-start q-py-none fontastyle">Your OrderID :<q-item-label caption> <q-badge >{{ _orderIntiatedID  }}  </q-badge>  </q-item-label> </legend>
-                                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>                                            
-                                                        
+                                                                <q-badge color="green" v-if="_orderConfirmDebuger"> {{  _orderConfirmDebuger  }}   </q-badge>
+
                                                               </fieldset-->
                         </div>
 
@@ -2223,7 +2223,7 @@
                                 <div
                                   class="text-orange row justify-between fontastyle"
                                 >
-                                  <!--q-item-label class="row justify-start items-center " >Remark: <q-item-label class="text-grey " > 
+                                  <!--q-item-label class="row justify-start items-center " >Remark: <q-item-label class="text-grey " >
                                                                       {{item['description']   }} </q-item-label>
                                                                     </q-item-label-->
                                   <div></div>
@@ -2519,8 +2519,8 @@
                     <div
                       class="row no-wrap items-center q-pa-sm q-gutter-xs fontastyle"
                     >
-                      <!--div>                                   
-                                              <q-item-label> 
+                      <!--div>
+                                              <q-item-label>
                                                 <q-rating v-model="props.row._itServiceRating" :max="5" size="xs" @click="_this_ActiveOperation._rating(props.rowIndex)"/>
                                                 <q-tooltip class="bg-black">Product Reliability Score</q-tooltip>
                                               </q-item-label>
@@ -2898,15 +2898,10 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
+thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((e) => {
-    console.error("Error importing schema:", e);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)

@@ -318,7 +318,7 @@
             style="border-radius: 5px; border: 0px solid white"
           >
             <!--legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
-                 Descriptions   :rules="[_valRules]" 
+                 Descriptions   :rules="[_valRules]"
              </legend -->
             <div class="row q-gutter-sm">
               <fieldset class="col" style="border: 0px solid black">
@@ -1263,7 +1263,7 @@
 
       <div class="col column q-pa-none q-ma-none">
         <!-- For enabling common reactivity -->
-        <!-- <q-table  
+        <!-- <q-table
                                style="height:0px;width: 0px;visibility: hidden;"
                                flat bordered
                               :rows="_this_modelOneRows"
@@ -1734,15 +1734,9 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
-thisSchemaFile.value = "saleitSchema";
-import("../../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((error) => {
-    console.error("Error importing schema:", error);
-  });
+thisSchemaPath.value = "saleitSchemas";
+thisSchemaFile.value = "saleitSchema";import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleitClient"; // the Vue_Page_DataModel (Listing Collection Name)

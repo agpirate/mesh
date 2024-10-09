@@ -530,7 +530,7 @@
               </q-expansion-item>
             </div>
             <!--div size="col-auto row"> {{  _listMicSource }}
-                    <q-item v-for="mic in _listMicSource" :key=mic class="column">                                                     
+                    <q-item v-for="mic in _listMicSource" :key=mic class="column">
                       <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedMicById == mic.deviceId ? 'blue':'black'" :label="mic.label.split('_')[1]" @click="_cameraModule._selectedMicId(mic.deviceId)" />
                     </q-item>
                 </div-->
@@ -1160,10 +1160,10 @@
           style=""
           v-else
         >
-          <!-- <q-table 
-                                        
+          <!-- <q-table
+
                                         flat bordered
-                                          
+
                                           :rows="_this_modelOneRows"
                                           :columns="_this_modelOneColumns"
                                           /> -->
@@ -1635,15 +1635,10 @@ const metaData = {
 };
 useMeta(metaData);
 //----STORE & SERVICES
-thisSchemaPath.value = "saleitSchemas.js";
+thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((error) => {
-    console.error("Error importing schema:", error);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)

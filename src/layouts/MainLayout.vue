@@ -173,7 +173,7 @@ iservicei_Menu.value = {
 //------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2----ModalSkeltone [ profileSchema]
 //-----user Schema
 // import { profileSchema } from "src/composables/schemas/profileSchemas";
-import { _permission } from "src/composables/schemas/profileSchemas";
+import { _permission } from "src/schemas/profileSchemas";
 //import { isArray } from "chart.js/dist/helpers/helpers.core";
 
 let _thisModel = "profile";

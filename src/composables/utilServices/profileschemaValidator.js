@@ -23,7 +23,8 @@ const useschemaValidator = () => {
 
   // var schemaPath = "../../composables/schemas/"+props.thisSchemaPath
   let schematoValidate;
-  import("../schemas/" + thisSchemaPath.value)
+
+  import("../../schemas/" + thisSchemaPath.value)
     .then((module) => {
       schematoValidate = module[thisSchemaFile.value];
       console.error("OK importing schema:  " + thisSchemaFile.value);

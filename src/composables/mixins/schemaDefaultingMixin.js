@@ -1,6 +1,6 @@
 import { ref, reactive, computed, watch, onUnmounted, onMounted } from "vue";
 import { schemaSklt } from "src/composables/schemaSklts";
-import { saleitSchema } from "src/composables/schemas/saleitSchemas";
+import { saleitSchema } from "src/schemas/saleitSchemas";
 // import {useQuasar, useMeta } from "quasar";
 
 // const $q = useQuasar();

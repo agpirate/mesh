@@ -217,7 +217,7 @@
               </q-expansion-item>
             </div>
             <!--div size="col-auto row"> {{  _listMicSource }}
-                    <q-item v-for="mic in _listMicSource" :key=mic class="column">                                                     
+                    <q-item v-for="mic in _listMicSource" :key=mic class="column">
                       <q-btn style="height:100%" no-caps size="sm" :dense="true" :color="_selectedMicById == mic.deviceId ? 'blue':'black'" :label="mic.label.split('_')[1]" @click="_cameraModule._selectedMicId(mic.deviceId)" />
                     </q-item>
                 </div-->
@@ -545,10 +545,10 @@
           </q-btn>
         </div>
 
-        <!--div v-if="_profile_iss?.['group'] ?? false "> 
-              <q-btn  @click="popUpgrader = !popUpgrader" flat no-caps  v-if="_profile_iss['group'] == 'client'" class="fontastyle" >   
-                 <q-item-label> UpgradeMe </q-item-label>           
-               </q-btn>               
+        <!--div v-if="_profile_iss?.['group'] ?? false ">
+              <q-btn  @click="popUpgrader = !popUpgrader" flat no-caps  v-if="_profile_iss['group'] == 'client'" class="fontastyle" >
+                 <q-item-label> UpgradeMe </q-item-label>
+               </q-btn>
                <q-btn v-else class="lt-sm"> Create</q-btn>
         </div-->
 
@@ -882,7 +882,7 @@
 
               <!-- <q-item-label>
                 <q-btn icon="add" :dense="true">Contact</q-btn>
-             
+
                 <q-tooltip style="background-color: black">
                   Add Contacts to follow</q-tooltip
                 >
@@ -1310,7 +1310,7 @@
               }"
               @click="$q.dark.toggle()"
             />
- 
+
           </q-item>
         </q-list>
       </q-menu>
@@ -1840,6 +1840,8 @@ async function resetUserAddress() {
   } else {
     _this.value.geolocation = _thislocation.value;
   }
+  _localStorage._set("lat", _this.value.geolocation.lat);
+  _localStorage._set("long", _this.value.geolocation.long);
   //always use the timezone/apitime zone data to locationsInformations
   _this.value.phoneCode = _Country.value;
   _this.value.location["country"] = _State.value.country ?? ""; //
@@ -2170,13 +2172,8 @@ Objprops_.value = { _profile: _this.value, _acctype: _this.value.acctype };
 
 thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
-import("../composables/schemas/" + thisSchemaPath.value)
-  .then((module) => {
-    _this_Schema.value = module[thisSchemaFile.value];
-  })
-  .catch((e) => {
-    console.error("Error importing schema:", e);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
 
 //------column invisiblity on table_
 //columns_filter()-------- which to displayOn REgisterations form
