@@ -33,8 +33,12 @@ import cors from "cors";
 import path from "path";
 import dotenv from "dotenv"; //to use the .env file ?
 dotenv.config(); //// Load environment variables
-const appport = process.env.API_PORT || 8080;
+
+const Api_PORT = process.env.Api_PORTI;
+const Api_IP = [process.env.Api_IPI,'192.168.100.8'];
+
 const maxAge = process.env.DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
+const allowedOrigins = ["*"];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -45,7 +49,11 @@ const corsOptions = {
       callback(null, true);
     }
   },
+  methods: ['GET', 'POST',"PUT","DELETE"], // Only allow GET and POST methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  credentials: true // Allow cookies and credentials to be sent
 };
+
 export const create = ssrCreate((/* { ... } */) => {
   const app = express();
   //-----------Performance Boosting by compressing Response body
@@ -64,7 +72,6 @@ export const create = ssrCreate((/* { ... } */) => {
       )
     );
   }
-  app.disable("x-powered-by"); // disable the engine informations on client
 
   //-------------------Middleware to parse cookies
   app.use(cookieParser());
@@ -94,12 +101,12 @@ export const create = ssrCreate((/* { ... } */) => {
     //Accept: text/plain //Content-Types that are acceptable for the response
     //res.setHeader('Access-Control-Allow-Origin', '*') //Specifying which web sites can participate in cross-origin resource sharing
     // Set security headers
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "SAMEORIGIN"); //Clickjacking protection:
-    res.setHeader("X-XSS-Protection", "1; mode=allow"); //Cross-site scripting (XSS) filter
+    // res.setHeader("X-Content-Type-Options", "nosniff");
+    // res.setHeader("X-Frame-Options", "SAMEORIGIN"); //Clickjacking protection:
+    // res.setHeader("X-XSS-Protection", "1; mode=allow"); //Cross-site scripting (XSS) filter
     // Prevent browser caching
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); //Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds
-    res.setHeader("Pragma", "no-cache");
+    // res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); //Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds
+    // res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "4d");
     // Call the next middleware
     next();
@@ -117,6 +124,7 @@ export const create = ssrCreate((/* { ... } */) => {
   //import { Router } from "express";
   // const router = Router();
   // router.post('/api2', async (req, res) => {res.send('working')})
+
   //------authentication & authorizations middleware
   //app.use('/tc',verifyToken)
   //1) Home & token authentication
@@ -146,24 +154,29 @@ export const create = ssrCreate((/* { ... } */) => {
   return app;
 });
 
+// Api_IP.forEach(ip => {
+//   app.listen(Api_PORT, ip, () => {
+//     console.log(process.env.PROD + " = Prod.Mode, listening @port " +`@ http://${ip}:${port}`);
+//   });
+// });
+
 export const listen = ssrListen(async ({ app, port, isReady }) => {
   await isReady();
-  return app.listen(port, () => {
-    if (process.env.PROD) {
-      console.log(
-        "Server listening at port " + port + process.env.mongodAPI_URL
-      );
-    }
+  Api_IP.forEach(ip => {
+  return app.listen(Api_PORT,ip, () => {
+    console.log(
+      process.env.PROD + " = Prod.Mode, ServerAPI " + `@ http://${ip}:${port}`+ ' DataBase_API @ : '+ process.env.mongodAPI_URL
+    );
   });
+})
 });
-// Start the server
-// app.listen(appport, () => {
-//   console.log(`Server is running on ${process.env.API}/${appport}`);
-// });
 
 export const close = ssrClose(({ listenResult }) => {
   console.log("Closing Server is Being Used", listenResult);
-  return listenResult.close();
+  if(listenResult){
+ listenResult.close();
+  }
+  return true
 });
 /**
  * Should return middleware that serves the indicated path
@@ -215,7 +228,6 @@ const woff2RE = /\.woff2$/;
 const gifRE = /\.gif$/;
 const jpgRE = /\.jpe?g$/;
 const pngRE = /\.png$/;
-const allowedOrigins = ["*"];
 
 /**
  * Should return a String with HTML output

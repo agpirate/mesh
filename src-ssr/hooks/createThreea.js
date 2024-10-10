@@ -1,13 +1,13 @@
 // Creating role and permissions tables
 // and let user assign permissions sets by ID
 
-/*  
+/*
 Permissions Rule;- like ubunut/linux file permissions schecma
 
                 group: name (user type)
                 capability: has 4 permissions status indicators ; 0-0-0-0
                         Value Rules ; ==> 0 = no any(block any) , 1=yes this(role listed columns) , 2=yes any(all column_of document)
-                            Create : the first index of ; creating new item ; 
+                            Create : the first index of ; creating new item ;
                             Read(R): the second Index of capability digits ; read permissions : 0 = yes , 1=no
                             Write (W) : the thrid index of capabilit digitst : write/modifie permi ; 0 = yes , 1=no
                             Excute (x) : the thrid index of capability digit : execute/ run it or delete ; 0 = yes , 1=no
@@ -174,7 +174,7 @@ async function createRolePermissions() {
       " = Sum of Role and Permissions <=>\n"
     );
     for (let i in modelData.data) {
-      console.log(`\n Role Name = ${i} && acckey = ${modelData.data[i]._id}\n`);
+      // console.log(`\n Role Name = ${i} && acckey = ${modelData.data[i]._id}\n`);
     }
     //---and Create sample users
     let _sampleRole = null;
@@ -183,11 +183,11 @@ async function createRolePermissions() {
     } else {
       return true;
     }
-    console.log(
-      `\n Creating Sample User = ${userSampleRole} && with accKey ${
-        _sampleRole._id ?? null
-      }`
-    );
+    // console.log(
+    //   `\n Creating Sample User = ${userSampleRole} && with accKey ${
+    //     _sampleRole._id ?? null
+    //   }`
+    // );
     const letProfiles = [
       {
         name: "root",

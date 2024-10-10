@@ -22,7 +22,7 @@ var _blackArray = [
 ];
 //--------------
 /*
-mongodb ObjectID //reference or id(primary keys) doesn't require 
+mongodb ObjectID //reference or id(primary keys) doesn't require
 objectId casting... only asssing 24character length(sting) it would handle it self..
 
 but when searching item by referencekey or primary key.. casting objectId would must.

@@ -21,7 +21,7 @@ const SETTINGS_LOCAL_STORAGE_KEY = "settings";
 //-------------TimeBase Query_Helper
 //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
 
-var initialState = { _isRegistered: false, user: {}, cookies: "" };
+var initialState = { _isRegistered: false, user: {}, cookies: "",enrolled: false };
 export var authenticatingStore = defineStore(STORE_NAME, () => {
   //state
   //---------
@@ -29,6 +29,7 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
   let logStatus = ref(initialState);
   let logUser = ref(null);
   let logisRegistered = ref(null);
+  let logisEnrolled = ref(null);
 
   //======gett Data
   let getLogStatus = computed(() => logStatus.value);
@@ -45,14 +46,13 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
   async function setlogStatus(
     _isRegistered = null,
     user = null,
-    cookies = null
+    cookies = null,
   ) {
     //set from use_request or find cached data
 
     if (_isRegistered ?? false) {
-      let _newisR = _isRegistered ?? logisRegistered.value ?? false;
-      //logisRegistered.value=_newisR
-      logisRegistered.value = useLocalStorage("_isRegistered", _newisR);
+      let updatValue = _isRegistered ?? (false);
+      logisRegistered.value = useLocalStorage("_isRegistered", updatValue);
     } else {
     }
     console.log("loging UserData", user);
@@ -111,6 +111,7 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
   //---------------------AUTHENTICATE-----------------
   let _rolingkey = ["phone", "id"]; //key for authenticating.. new Data
   async function useLogin(formData = {}) {
+    let enrollInformation = _localStorage._get('enrolled')
     formData = Object.assign(formData, (await _checkExistLogin()) ?? formData);
     console.log("((1)) Incoming User/Storage Data " + formData);
     if ((formData[_rolingkey[0]] ?? formData[_rolingkey[1]]) == null) {
@@ -144,6 +145,16 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
                 );
               }
             }
+//---------
+            if(Boolean(enrollInformation)){
+              _localStorage._set('enrolled',enrollInformation)
+              resp.data.enrolled = true
+            }else if(resp.data?.enrolled ?? false){
+              _localStorage._set('enrolled',String(resp.data.enrolled ?? false))
+
+            }
+
+            console.log('stored rolle ',enrollInformation,typeof enrollInformation)
             await setlogStatus(true, resp.data, "true");
           } else {
             // await clearlogStatus();

@@ -7,6 +7,7 @@ import {
   computed,
 } from "vue";
 // import { saleitSchema } from "src/composables/schemas/saleitSchemas";
+import dynamicModular from "./dynamicModule.js";
 
 // import { ref, reactive, computed, watch, onUnmounted, onMounted } from "vue";
 
@@ -23,14 +24,10 @@ const useschemaValidator = () => {
 
   // var schemaPath = "../../composables/schemas/"+props.thisSchemaPath
   let schematoValidate;
-  import("../schemas/" + thisSchemaPath.value)
-    .then((module) => {
-      schematoValidate = module[thisSchemaFile.value];
-      console.error("OK importing schema:  " + thisSchemaFile.value);
+  dynamicModular(thisSchemaPath.value, thisSchemaFile.value).then((m)=>{
+    if(m) schematoValidate = m
+      return true
     })
-    .catch((error) => {
-      console.error("Error importing schema:", error);
-    });
 
   //------------------------------------  submittting and Checking Forms
   // New data types and rules

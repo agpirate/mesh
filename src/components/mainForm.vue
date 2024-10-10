@@ -711,13 +711,16 @@ function emitClose() {
 
 // var schemaPath = "../../composables/schemas/"+props.thisSchemaPath
 let schematoValidate;
-import("../composables/schemas/" + props.thisSchemaPath)
-  .then((module) => {
-    schematoValidate = module[props.thisSchemaFile];
-  })
-  .catch((error) => {
-    console.error("Error importing schema:", error);
-  });
+import dynamicModular from "../composables/utilServices/dynamicModule.js";
+schematoValidate = dynamicModular(props.thisSchemaPath, props.thisSchemaFile);
+
+// import("../composables/schemas/" + props.thisSchemaPath)
+//   .then((module) => {
+//     schematoValidate = module[props.thisSchemaFile];
+//   })
+//   .catch((error) => {
+//     console.error("Error importing schema:", error);
+//   });
 
 //------------------------------------  submittting and Checking Forms
 // New data types and rules

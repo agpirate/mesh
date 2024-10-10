@@ -697,6 +697,7 @@ let routeIt = async (_name = null, _path = null, _accModel = true) => {
       _localStorage._reroute(_name, _path, screenSize.value == "Small")
     );
     _localStorage._set("path", toRaw(_path));
+    // _localStorage._set("path", toRaw(_path));
     await router.push(routePath);
     timerLoadevent({ main: 1 }, 1, "Ok, Loading " + _name); //Message display for 3sec,but don wait && reset it
     return true; //
@@ -708,5 +709,12 @@ let routeIt = async (_name = null, _path = null, _accModel = true) => {
     return false;
   }
 };
+async function _updateStorage(key, value) {
+  if (value) {
+    // _pageSettings.value[key] = value;
+    _localStorage._set(key, toRaw(value));
+  }
+  return true;
+}
 //-------- Or Creating Role and Permission Tables...
 </script>

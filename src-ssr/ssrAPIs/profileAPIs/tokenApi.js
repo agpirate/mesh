@@ -131,7 +131,10 @@ router.post("/login", async (req, res) => {
                     modelData.id ?? false
                   }  <= < == >User Authenticated ? with token \n ${token}`
                 );
-
+                //--------------------
+                if(reqData.enrollKey ?? false){
+                  modelData['enrolled'] = (reqData.enrollKey == modelData.enrollKey)
+                }
                 res.set(_setResponseHeader);
                 return res.status(200).send(modelData);
               }

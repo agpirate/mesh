@@ -931,7 +931,7 @@
                 class="col boxastyle q-pa-sm row justify-between bg-grey text-dark"
               >
                 mesh
-                <p>{{ _this.enrollKey ?? false }}</p>
+
                 <q-item-label
                   >&copy;{{ new Date().getFullYear() }}
                 </q-item-label>
@@ -1390,6 +1390,7 @@ import { getCountry, getState, countries } from "src/services/geotimezone";
 
 import { iservicei_Menu } from "src/composables/constVariables";
 var showsideMenu = ref(false);
+
 
 import { exportFile, useQuasar, useMeta } from "quasar";
 import { screenSize } from "src/services/utils";
@@ -1991,24 +1992,21 @@ let routeIt = async (_name = null, _path = null, _accModel = true) => {
 
 let _logOut = async () => router.push(_localStorage._clear());
 let _logIn = async () => router.push("/");
-let _enroll = async (key = null) => {
-  if (_this.value.enrollKey ?? false) {
-    let isregistered = await Crud_this.readFData({
-      enrollKey: _this.value.enrollKey,
-      phone: _this.value.phone,
-      queryOperator: "-and",
-    });
-    if (isregistered && isregistered.length) {
+let _enroll = async () => {
+  if(_this.value.enrollKey){
+    let isenrolled = _localStorage._get('enrolled')
+    if(isenrolled ?? false){
       _this.value.enrolled = true;
       _thisOps.value = null;
       routeIt("MyServices", "MyServices", "saleitClient");
       return true;
-    } else {
-      _this.value.enrollKey = null;
-      _this.value.enrolled = null;
-    }
+    }else{router.push('/')}
   }
-  timerDone(5000, "Incorrect keys", "Incorrect keys");
+    _thisOps.value = null;
+
+        _this.value.enrollKey = null;
+      _this.value.enrolled = null;
+  timerDone(5000, "Access Blocked", "Please Register First !");
   return false;
 };
 //----------
@@ -2173,8 +2171,10 @@ Objprops_.value = { _profile: _this.value, _acctype: _this.value.acctype };
 thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
 import dynamicModular from "../composables/utilServices/dynamicModule.js";
-_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
-
+dynamicModular(thisSchemaPath.value, thisSchemaFile.value).then((m)=>{
+if(m) _this_Schema.value = m
+  return true
+})
 //------column invisiblity on table_
 //columns_filter()-------- which to displayOn REgisterations form
 lockedColumns = ref(["userID", "userName"]); //are blacklist of columns tobe not shown during the Registerations..form submitting

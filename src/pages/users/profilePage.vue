@@ -81,24 +81,12 @@
   <div class="col row q-pa-xs q-gutter-xs" style="height: 90vh">
     <div class="col column rounded q-pa-sm" style="height: 90vh">
       <q-card class="col dark bordered column q-pa-none q-ma-none">
-        <q-expansion-item
-          :label="_thisModel + ' ' + 'More ...'"
-          class="shadow-1 overflow-hidden"
-          style="border-radius: 5px; text-transform: capitalize"
-          header-class="text-black-10 text-blue"
-          expand-icon-class="text-blue"
-          :dense="true"
-        >
-          <q-card-section
-            class="col-auto row"
-            style="text-transform: capitalize"
-          >
-          </q-card-section>
-        </q-expansion-item>
+
 
         <q-card-section
           class="q-pa-none col column bordered wrap scroll bg-orange"
         >
+
           <!----------------------------------------- Table View...-->
           <div class="col row" v-if="Object.keys(_this_acctype ?? {}).length">
             <q-table
@@ -424,6 +412,8 @@
 //_____________________________________________Modules Definitions
 import mainForm from "src/components/mainForm.vue";
 // import BChart from "src/components/visualith/BChart.vue";
+import dynamicModular from "../../composables/utilServices/dynamicModule.js";
+
 //-------------------------------------------------------------Importing System Modules
 import {
   ref,
@@ -625,9 +615,10 @@ const {
 
 thisSchemaPath.value = "profileSchemas";
 thisSchemaFile.value = "profileSchema";
-import dynamicModular from "../../composables/utilServices/dynamicModule.js";
-_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
-
+ dynamicModular(thisSchemaPath.value, thisSchemaFile.value).then((m)=>{
+if(m) _this_Schema.value = m
+  return true
+})
 // import("../../composables/schemas/" + thisSchemaPath.value)
 //   .then((module) => {
 //     _this_Schema.value = module[thisSchemaFile.value];

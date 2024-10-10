@@ -2901,8 +2901,10 @@ useMeta(metaData);
 thisSchemaPath.value = "saleitSchemas";
 thisSchemaFile.value = "saleitSchema";
 import dynamicModular from "../composables/utilServices/dynamicModule.js";
-_this_Schema.value = dynamicModular(thisSchemaPath.value, thisSchemaFile.value);
-
+dynamicModular(thisSchemaPath.value, thisSchemaFile.value).then((m)=>{
+if(m) _this_Schema.value = m
+  return true
+})
 //---foreignKeyed Defaulting (Scheam)==== PreDefined Models
 _thisModel.value = "saleit"; // the Vue_Page_DataModel (Listing Collection Name)
 var _thisModelHeader = ref(_thisModel.value + " Managment"); // the Vue_Page_Data_Headers(Descriptions...)
