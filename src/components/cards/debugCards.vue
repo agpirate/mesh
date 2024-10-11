@@ -16,10 +16,10 @@
     <div v-for="(message, index) in messages" :key="index">
       <div class="notification">
         <!-- <span style="font-size: 18px; font-weight: 600; color: #333;">{{ message.title }}</span> -->
-        <p style="color: whitesmoke; margin: 0 0 0" class="fontastyle">
+        <p style="color: whitesmoke; margin: 10px 0 0" class="fontastyle">
           {{ message.content }}
         </p>
-        <!-- <q-btn   :color="message.color ?? ''"  @click="emitPress('close',index)" :dense="true"  label=""
+        <!-- <q-btn   :color="message.color ?? ''"  @click="emitPress('close',index)" :dense="true"  label="" 
                 style="position: absolute; top: 15px; right: 15px; background-color: #ff4d4d; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; color: white; cursor: pointer; line-height: 20px; text-align: center; transition: background-color 0.3s ease;">&times;</q-btn>
                  -->
         <div class="col-auto row transparent">

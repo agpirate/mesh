@@ -78,7 +78,7 @@
                           color="secondary"
                           outlined
                           dense
-                          v-model="_thiss[tier_0obj.name]"
+                          v-model="_this_Up[tier_0obj.name]"
                           :options="tier_0obj.schema.enum"
                           single
                           use-chips
@@ -101,7 +101,7 @@
                           style="min-width: 7vw"
                           dense
                           outlined
-                          v-model="_thiss[tier_0obj.name]"
+                          v-model="_this_Up[tier_0obj.name]"
                           :type="tier_0obj.schema['vtype']"
                           @update:model-value="_validateThis(tier_0obj.name)"
                           capture="user"
@@ -113,7 +113,7 @@
                         <q-editor
                           dense
                           outlined
-                          v-model="_thiss[tier_0obj.name]"
+                          v-model="_this_Up[tier_0obj.name]"
                           filled
                           autogrow
                           :label="tier_0obj.name"
@@ -133,7 +133,7 @@
                           style="min-width: 7vw"
                           dense
                           outlined
-                          v-model="_thiss[tier_0obj.name]"
+                          v-model="_this_Up[tier_0obj.name]"
                           :type="tier_0obj.schema['type']"
                           class="col text-weight-bold"
                           lazy-rules
@@ -170,7 +170,7 @@
                       :dense="true"
                       rounded
                       color="purple"
-                      :label="'# ' + _thiss[tier_0obj.name].length"
+                      :label="'# ' + _this_Up[tier_0obj.name].length"
                     />
 
                     <q-btn
@@ -182,7 +182,7 @@
                       icon="add"
                       :label="'Create ' + tier_0obj.name"
                       @click="
-                        _thiss[tier_0obj.name].push(
+                        _this_Up[tier_0obj.name].push(
                           _thisDefaultt[tier_0obj.name][0]
                         )
                       "
@@ -193,11 +193,11 @@
                 <q-scroll-area
                   class="bg-grey-12 row"
                   style="height: 40vh; width: 100%"
-                  v-if="_thiss[tier_0obj.name].length"
+                  v-if="_this_Up[tier_0obj.name].length"
                 >
                   <q-list>
                     <q-item
-                      v-for="(_thism, index) in _thiss[tier_0obj.name]"
+                      v-for="(_thism, index) in _this_Up[tier_0obj.name]"
                       :key="index"
                       class="col q-gutter-xs column"
                     >
@@ -205,7 +205,7 @@
                         <div class="fontastyle">{{ index }}</div>
                         <div>
                           <q-btn
-                            @click="_thiss[tier_0obj.name].splice(index, 1)"
+                            @click="_this_Up[tier_0obj.name].splice(index, 1)"
                             dense="true"
                             label="remove"
                           />
@@ -261,7 +261,7 @@
                                       outlined
                                       dense
                                       v-model="
-                                        _thiss[tier_0obj.name][index][
+                                        _this_Up[tier_0obj.name][index][
                                           tier_1name
                                         ]
                                       "
@@ -282,7 +282,7 @@
                                       dense
                                       outlined
                                       v-model="
-                                        _thiss[tier_0obj.name][index][
+                                        _this_Up[tier_0obj.name][index][
                                           tier_1name
                                         ]
                                       "
@@ -300,7 +300,7 @@
                                       style="min-width: 5vw"
                                       outlined
                                       v-model="
-                                        _thiss[tier_0obj.name][index][
+                                        _this_Up[tier_0obj.name][index][
                                           tier_1name
                                         ]
                                       "
@@ -317,7 +317,7 @@
                                       dense
                                       outlined
                                       v-model="
-                                        _thiss[tier_0obj.name][index][
+                                        _this_Up[tier_0obj.name][index][
                                           tier_1name
                                         ]
                                       "
@@ -406,7 +406,7 @@
                                     color="secondary"
                                     outlined
                                     dense
-                                    v-model="_thiss[tier_0obj.name][tier_1name]"
+                                    v-model="_this_Up[tier_0obj.name][tier_1name]"
                                     :options="tier_1schema.enum"
                                     single
                                     use-chips
@@ -423,7 +423,7 @@
                                   <q-editor
                                     dense
                                     outlined
-                                    v-model="_thiss[tier_0obj.name][tier_1name]"
+                                    v-model="_this_Up[tier_0obj.name][tier_1name]"
                                     filled
                                     autogrow
                                     :label="tier_1name"
@@ -439,7 +439,7 @@
                                     style="min-width: 7vw"
                                     dense
                                     outlined
-                                    v-model="_thiss[tier_0obj.name][tier_1name]"
+                                    v-model="_this_Up[tier_0obj.name][tier_1name]"
                                     :type="tier_1schema.vtype"
                                     class="col text-weight-bold"
                                     lazy-rules
@@ -451,7 +451,7 @@
                                     style="min-width: 7vw"
                                     dense
                                     outlined
-                                    v-model="_thiss[tier_0obj.name][tier_1name]"
+                                    v-model="_this_Up[tier_0obj.name][tier_1name]"
                                     :type="tier_1schema['type']"
                                     class="col text-weight-bold"
                                     lazy-rules
@@ -516,7 +516,7 @@
                                             outlined
                                             dense
                                             v-model="
-                                              _thiss[tier_0obj.name][
+                                              _this_Up[tier_0obj.name][
                                                 tier_1name
                                               ][tier_2name]
                                             "
@@ -539,7 +539,7 @@
                                             dense
                                             outlined
                                             v-model="
-                                              _thiss[tier_0obj.name][
+                                              _this_Up[tier_0obj.name][
                                                 tier_1name
                                               ][tier_2name]
                                             "
@@ -558,7 +558,7 @@
                                             dense
                                             outlined
                                             v-model="
-                                              _thiss[tier_0obj.name][
+                                              _this_Up[tier_0obj.name][
                                                 tier_1name
                                               ][tier_2name]
                                             "
@@ -575,7 +575,7 @@
                                             dense
                                             outlined
                                             v-model="
-                                              _thiss[tier_0obj.name][
+                                              _this_Up[tier_0obj.name][
                                                 tier_1name
                                               ][tier_2name]
                                             "
@@ -615,14 +615,14 @@
         outlined
         label="Create"
         color="green"
-        @click="emitSubmit('create')"
+        @click="_thisValidator('create')"
         v-if="__thisOps == 'CreateRowItem'"
       />
       <q-btn
         outlined
         label="Update"
         color="orange"
-        @click="emitSubmit('update')"
+        @click="_thisValidator('update')"
         v-else
       />
     </q-card-actions>
@@ -670,7 +670,7 @@ var props = defineProps({
 var _rolesColumnss = computed(() => {
   return props._rolesColumns;
 });
-var _thiss = computed(() => {
+var _this_Up = computed(() => {
   return props._this;
 });
 var _thisDefaultt = computed(() => {
@@ -682,27 +682,27 @@ let inputColor = computed(() => {
 });
 
 async function removeList(name, index) {
-  console.log(_thiss.value[name], index, "pppp");
-  return _thiss.value[name].splice(index, 1);
+  console.log(_this_Up.value[name], index, "pppp");
+  return _this_Up.value[name].splice(index, 1);
 }
 
 //-------------------------------------- The Schematic Values
 //======================================== the Form Submitting
 
 const emit = defineEmits(["create", "update", "close"]);
-function emitSubmit(_action) {
+function _thisValidator(_action) {
   let _isCompleted = Object.values(_debugObj.value).every(
     (value) => value == null
   );
   if (!_isCompleted) {
     return false;
+  } else if (!_this_Up.value.price) {
+    return false;
   }
   //-----
-  emit(_action, _thiss.value);
+  emit(_action, _this_Up.value);
 }
-// function emitSubmit(_action) {
-//   emit('update', _thiss.value);
-// }
+
 function emitClose() {
   emit("close", false);
 }
@@ -711,16 +711,8 @@ function emitClose() {
 
 // var schemaPath = "../../composables/schemas/"+props.thisSchemaPath
 let schematoValidate;
-import dynamicModular from "../composables/utilServices/dynamicModule.js";
+import dynamicModular from "@/composables/utilServices/dynamicModule.js";
 schematoValidate = dynamicModular(props.thisSchemaPath, props.thisSchemaFile);
-
-// import("../composables/schemas/" + props.thisSchemaPath)
-//   .then((module) => {
-//     schematoValidate = module[props.thisSchemaFile];
-//   })
-//   .catch((error) => {
-//     console.error("Error importing schema:", error);
-//   });
 
 //------------------------------------  submittting and Checking Forms
 // New data types and rules
@@ -732,24 +724,6 @@ let _inputCharacter = {
 };
 //-----------------------
 
-// async function _validateThis(field) {
-//   let _fieldRule = schematoValidate[field]["rules"] ?? false; // Changed from 'rule' to 'rules'
-//   if (!(_fieldRule ?? false)) {
-//     console.log("No Validator Set; For", schematoValidate[field] ?? false);
-//     return true;
-//   }
-//   _debugObj.value[field] = null;
-//   let value = _thisReturn.value[field];
-//   //------------------
-//   for (let rule of _fieldRule) {
-//     let _check = await _isThisRule210(rule, value);
-//     if (!_check) {
-//       _debugObj.value[field] = _getErrorMessage(rule); // Improved error message handling
-//       break;
-//     }
-//   }
-//   return true;
-// }
 // Helper function to get error messages based on rule type
 function _getErrorMessage(rule) {
   switch (rule.type) {

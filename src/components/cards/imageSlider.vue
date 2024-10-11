@@ -15,7 +15,7 @@
 ">
         <div class="slides">
             <img :src="image" alt="Image 1" :key="inx" v-for="image,inx in images">
-
+           
         </div>
         <!-- <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
         <button class="next" onclick="moveSlide(1)">&#10095;</button> -->
@@ -24,7 +24,7 @@
     <!-- <button class="fullscreen-btn" onclick="toggleFullscreen()">Full Screen</button> -->
 
   </template>
-
+  
   <script setup>
   import { defineEmits,ref, reactive, onMounted, defineAsyncComponent, computed } from "vue";
   // import { ref, reactive, computed, onMounted, onBeforeMount, watch } from "vue";
@@ -81,7 +81,7 @@ function toggleFullscreen() {
 
 
   </script>
-
+  
   <style scoped>
 
 .slider {
