@@ -5,20 +5,30 @@
       :isOpen="askForGPS"
       @emitClick0="allowGPS($event)"
     >
-      <div class="boxastyle text-orange bg-orange">
-        <p class="text-white">Allow Location Access.</p>
-        <div class="text-orange boxcstyle" style="max-width: 80vw">
-          Would you like to
-          <ul>
-            <li>Get product before any one</li>
-            <li>Get product near you</li>
-          </ul>
-          then, we need locations acccess to provide you with best exprience.
+    <div class="q-pa-md q-mx-auto fontastyle" style="max-width: 400px;">
+      <div class="rounded-borders q-card q-card--bordered q-pa-md bg-orange text-white">
+        <div class="q-pt-sm q-mb-md">
+          <q-icon name="place" size="48px" color="white" />
+          <h4 class="q-my-none text-h5">Allow Location Access</h4>
         </div>
-        <div class="justify-end row">
-          <q-btn flat color="green" @click="allowGPS(true)"> Allow </q-btn>
+
+        <div class="q-mb-md">
+          <p>We need your location to provide you with the best experience:</p>
+          <ul class="q-pl-lg">
+            <li>Get exclusive access to products before others.</li>
+            <li>Find products near your location.</li>
+            <li>Sell products to customers near you.</li>
+          </ul>
+        </div>
+
+        <p>For these features, please allow location access.</p>
+
+        <div class="q-mt-md row justify-end q-gutter-sm">
+          <q-btn flat color="primary" label="Allow" @click="allowGPS(true)" />
+          <!-- <q-btn flat color="negative" label="Deny" @click="allowGPS(false)" /> -->
         </div>
       </div>
+    </div>
     </dialogOne>
   </template>
   <!-- _thisOps -->
@@ -789,7 +799,7 @@
           <q-list padding class="col-9 column" style="min-height: 60vh">
             <q-item>
               <q-item-section>
-                <q-item-label overline>{{ _this.username }}</q-item-label>
+                <q-item-label overline>{{ _this.userName }}</q-item-label>
                 <q-item-label
                   >{{ _this.name }} {{ _this.lastName }}</q-item-label
                 >
@@ -1037,19 +1047,20 @@
           <!----profile basic informations-->
           <q-list padding class="col-9 column" style="min-height: 50vh">
             <q-item class="row justify-between">
-              <q-item-section
+              <div
                 style="
                   max-width: 100px;
                   overflow: hidden;
                   text-overflow: ellipsis;
                 "
               >
-                <q-item-label overline>{{ _this.username }}</q-item-label>
                 <q-item-label
                   >{{ _this.name }} {{ _this.lastName }}</q-item-label
                 >
+                <div>@{{ _this.userName }}</div>
+
                 <!-- <q-item-label caption>Since : {{  _this.updatedAt }}</q-item-label> -->
-              </q-item-section>
+            </div>
 
               <q-item-section side top>
                 <q-item-label class="row justify-between fontastyle">
@@ -1108,14 +1119,7 @@
                       :dense="true"
                     />
                   </q-item-label>
-                  <div
-                    style="text-transform: capitalize"
-                    class="row q-gutter-sm"
-                    v-else
-                  >
-                    <p>{{ cinfo }}</p>
-                    <h1>{{ _this[cinfo] }}</h1>
-                  </div>
+
                 </q-item-section>
 
                 <q-item-section side>

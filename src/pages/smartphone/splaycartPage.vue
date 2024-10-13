@@ -9,6 +9,7 @@
    @close="__thisBox = $event"
    @Update_this="Update_this()"
    @Create_this="Create_this()"
+   screenSize='mobile'
    >
 
     </thisCard>
@@ -1107,7 +1108,7 @@ let confirmMessage = ref("Are You Sure ?");
 import dialogOne from "src/components/dialogs/dialogOne.vue";
 
 import debugCard from "@/components/debugCards.vue";
-import thisCard from "@/components/cards/thisCard.vue";
+import thisCard from "@/components/cards/thisCardm.vue";
 import useDebugMixin from "@/composables/mixins/debugMixin";
 const {
   Loadingpage,
@@ -2278,7 +2279,7 @@ async function Create_this() {
         // timerDone(5000, "Item Created", "Succefully Created");
         // __thisBox.value = false;
         // this_Query("userID", Objprops._profile.id);
-        return router.push("/play/MyServices");
+        return router.push("/play/sMyServices");
       } else {
       }
       __thisOpsStatus.value = false;

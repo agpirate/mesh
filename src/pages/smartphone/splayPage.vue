@@ -11,6 +11,8 @@
    @close="__thisBox = $event"
    @Update_this="Update_this()"
    @Create_this="Create_this()"
+
+
    >
 
     </thisCard>
@@ -1023,16 +1025,7 @@
                           </div>
                         </div>
 
-                        <div class="row" style="padding-right: 5%">
-                          <q-item-label
-                            class="boxbstyle bg-cyan"
-                            v-if="_orderBox.includes(props.row.id)"
-                          >
-                            <q-icon name="save" />
-                          </q-item-label>
-                          <!--div v-if="props.row.buy =='buy' ?? false" style="color:orange"> Already Bought </div>
-                                                <div v-else> Added to cart </div-->
-                        </div>
+
                       </q-item>
 
                       <q-item
@@ -1093,20 +1086,31 @@
                                   )
                                 "
                               />
-                              {{ __this_foreignBoxOps }}
                               <q-btn
                                 size="xs"
                                 class="col-grow"
-                                label="Save"
+                                label="Saved"
                                 no-caps
-                                color="black"
-                                @click="
-                                  _this_ActiveOperation._toCart(
-                                    props.row.id,
-                                    'clients'
-                                  )
-                                "
-                              />
+                            style="background-color:black;color:orange"
+                                v-if="_orderBox.includes(props.row.id)"
+                              >
+                            <q-icon name="save" />
+
+                              </q-btn>
+                              <q-btn
+                              size="xs"
+                              class="col-grow"
+                              label="Save"
+                              no-caps
+                              color="black"
+                              @click="
+                                _this_ActiveOperation._toCart(
+                                  props.row.id,
+                                  'clients'
+                                )
+                              "
+                              v-else
+                            />
                             </div>
 
                             <div class="col column q-pa-sm">
@@ -1537,7 +1541,7 @@ let confirmMessage = ref("Are You Sure ?");
 import dialogOne from "src/components/dialogs/dialogOne.vue";
 
 import debugCard from "@/components/debugCards.vue";
-import thisCard from "@/components/cards/thisCard.vue";
+import thisCard from "@/components/cards/thisCardm.vue";
 import useDebugMixin from "@/composables/mixins/debugMixin";
 const {
   Loadingpage,
@@ -2748,7 +2752,7 @@ async function Create_this() {
         // timerDone(5000, "Item Created", "Succefully Created");
         // __thisBox.value = false;
         // this_Query("userID", Objprops._profile.id);
-        return router.push("/play/MyServices");
+        return router.push("/play/sMyServices");
       } else {
       }
       __thisOpsStatus.value = false;

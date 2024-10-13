@@ -35,20 +35,22 @@ import dotenv from "dotenv"; //to use the .env file ?
 dotenv.config(); //// Load environment variables
 
 const Api_PORT = process.env.Api_PORTI;
-const Api_IP = [process.env.Api_IPI,'192.168.100.8'];
+const Api_IP = [process.env.Api_IPI];
 
 const maxAge = process.env.DEV ? 0 : 1000 * 60 * 60 * 24 * 30;
-const allowedOrigins = ["*"];
+// const allowedOrigins = ["*"];
+const allowedOrigins = ['http://127.0.0.1:9100', 'http://127.0.0.1:3000'];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      // callback(new Error("Not allowed by CORS"));
-      callback(null, true);
-    }
-  },
+  // origin: function (origin, callback) {
+  //   if (allowedOrigins.includes(origin) || !origin) {
+  //     callback(null, true);
+  //   } else {
+  //     // callback(new Error("Not allowed by CORS"));
+  //     callback(null, true);
+  //   }
+  // },
+  origin:"*",
   methods: ['GET', 'POST',"PUT","DELETE"], // Only allow GET and POST methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
   credentials: true // Allow cookies and credentials to be sent
@@ -72,6 +74,7 @@ export const create = ssrCreate((/* { ... } */) => {
       )
     );
   }
+  app.options('*', cors(corsOptions)); // Allow preflight requests for all routes
 
   //-------------------Middleware to parse cookies
   app.use(cookieParser());
@@ -160,17 +163,28 @@ export const create = ssrCreate((/* { ... } */) => {
 //   });
 // });
 
+// export const listen = ssrListen(async ({ app, port, isReady }) => {
+//   await isReady();
+//   Api_IP.forEach(ip => {
+//   return app.listen(Api_PORT,ip, () => {
+//     console.log(
+//       process.env.PROD + " = Prod.Mode, ServerAPI " + `@ http://${ip}:${Api_PORT}`+ ' DataBase_API @ : '+ process.env.mongodAPI_URL
+//     );
+//   });
+// })
+// });
+
 export const listen = ssrListen(async ({ app, port, isReady }) => {
   await isReady();
-  Api_IP.forEach(ip => {
-  return app.listen(Api_PORT,ip, () => {
-    console.log(
-      process.env.PROD + " = Prod.Mode, ServerAPI " + `@ http://${ip}:${port}`+ ' DataBase_API @ : '+ process.env.mongodAPI_URL
-    );
-  });
-})
-});
+  return app.listen(Api_PORT, () => {
+    if (process.env.PROD) {
+      console.log(
+        process.env.PROD + " = Prod.Mode, ServerAPI " + `@ http://:${Api_PORT}`+ ' DataBase_API @ : '+ process.env.mongodAPI_URL
+      );
+    }
 
+  });
+});
 export const close = ssrClose(({ listenResult }) => {
   console.log("Closing Server is Being Used", listenResult);
   if(listenResult){

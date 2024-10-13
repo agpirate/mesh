@@ -15,9 +15,9 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const server_PORT = ["9100", "8080"];
-const server_IP = ["127.0.0.1","127.0.0.1", "196.190.43.166"];
+const server_IP = ["127.0.0.1","192.168.100.8", "196.190.43.166"];
 const client_PORT = ["9100", "8080"];
-const client_IP = ["127.0.0.1","127.0.0.1", "196.190.43.166"];
+const client_IP = ["127.0.0.1","192.168.100.8", "196.190.43.166"];
 // const __dirname=""
 
 module.exports = configure(function (ctx) {

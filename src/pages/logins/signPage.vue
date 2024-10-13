@@ -5,25 +5,37 @@
   >
     <template v-if="gpsStatus == 'permiting_gpsservice'">
       <dialogOne :isOpen="askForGPS" @emitClick0="allowGPS($event)">
-        <div class="boxastyle text-orange bg-orange">
-          <p class="text-white">Allow Location Access.</p>
-          <div class="text-orange boxcstyle" style="max-width: 80vw">
-            Would you like to
-            <ul>
-              <li>Get product before any one</li>
-              <li>Get product near you</li>
-            </ul>
-            then, we need locations acccess to provide you with best exprience.
-          </div>
-          <div class="justify-end row">
-            <q-btn flat color="green" @click="allowGPS(true)"> Allow </q-btn>
+        <div class="q-pa-md q-mx-auto fontastyle" style="max-width: 400px;">
+          <div class="rounded-borders q-card q-card--bordered q-pa-md bg-orange text-white">
+            <div class="q-pt-sm q-mb-md">
+              <q-icon name="place" size="48px" color="white" />
+              <h4 class="q-my-none text-h5">Allow Location Access</h4>
+            </div>
+
+            <div class="q-mb-md">
+              <p>We need your location to provide you with the best experience:</p>
+              <ul class="q-pl-lg">
+                <li>Get exclusive access to products before others.</li>
+                <li>Find products near your location.</li>
+                <li>Sell products to customers near you.</li>
+              </ul>
+            </div>
+
+            <p>For these features, please allow location access.</p>
+
+            <div class="q-mt-md row justify-end q-gutter-sm">
+              <q-btn flat color="primary" label="Allow" @click="allowGPS(true)" />
+              <!-- <q-btn flat color="negative" label="Deny" @click="allowGPS(false)" /> -->
+            </div>
           </div>
         </div>
+
       </dialogOne>
     </template>
     <p v-else>
-      {{ gpsStatus == "timezone" ? "Connection Error" : gpsStatus }}
+      {{ gpsStatus == "timezone" ? "Connection Error" : 'Loading ...' }}
     </p>
+
     <div>
       <q-spinner-rings style="color: lightyellow" size="10em">
       </q-spinner-rings>
@@ -70,7 +82,8 @@
   </q-page>
 
   <q-page persistent class="bg-white rounded-borders column" v-else>
-    <div class="col flex flex-center column q-gutter-md">
+    <div class="col flex flex-center column bg-black q-pa-sm">
+       <div>
       <!-- {{ getCountry() }}{{ _Country }}{{ _this.phoneCode }} {{ _debugObj }} -->
       <q-card
         style="min-width: 20%; max-width: 80vw"
@@ -177,7 +190,7 @@
 
           <div class="column justify-evenly items-center">
             <div>
-              <q-icon name="phone" />
+              <q-icon name="phone" /> +{{ _this.phoneCode[1] }}
               <input
                 class="boxcstyle"
                 type="Number"
@@ -261,9 +274,7 @@
         </q-card-section>
 
         <div v-if="_debugObj.phone ?? false"></div>
-        <q-card-section class="q-py-xs">
-          <q-item-label caption>Contact us: +251 091232344 </q-item-label>
-        </q-card-section>
+
 
         <q-card-actions
           class="text-dark bg-orange"
@@ -273,9 +284,11 @@
           <q-btn class="fontastyle" flat label="Login" />
         </q-card-actions>
       </q-card>
+    </div>
 
       <div
-        class="col-auto q-pa-none row q-gutter-xs fontastyle text-grey justify-end"
+        class="col-auto  column   q-gutter-xs  text-grey "
+
       >
         <!-- <div v-if="Loadingevent.loginform ?? false">
           {{ Loadingpage.content ?? "" }}
@@ -289,8 +302,13 @@
           Create
         </q-btn>
         <q-btn v-else flat :dense="true" @click="logStatus.login = 'init'">
-          Already Have Account ?
+          Login
         </q-btn>
+
+        <br />
+        <q-card-section class="q-py-xs text-grey">
+          <q-item-label  class="text-grey" caption>Contact us: +251 914424140 </q-item-label>
+        </q-card-section>
       </div>
     </div>
     <p class="text-grey q-pa-sm">Provided by mesh</p>
@@ -690,7 +708,7 @@ let routeIt = async (_name = null, _path = null, _accModel = true) => {
     }
   }
   // await timerLoadevent({ main: 3000 }, 3000, "Loading " + _path); //Message  [ wait 3 sec ] [reset]
-  await timerLoadevent({ main: 0 }, 0, "Loading " + _name); //Message display for unlimited sec,but  wait && don reset it
+  await timerLoadevent({ main: 0 }, 0, "Loading ..."); //Message display for unlimited sec,but  wait && don reset it
   try {
     let routePath = Object.assign(
       { acctype: _this.value["acctype"][_accModel] ?? "" },
@@ -699,7 +717,7 @@ let routeIt = async (_name = null, _path = null, _accModel = true) => {
     _localStorage._set("path", toRaw(_path));
     // _localStorage._set("path", toRaw(_path));
     await router.push(routePath);
-    timerLoadevent({ main: 1 }, 1, "Ok, Loading " + _name); //Message display for 3sec,but don wait && reset it
+    timerLoadevent({ main: 1 }, 1, " "); //Message display for 3sec,but don wait && reset it
     return true; //
   } catch (e) {
     console.log(
