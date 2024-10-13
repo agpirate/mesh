@@ -1,7 +1,7 @@
 <template>
-    <div class="overlay z-top" style="" @click="emitClose(null)" >
+<div class="overlay z-top" style="" @click="emitClose(null)" >
 
-  <q-card style="min-width: 30vw; max-width: 40vw;max-height:90vh;"
+  <q-card style="min-width: 30vw; max-width: 40vw;max-height:80vh;"
   v-if="Object.keys(_this_Up).length && _this_Schema" @click.stop>
     <!----HEADER-TOP Begin-->
     <!-- {{ _this_Up.currency }} {{ Objprops._profile.curreny }} -->
@@ -12,37 +12,60 @@
         <q-img
           loading="lazy"
           class=""
-          style="aspect-ratio: 2/1; max-width: 40"
+          style="aspect-ratio: 2/1; max-width: 50vw;"
           :src="
             _fileAttributeName
               ? _fileAsSRC[_fileAsSRCIndex]
-              : _this_Up['saleitgr'][_fileAsSRCIndex]
+              : _this_Up[__thisFileAttribute][_fileAsSRCIndex]
           "
         >
           <div class="absolute-full transparent column justify-between">
             <div class="row q-ma-sm">
-              <div class="col fontdstyle text-dark"></div>
+              <div
+              class="justify-left col-auto"
+              style="" v-if="_fileAsSRC && _fileAsSRC.length > 1"
+            >
+
+              <div class="row " style="width:100%;height:10px">
+                <button style="border-radius:15px;width:30px" @click="_fileAsSRCOpsCall(index-1)" :key="index" v-for="index of _fileAsSRC.length">
+        <p :style="_fileAsSRCOps ? 'color:red':''">  {{ index }} </p>
+                </button>
+              </div>
+
+            </div>
+
+              <div class="col  text-dark"></div>
               <div class="column col-auto q-gutter-xs" style="width: 5vw">
-                <q-item-label class="text-orange">Upload Via </q-item-label>
+                <!-- <q-item-label class="text-orange">Upload Via </q-item-label> -->
                 <input
                   type="file"
                   multiple
                   ref="openFolder"
                   style="display: none"
-                  @change="_fileSourceFolder($event, 'saleitgr')"
+                  @change="_fileSourceFolder($event, __thisFileAttribute)"
                 />
-                <q-btn
-                  class="bg-orange"
+
+                <button
+
+              stle="width:100px;height:100px;padding:0px;margin:0px;"
                   icon="folder"
                   @click="$refs.openFolder.click()"
-                  :dense="true"
-                />
-                <q-btn
+                > <q-icon name="add_a_photo" style="width:100%;height:100%;padding:0px;margin:0px;"/>
+              </button>
+
+              <button
+
+              stle="width:100px;height:100px;padding:0px;margin:0px;"
+                  icon="folder"
+                  @click="_fileAsSRCOps = !_fileAsSRCOps"
+                > <q-icon name="delete" :style="_fileAsSRCOps ? 'color:red':''" />
+              </button>
+                <!-- <q-btn
                   class="bg-orange"
                   icon="add_a_photo"
                   @click="_cameraInstance._openCamera('saleitgr')"
                   :dense="true"
-                />
+                /> -->
               </div>
             </div>
 
@@ -51,6 +74,7 @@
             </div> -->
 
             <div class="col row justify-between q-py-sm">
+
               <div
                 class="self-end justify-left col-auto"
                 style="max-width: 4vw"
@@ -62,7 +86,7 @@
                     :loading="__thisOpsStatus"
                     class="apple-button"
                     flat
-                    :label="_pageSettings.language ? 'ሽጥ' : 'Create'"
+                    :label="_pageSettings.language ? 'Create' : 'Create'"
                     @click="_thisValidator('Create_this')"
                   >
                     <!--template v-slot:__thisOpsStatus>
@@ -73,105 +97,28 @@
                   </q-btn>
                 </div>
 
-                <div v-else>
+                <div v-else class="font0astyle">
                   <q-btn
                     flat
-                    :loading="_this_UpOpsStatus"
-                    class="bg-orange shadow-7 fontbstyle q-pa-xs"
+                    :loading="__thisOpsStatus"
+                    class="bg-orange shadow-7  q-pa-xs row flex-center"
                     color="white"
-                    :label="_pageSettings.language ? 'ሽጥ' : 'Update'"
+
                     icon="upload"
                     @click="_thisValidator('Update_this')"
                   />
+                  <p>   {{ _pageSettings.language ? 'Update' : 'Update' }} </p>
+
                 </div>
               </div>
 
-              <div
-                class="self-end justify-right col-grow column q-pa-xs"
-                v-if="_fileAsSRC?.length ?? false"
-                style="max-height: 100%"
-              >
-                <div
-                  class="self-end justify-right col row bg-orange fontastyle q-pa-xs"
-                  v-if="_fileAsSRC.length > 1"
-                >
-                  <q-checkbox
-                    left-label
-                    v-model="_fileAsSRCOps"
-                    :label="_pageSettings.language ? 'መደምሰሲ' : 'Delete'"
-                    checked-icon="task_alt"
-                    unchecked-icon="highlight_off"
-                    :dense="true"
-                  />
-                  <q-tooltip class="fontastyle bg-black text-white"
-                    >Check Enable Delete & Click The Image ?</q-tooltip
-                  >
-                </div>
 
-                <div
-                  class="self-end justify-right col row shadow-1 q-pa-sm transparent"
-                  style="
-                    max-height: 100%;
-                    max-width: 100%;
-                    position: absolute;
-                    bottom: 100px;
-                    right: 2px;
-                    width: 5vw;
-                    height: 5vh;
-                  "
-                  v-if="_fileAttributeName ?? false"
-                >
-                  <div
-                    v-for="(item, fileIndx) in _fileAsSRC"
-                    :key="fileIndx"
-                    class="col row q-px-xs"
-                    style="
-                      position: absolute;
-                      right: 2px;
-                      width: 5vw;
-                      height: 5vh;
-                    "
-                    :style="`bottom:${fileIndx * 25}px`"
-                  >
-                    <q-btn
-                      round
-                      @click="_fileAsSRCOpsCall(fileIndx)"
-                      class="col-auto"
-                    >
-                      <q-avatar size="42px">
-                        <img :src="item" />
-                      </q-avatar>
-                    </q-btn>
-                  </div>
-                </div>
-                <div
-                  class="self-end justify-right col row shadow-5 q-pa-xs"
-                  style="max-height: 100%; max-width: 100%"
-                  v-else
-                >
-                  <div
-                    v-for="(item, fileIndx) in _this_Up['saleitgr']"
-                    :key="fileIndx"
-                    class="col row inset-shadow q-px-xs"
-                    style="max-height: 100%"
-                  >
-                    <q-btn
-                      round
-                      @click="_fileAsSRCOpsCall(fileIndx)"
-                      class="col-auto"
-                    >
-                      <q-avatar size="42px">
-                        <img :src="item" />
-                      </q-avatar>
-                    </q-btn>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </q-img>
       </div>
     </q-card-section>
+
     <q-card-section
       class="column text-dark bg-white fontbstyle"
       v-if="__thisOps == 'CreateRowItem'"
@@ -419,6 +366,7 @@
 import {
   defineEmits,
   ref,
+  watch,
   reactive,
   onMounted,
   defineAsyncComponent,
@@ -444,6 +392,7 @@ var {
   _cameraBox,
   _fileSourceFoCam,
   _fileAsSRC,
+  _fileAsString,
   _fileAsRaw,
 
   _liveFeedSRC,
@@ -471,12 +420,14 @@ const props = defineProps({
 
   __thisOps: {type: String, required: true},
   __thisOpsStatus: {type: String},
+  __thisFileAttribute: {type: String},
+
 
     //----------------=========  Validation Props and Values
-    fileAttributeName_Rec: { type: String },
     thisSchemaFile_Rec: {type: String},
     thisSchemaPath_Rec: {type: String },
 });
+// let fileName = 'saleitgr'
 
 let _this_Schema=ref(null)
 import dynamicModular from "@/composables/utilServices/dynamicModule.js";
@@ -486,12 +437,24 @@ dynamicModular(props.thisSchemaPath_Rec,props.thisSchemaFile_Rec).then((m)=>{
 
 
 var _this_Up = computed(() =>   props._this);
+_fileAsString = computed(() =>   props._this[props.__thisFileAttribute]);
 // var _this_UpOps = computed(() => props.__thisOps);
 //------------
 // _fileAttributeName = computed(() =>   props.fileAttributeName_Rec);
  thisSchemaPath = computed(() => props.thisSchemaPath_Rec);
  thisSchemaFile = computed(() => props.thisSchemaFile_Rec);
 
+ watch(_fileAttributeName,(nv,ov)=>{
+  if(nv){
+    _this_Up.value[nv] =_fileAsRaw.value;
+    if (typeof _fileAsRaw.value == "object") {
+      _this_Up.value["file_"] = { files: nv };
+    } else {
+      _this_Up.value["file_"] = { file: nv};
+    }
+  }
+  return true
+ })
 
 const emit = defineEmits(["Create_this", "Update_this", "close"]);
 function _thisValidator(_action) {
@@ -504,8 +467,8 @@ function _thisValidator(_action) {
     return false;
   }
   //-----
-  console.log(_action,_this_Up.value.quantity,'ddddddddddddddd')
-  emit(_action, _this_Up.value);
+  emit(_action);
+  //data into parent is passing through reactive_behavioure(_this or injecting(fileName))
 }
 
 function emitClose() {

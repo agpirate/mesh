@@ -15,6 +15,8 @@ const usefileMixin = () => {
   let _fileAsRaw = ref([]); //_file in Upload_Mode
   //---------------------
   let _fileAsSRC = ref([]); //_file in Show_Mode (Non_String / As_SRC)
+  let _fileAsString = ref([]); //_file in Show_Mode (Non_String / As_SRC)
+
   let _fileAsSRCIndex = ref(0); ///_fileAsSRC_Array_index
   let _fileAsSRCOps = ref(false); //tis could for deleting/
 
@@ -25,7 +27,7 @@ const usefileMixin = () => {
       File Could Have 2 source
         1. cameara
         2. file(folder)
-      in both ways file enters 2 phases 
+      in both ways file enters 2 phases
       phase1: RAW Stage
       phase2: SRC stage
 
@@ -70,6 +72,7 @@ const usefileMixin = () => {
 
     _cameraBox.value = false;
 
+    _fileAsString.value = [];
     _fileAsSRC.value = [];
     _fileAsRaw.value = [];
 
@@ -85,12 +88,27 @@ const usefileMixin = () => {
       // await _SRCDelOps(SRCIndex)
       _fileAsSRC.value.splice(SRCIndex, 1); //remove from display
       _fileAsRaw.value.splice(SRCIndex, 1); //remove from file_tobe uploaded
+      _fileAsSRCIndex.value = 0;
+
     } else {
       _fileAsSRCIndex.value = SRCIndex;
     }
     return true;
   }
+  async function _fileAsSRCOpsCall2(SRCIndex) {
+    //__thisIndex.value=index
+    if (_fileAsSRCOps.value ?? false) {
+      //if delete operations is checked(or calling for selecting)
+      // await _SRCDelOps(SRCIndex)
+      _fileAsString.value.splice(SRCIndex, 1); //remove from display
+      // _fileAsRaw.value.splice(SRCIndex, 1); //remove from file_tobe uploaded
+      _fileAsSRCIndex.value = 0;
 
+    } else {
+      _fileAsSRCIndex.value = SRCIndex;
+    }
+    return true;
+  }
   let _listNavDevices = ref({});
 
   let _listCameraSource = ref([]);
@@ -130,7 +148,7 @@ const usefileMixin = () => {
 
       try {
         // Request permission to access the user's camera
-        _thisMedia.value =  navigator.mediaDevices 
+        _thisMedia.value =  navigator.mediaDevices
         console.error(_thisMedia.value,"Navigating mediaDevice.op");
         if (_thisMedia.value ?? false) {
           _listNavDevices.value["getUserMedia"] =
@@ -337,6 +355,7 @@ const usefileMixin = () => {
     _cameraBox,
     _fileSourceFoCam,
     _fileAsSRC,
+    _fileAsString,
     _fileAsRaw,
 
     _liveFeedSRC,
@@ -352,6 +371,7 @@ const usefileMixin = () => {
     //--------
     _fileAsSRCOps,
     _fileAsSRCOpsCall,
+    _fileAsSRCOpsCall2,
     //-----------
     _resetFileSource,
     //-----

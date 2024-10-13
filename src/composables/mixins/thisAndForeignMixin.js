@@ -2,6 +2,7 @@ import { ref, reactive, computed, watch, onUnmounted, onMounted } from "vue";
 
 // Define your mixin-like functionality
 const useThisMixin = () => {
+  let __thisFileAttribute =ref(null)
   // Define reactive state
   let thisOps = ref({
     hover: false,
@@ -42,6 +43,8 @@ const useThisMixin = () => {
   //--------------------CONTENTING (CREATING  && EDITING....)====ENDS
 
   return {
+    __thisFileAttribute,
+    //--
     thisOps,
     thissubOpsStatus,
     // _this,

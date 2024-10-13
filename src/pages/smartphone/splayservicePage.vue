@@ -1,425 +1,18 @@
 <template>
-  <template v-if="__thisBox && (_this ?? false)">
-    <dialogOne
-      :isOpen="__thisBox"
-      @emitClick0="__thisBox = $event"
-      class="fit shadow-5 column"
-    >
-      <q-card style="min-width: 30vw; width: 90vw" v-if="_this ?? false">
-        <!----HEADER-TOP Begin-->
-        <q-linear-progress :value="0.8" color="orange" />
+  <template v-if="__thisBox ">
 
-        <q-card-section class="col column items-center no-wrap q-pa-none">
-          <div class="col q-pa-none q-ma-none bg-green">
-            <q-img
-              loading="lazy"
-              class=""
-              style="aspect-ratio: 1/1; min-width: 80vw"
-              :src="
-                _fileAttributeName
-                  ? _fileAsSRC[_fileAsSRCIndex]
-                  : _this['saleitgr'][_fileAsSRCIndex]
-              "
-            >
-              <div class="absolute-full transparent column justify-between">
-                <div class="row q-ma-sm">
-                  <div class="col fontdstyle text-dark"></div>
-                  <div class="column col-auto q-gutter-xs" style="width: 5vw">
-                    <q-item-label class="text-orange">Upload Via </q-item-label>
-                    <input
-                      type="file"
-                      multiple
-                      ref="openFolder"
-                      style="display: none"
-                      @change="_fileSourceFolder($event, 'saleitgr')"
-                    />
-                    <q-btn
-                      class="bg-orange"
-                      icon="folder"
-                      @click="$refs.openFolder.click()"
-                      :dense="true"
-                    />
-                    <q-btn
-                      class="bg-orange"
-                      icon="add_a_photo"
-                      @click="_cameraInstance._openCamera('saleitgr')"
-                      :dense="true"
-                    />
-                  </div>
-                </div>
+    <thisCard :__thisOps :_this :_pageSettings :__thisOpsStatus :__thisFileAttribute
 
-                <!-- <div class="flex fontestyle">
-                <q-item-label> {{ _this["header"] }}</q-item-label>
-              </div> -->
+    :thisSchemaFile_Rec="thisSchemaFile"
+    :thisSchemaPath_Rec="thisSchemaPath"
 
-                <div class="col row justify-between q-py-sm">
-                  <div
-                    class="self-end justify-left col-auto"
-                    style="max-width: 4vw"
-                  >
-                    <div v-if="__thisOps == 'CreateRowItem'">
-                      <q-btn
-                        no-caps
-                        :dense="true"
-                        :loading="__thisOpsStatus"
-                        class="apple-button"
-                        size="sm"
-                        flat
-                        :label="_pageSettings.language ? 'ሽጥ' : 'Create'"
-                        @click="_thisValidator('Create_this')"
-                      >
-                        <!--template v-slot:__thisOpsStatus>
-                                                      uploading...
-                                                      <q-spinner-radio class="on-left" />
-                                                      uploading...
-                                                    </template-->
-                      </q-btn>
-                    </div>
+   @close="__thisBox = $event"
+   @Update_this="Update_this()"
+   @Create_this="Create_this()"
+   >
 
-                    <div v-else>
-                      <q-btn
-                        flat
-                        :loading="__thisOpsStatus"
-                        class="bg-orange shadow-7 fontbstyle q-pa-xs"
-                        color="white"
-                        size="sm"
-                        :label="
-                          _pageSettings.language
-                            ? 'ሽጥ'
-                            : 'Update Product & Service'
-                        "
-                        icon="upload"
-                        @click="_thisValidator('Update_this')"
-                      />
-                    </div>
-                  </div>
+    </thisCard>
 
-                  <div
-                    class="self-end justify-right col-grow column q-pa-xs"
-                    v-if="_fileAsSRC?.length ?? false"
-                    style="max-height: 100%"
-                  >
-                    <div
-                      class="self-end justify-right col row bg-orange fontastyle q-pa-xs"
-                      v-if="_fileAsSRC.length > 1"
-                    >
-                      <q-checkbox
-                        left-label
-                        v-model="_fileAsSRCOps"
-                        :label="_pageSettings.language ? 'መደምሰሲ' : 'Delete'"
-                        checked-icon="task_alt"
-                        unchecked-icon="highlight_off"
-                        :dense="true"
-                      />
-                      <q-tooltip class="fontastyle bg-black text-white"
-                        >Check Enable Delete & Click The Image ?</q-tooltip
-                      >
-                    </div>
-
-                    <div
-                      class="self-end justify-right col row shadow-1 q-pa-sm transparent"
-                      style="
-                        max-height: 100%;
-                        max-width: 100%;
-                        position: absolute;
-                        top: 100px;
-                        left: 25px;
-                        width: 5vw;
-                        height: 5vh;
-                      "
-                      v-if="_fileAttributeName ?? false"
-                    >
-                      <div
-                        v-for="(item, fileIndx) in _fileAsSRC"
-                        :key="fileIndx"
-                        class="col row q-px-xs"
-                        style="
-                          position: absolute;
-                          right: 2px;
-                          width: 5vw;
-                          height: 5vh;
-                        "
-                        :style="`bottom:${fileIndx * 25}px`"
-                      >
-                        <q-btn
-                          round
-                          @click="_fileAsSRCOpsCall(fileIndx)"
-                          class="col-auto"
-                        >
-                          <q-avatar size="42px">
-                            <img :src="item" />
-                          </q-avatar>
-                        </q-btn>
-                      </div>
-                    </div>
-                    <div
-                      class="self-end justify-right col row shadow-5 q-pa-xs"
-                      style="max-height: 100%; max-width: 100%"
-                      v-else
-                    >
-                      <div
-                        v-for="(item, fileIndx) in _this['saleitgr']"
-                        :key="fileIndx"
-                        class="col row inset-shadow q-px-xs"
-                        style="max-height: 100%"
-                      >
-                        <q-btn
-                          round
-                          @click="_fileAsSRCOpsCall(fileIndx)"
-                          class="col-auto"
-                        >
-                          <q-avatar size="42px">
-                            <img :src="item" />
-                          </q-avatar>
-                        </q-btn>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </q-img>
-          </div>
-        </q-card-section>
-
-        <q-card-section
-          class="column text-dark fontbstyle"
-          v-if="__thisOps == 'CreateRowItem'"
-        >
-          <fieldset
-            class="col fontastyle q-gutter-xs column"
-            style="border-radius: 5px; border: 0px solid white"
-          >
-            <div class="row q-gutter-md">
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  Quantity
-
-                  <div
-                    v-if="_debugObj['quantity']"
-                    class="boxvalidStyle text-red"
-                  >
-                    ( {{ _debugObj["quantity"] }})
-                  </div>
-                </legend>
-                <input
-                  type="Number"
-                  class="fontestyle boxbstyle"
-                  v-model="_this['quantity']"
-                  @update:model-value="
-                    _validateThis('quantity', _this['quantity'])
-                  "
-                  style="max-width: 95%"
-                />
-              </fieldset>
-
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  Price
-
-                  <div v-if="_debugObj['price']" class="boxvalidStyle text-red">
-                    ( {{ _debugObj["price"] }})
-                  </div>
-                </legend>
-                <input
-                  type="Number"
-                  class="col fontestyle boxbstyle"
-                  v-model="_this['price']"
-                  @input="_validateThis('price', _this['price'])"
-                  @update:model-value="_validateThis('price', _this['price'])"
-                  style="max-width: 95%"
-                />
-              </fieldset>
-
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  {{ _pageSettings.language ? "ምድብ" : "currency" }}
-
-                  <div
-                    v-if="_debugObj['currency']"
-                    class="boxvalidStyle text-red"
-                  >
-                    ( {{ _debugObj["currency"] }})
-                  </div>
-                </legend>
-                <select
-                  outlined
-                  class="col-md col-xs q-pa-none boxbstyle"
-                  color="purple-12"
-                  v-model="_this['currency']"
-                  @input="_validateThis('currency', _this['currency'])"
-                  style="max-width: 95%"
-                >
-                  <option
-                    v-for="key in _this_Schema['currency']['enum']"
-                    :key="key"
-                  >
-                    {{ key }}
-                  </option>
-                </select>
-              </fieldset>
-            </div>
-
-            <div>
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  <p>{{ _pageSettings.language ? "ምድብ" : "catagory" }}</p>
-
-                  <div
-                    v-if="_debugObj['catagory']"
-                    class="boxvalidStyle text-red"
-                  >
-                    ( {{ _debugObj["catagory"] }})
-                  </div>
-                </legend>
-                <select
-                  outlined
-                  class="col-md col-xs q-pa-none boxbstyle"
-                  style=""
-                  color="purple-12"
-                  v-model="_this['catagory']"
-                  @input="_validateThis('catagory', _this['catagory'])"
-                >
-                  <option
-                    v-for="key in _this_Schema['catagory']['enum']"
-                    :key="key"
-                  >
-                    {{ key }}
-                  </option>
-                </select>
-              </fieldset>
-            </div>
-
-            <div v-if="['Vehicles', 'Households'].includes(_this['catagory'])">
-              <q-radio
-                keep-color
-                left-label
-                size="md"
-                v-model="_this['usage']"
-                :val="usage"
-                :label="usage"
-                color="black"
-                v-for="usage in _this_Schema['usage']['enum']"
-                :key="usage"
-                @update:model-value="_validateThis('usage', _this['usage'])"
-              />
-              <div v-if="_debugObj['usage']" class="boxvalidStyle">
-                {{ _debugObj["usage"] }}
-              </div>
-            </div>
-
-            <q-item-label caption> What are You Saling !</q-item-label>
-            <q-separator inset />
-          </fieldset>
-        </q-card-section>
-
-        <q-card-section class="column text-dark bg-white fontbstyle" v-else>
-          <fieldset
-            class="col fontastyle q-gutter-xs"
-            style="border-radius: 5px; border: 0px solid white"
-          >
-            <!--legend @click="_formsMeta.description = ! _formsMeta.description" class=" text-weight-bolder">
-                 Descriptions   :rules="[_valRules]"
-             </legend -->
-            <div class="row q-gutter-sm">
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  Quantity
-
-                  <div
-                    v-if="_debugObj['quantity']"
-                    class="boxvalidStyle text-red"
-                  >
-                    ( {{ _debugObj["quantity"] }})
-                  </div>
-                </legend>
-                <input
-                  type="Number"
-                  class="fontestyle boxbstyle"
-                  v-model="_this['quantity']"
-                  @update:model-value="
-                    _validateThis('quantity', _this['quantity'])
-                  "
-                  style="max-width: 95%"
-                />
-              </fieldset>
-
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  Price
-
-                  <div v-if="_debugObj['price']" class="boxvalidStyle text-red">
-                    ( {{ _debugObj["price"] }})
-                  </div>
-                </legend>
-                <input
-                  type="Number"
-                  class="col fontestyle boxbstyle"
-                  v-model="_this['price']"
-                  @input="_validateThis('price', _this['price'])"
-                  @update:model-value="_validateThis('price', _this['price'])"
-                  style="max-width: 95%"
-                />
-              </fieldset>
-              <fieldset class="col" style="border: 0px solid black">
-                <legend>
-                  New Price
-
-                  <div
-                    v-if="_debugObj['discount']"
-                    class="boxvalidStyle text-red"
-                  >
-                    ( {{ _debugObj["discount"] }})
-                  </div>
-                </legend>
-                <input
-                  type="Number"
-                  class="col fontestyle boxbstyle"
-                  v-model="_this['discount']"
-                  @input="_validateThis('discount', _this['discount'])"
-                  @update:model-value="
-                    _validateThis('discount', _this['discount'])
-                  "
-                  style="max-width: 95%"
-                />
-                (Happy Hours Price)
-              </fieldset>
-            </div>
-
-            <q-separator inset />
-            <q-input
-              class="col-md col-xs q-pa-sm"
-              style=""
-              outlined
-              v-model="_this['header']"
-              label="Name"
-              @update:model-value="_validateThis('header', _this['header'])"
-              stack-label
-            >
-              <div v-if="_debugObj['header']" class="boxvalidStyle">
-                {{ _debugObj["header"] }}
-              </div>
-            </q-input>
-            <q-input
-              outlined
-              v-model="_this['content']"
-              @update:model-value="_validateThis('content', _this['content'])"
-              label="decscriptions"
-              style=""
-              filled
-              autogrow
-            >
-              <div v-if="_debugObj['content']" class="boxvalidStyle">
-                {{ _debugObj["content"] }}
-              </div>
-            </q-input>
-
-            <q-separator inset />
-            <q-item-label caption> Notes to be displayed !</q-item-label>
-            <q-separator inset />
-          </fieldset>
-        </q-card-section>
-      </q-card>
-    </dialogOne>
   </template>
 
   <template v-if="__thisOps == 'details' && __thisOpsStatus == 'selected'">
@@ -1479,6 +1072,7 @@ import dialogOne from "src/components/dialogs/dialogOne.vue";
 // const __thissubOps = ref(null);
 
 import debugCard from "@/components/debugCards.vue";
+import thisCard from "@/components/cards/thisCard.vue";
 import useDebugMixin from "@/composables/mixins/debugMixin";
 const {
   Loadingpage,
@@ -1564,6 +1158,8 @@ let Objprops = defineProps({
 
 import useThisMixin from "src/composables/mixins/thisAndForeignMixin";
 var {
+  __thisFileAttribute,
+
   //----------//-- settings
   _is_modelOneOwner,
   _is_this_netPrice,
@@ -2131,6 +1727,7 @@ async function set_this(Ops = null, rowIndex = null, stopSync = null) {
       _this.value = Object.assign({}, _this_Rows.value[rowIndex]);
     } catch {}
   }
+  __thisFileAttribute.value ='saleitgr'
   return true;
 }
 
@@ -2486,7 +2083,7 @@ let _this_foreignOperation = {
       timerError(500, "Error Creating", "");
       return false;
     }
-    timerDone(5000, _store == "buy" ? "Ordered" : "ADD To Cart", "");
+    timerDone(5000, _store == "buy" ? "Ordered" : "Saved", "");
 
     _orderBox.value.push(_clientResp.data.data["id"] ?? null);
     _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
@@ -2712,35 +2309,10 @@ let _this_ActiveOperation = {
 //==========================ROW Confirming &&& Submitting==============
 
 //--------------------------------------METHODS & PROCESS
-async function _thisValidator(formtype) {
-  let _isCompleted = Object.values(_debugObj.value).every(
-    (value) => value == null
-  );
-  if (!_isCompleted) {
-    return false;
-  } else if (!_this.value.price) {
-    return false;
-  }
-  //-----
-  formtype == "Create_this" ? Create_this() : Update_this();
-  return true;
-}
-
 async function Create_this() {
   //UpdateRowItem User DAta with no graphic to update
   //---set--loading row operation
   __thisOpsStatus.value = true;
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  let _fileExistance = _fileAttributeName.value ?? false;
-  if (_fileExistance) {
-    //_this.value['file_']={'files':_fileExistance}
-    _this.value[_fileExistance] = _fileAsRaw.value;
-    if (typeof _fileAsRaw.value == "object") {
-      _this.value["file_"] = { files: _fileExistance };
-    } else {
-      _this.value["file_"] = { file: _fileExistance };
-    }
-  }
   //--------set Operational parameters
   _this.value["thisOps"] = __thisOps;
   _this.value["thisSubOps"] = "new";
@@ -2749,10 +2321,10 @@ async function Create_this() {
     .then(async (response) => {
       timerLoadevent({ createData: 1 }, 1, "Updating...");
       if (response) {
-        timerDone(5000, "Item Created", "Succefully Created");
-        __thisBox.value = false;
-        this_Query("userID", Objprops._profile.id);
-        // return router.push("/play/MyServices");
+        // timerDone(5000, "Item Created", "Succefully Created");
+        // __thisBox.value = false;
+        // this_Query("userID", Objprops._profile.id);
+        return router.push("/play/MyServices");
       } else {
       }
       __thisOpsStatus.value = false;
@@ -2773,16 +2345,6 @@ async function Update_this() {
   //---set--loading row operation
   __thisOpsStatus.value = true;
   //-------------
-  let _fileExistance = _fileAttributeName.value ?? false;
-  if (_fileExistance) {
-    //_this.value['file_']={'files':_fileExistance}
-    _this.value[_fileExistance] = _fileAsRaw.value;
-    if (typeof _fileAsRaw.value == "object") {
-      _this.value["file_"] = { files: _fileExistance };
-    } else {
-      _this.value["file_"] = { file: _fileExistance };
-    }
-  }
   //----------set Operational parameters
   _this.value["thisOps"] = __thisOps;
   _this.value["thisSubOps"] = "update";

@@ -153,7 +153,7 @@ async function authenticate(req, res, next) {
   req.location = { lat: _header.lat ?? "", long: _header.long ?? "" };
 
   console.log(`Ending MWare UserID = ${_userID} && Acckey = ${_issID} \n`);
-
+console.log('\n Lat : ',_header.lat ?? false)
   next();
   return true;
 }

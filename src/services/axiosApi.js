@@ -27,21 +27,21 @@ const procApiWrap = {
 async function _gettime() {
   return new Date();
 }
-
-function request(method) {
+ function request(method) {
   return async (url, body = null, paramObj = {}) => {
     let _modelName = url.split("/")[2];
 
-    console.log("API Request ", url, _modelName);
 
     var requestOptions = {
       method: method,
-      headers: await requestHeader(_modelName),
+      headers: {},
       params: paramObj,
     };
+    await requestHeader(_modelName).then((h)=>requestOptions['headers'] =h)
     requestOptions.headers["Content-Type"] = "application/json";
     requestOptions.params["timestamp"] = await _gettime();
     //console.log(requestOptions,'thisclirequestOps')
+    console.log("API Request ", url, _modelName,requestOptions);
 
     if (body != null) {
       let fileObject = body["file_"] ?? false;
@@ -179,12 +179,8 @@ async function ErrorHandler(e) {
 //--------------------------------------------Helpers
 async function requestHeader(_model = "") {
   //Inject Header
-  console.log(
-    "\n Inject Headers Value as \n Model Name =",
-    _model ?? "No Model Name"
-  );
+
   var _reqHeaders = {}; //_reqHeader.value ?? {}
-  _reqHeaders["Test"] = "WooW";
   //_reqHeader['Accept']= ''//text/plain, Content types that are acceptable for the response {let it default}
   //_reqHeader['Content-Type']='' //gzip, deflate
   //_reqHeaders['Accept-Encoding']=''
@@ -197,7 +193,10 @@ async function requestHeader(_model = "") {
     _reqHeaders["lat"] = _geolat;
     _reqHeaders["long"] = _geolong;
   }
-  console.log(_geolat, _geolong);
+  console.log(
+    "\n Inject Headers Value as \n Model Name =",
+    _reqHeaders
+  );
   return _reqHeaders ?? {};
 }
 

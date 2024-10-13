@@ -300,6 +300,10 @@ router.get(modelIName + "s", async (req, res) => {
   //--------------------
   let reqParams = req.query ?? req.params ?? {};
   //------------------------
+  if (location) {
+    reqParams["lat"] = location.lat ?? "";
+    reqParams["long"] = location.long ?? "";
+  }
   let [
     findBy = [],
     returnWat = [],
@@ -309,10 +313,7 @@ router.get(modelIName + "s", async (req, res) => {
   ] = await _getdeleteParams(reqParams);
   // if(!Object.keys(findBy).length){return res.status(404).send({ message: "NullData(P) Received." });}
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
-  if (location) {
-    reqParams["lat"] = location.lat ?? "";
-    reqParams["long"] = location.long ?? "";
-  }
+
   //------------
   if (reqParams["trend"] ?? false) {
     //sorting By ( createdDate / TrendScore)
@@ -353,6 +354,10 @@ router.get(modelIName, async (req, res) => {
   //--------------------
   let reqParams = req.query ?? req.params ?? {};
   //------------------------
+  if (location) {
+    reqParams["lat"] = location.lat ?? "";
+    reqParams["long"] = location.long ?? "";
+  }
   let [
     findBy = [],
     returnWat = [],
@@ -364,10 +369,7 @@ router.get(modelIName, async (req, res) => {
     return res.status(404).send({ message: "NullData(P) Received." });
   }
   // findBy.push({'createdAt':{$gt:(new Date().getFullYear)-1}})  //Searching Queries (Period) ++
-  if (location) {
-    reqParams["lat"] = location.lat ?? "";
-    reqParams["long"] = location.long ?? "";
-  }
+
   //------------
   // let sortBy = {};
   if (reqParams["trend"] ?? false) {

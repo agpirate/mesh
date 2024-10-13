@@ -66,6 +66,7 @@ export async function _getdeleteParams(reqParams = {}) {
 }
 
 const userWeightDegree = 3;
+let geoDictionary = { nearMe: 5, myCity: 3, myCountry: 1, off: 0 };
 async function _queryBuilder(params = {}) {
   //JSON.parse(params);
   let searchQueries = []; //Initialize the Query Object
@@ -175,8 +176,7 @@ async function _queryBuilder(params = {}) {
       console.log("\n Error Formating Pagination ID ...");
     }
   }
-  if (geoSearch != "off") {
-    let geoDictionary = { nearMe: 7, myCity: 5, myCountry: 0, off: 0 };
+  if (geoSearch != "off" && (params["lat"] ?? false)) {
     let geoDegree = geoDictionary[geoSearch];
     searchQueries.push({
       $expr: {
@@ -194,6 +194,7 @@ async function _queryBuilder(params = {}) {
         },
       },
     });
+    // console.log('\ngeoSearch Init =>,',params.lat,params.long)
   }
   //------Recheck Queries Object(for null or error) && Filter Query Objects
   if (searchQueries.length) {
@@ -204,6 +205,6 @@ async function _queryBuilder(params = {}) {
     searchQueries = [{}];
   }
   // }
-  console.log("\nYield Query \n", searchQueries);
+  console.log("\nYield Query \n", searchQueries,'\n => DBs Search');
   return searchQueries;
 }

@@ -4,9 +4,8 @@
 
   <template v-if="__thisBox ">
 
-    <thisCard :__thisOps :_this :_pageSettings :__thisOpsStatus
+    <thisCard :__thisOps :_this :_pageSettings :__thisOpsStatus :__thisFileAttribute
 
-    :fileAttributeName_Rec="fileAttributeName"
     :thisSchemaFile_Rec="thisSchemaFile"
     :thisSchemaPath_Rec="thisSchemaPath"
 
@@ -288,7 +287,7 @@
             </div>
           </div>
 
-          <div style="height: 500px; max-width: 30vw; overflow-y: scroll">
+          <div style="height: 500px; overflow-y: scroll">
             <div
               class="cardPopDetails-title"
               style="width: 50%; overflow: hidden"
@@ -524,7 +523,7 @@
             :props="props"
             class="col-auto column q-px-none bg-orange"
             style="position: fixed; z-index: 100; width: 100%"
-            :style="isScrolledUp ? 'top:0vh' : 'top:50px;padding-top:4px'"
+            :style="isScrolledUp ? 'top:0vh' : 'top:57px;padding-top:4px'"
           >
             <div
               class="scroll-menu"
@@ -789,6 +788,10 @@
                           style="z-index: 99"
                         />
                       </div>
+
+
+
+
                     </q-img>
 
                     <div
@@ -884,16 +887,7 @@
                             </q-btn>
                           </div>
 
-                          <div class="row" style="padding-right: 5%">
-                            <q-item-label
-                              class="boxbstyle bg-cyan"
-                              v-if="_orderBox.includes(props.row.id)"
-                            >
-                              Added to cart
-                            </q-item-label>
-                            <!--div v-if="props.row.buy =='buy' ?? false" style="color:orange"> Already Bought </div>
-                                                  <div v-else> Added to cart </div-->
-                          </div>
+
                         </q-item>
 
                         <q-item
@@ -930,10 +924,12 @@
 
                             <q-item-section
                               class="row col-auto q-px-xs saleitContentOps-Glass"
+                              style="margin:5px;"
                             >
                               <!--  -->
                               <div
                                 class="col-auto fontastyle row no-wrap q-gutter-sm"
+                                style="padding:10px;"
                               >
                                 <q-btn
                                   size="md"
@@ -957,17 +953,26 @@
                                 />
                                 <q-btn
                                   class="col-grow"
-                                  label="Add to Cart"
+                                  label="Carted"
                                   no-caps
-                                  color="black"
-                                  @click="
-                                    _this_ActiveOperation._toCart(
-                                      props.row.id,
-                                      'clients',
-                                      'create'
-                                    )
-                                  "
+                                  style="background-color:black;color:orange"
+
+                                  v-if="_orderBox.includes(props.row.id)"
                                 />
+                                <q-btn
+                                class="col-grow"
+                                label="Add to Cart"
+                                no-caps
+                                color="black"
+                                @click="
+                                  _this_ActiveOperation._toCart(
+                                    props.row.id,
+                                    'clients',
+                                    'create'
+                                  )
+                                "
+                                v-else
+                              />
                               </div>
 
                               <div
@@ -1903,7 +1908,7 @@
               backdrop-filter: blur(10000px);
               width: 100%;
             "
-            :style="isScrolledUp ? 'top:0vh' : 'top:50px;padding-top:0px'"
+            :style="isScrolledUp ? 'top:0vh' : 'top:57px;padding-top:0px'"
           >
             <div
               class="scroll-menu"
@@ -2372,6 +2377,7 @@ let Objprops = defineProps({
 
 import useThisMixin from "src/composables/mixins/thisAndForeignMixin";
 var {
+  __thisFileAttribute,
   thisOps,
   thissubOpsStatus,
   //----------//------- settings
@@ -2916,6 +2922,7 @@ async function set_this(Ops = null, rowIndex = null, stopSync = null) {
       _this.value = Object.assign({}, _this_Rows.value[rowIndex]);
     } catch {}
   }
+  __thisFileAttribute.value ='saleitgr'
   return true;
 }
 
@@ -3251,7 +3258,7 @@ let _this_foreignOperation = {
       timerError(500, "Error Creating", "");
       return false;
     }
-    timerDone(5000, _store == "buy" ? "Ordered" : "ADD To Cart", "");
+    timerDone(5000, _store == "buy" ? "Ordered" : "Saved", "");
 
     _orderBox.value.push(_clientResp.data.data["id"] ?? null);
     _this_Rows.value[__thisIndex.value] = _clientResp.data.data;
@@ -3476,35 +3483,12 @@ let _this_ActiveOperation = {
 //==========================ROW Confirming &&& Submitting==============
 
 //--------------------------------------METHODS & PROCESS
-async function _thisValidator(formtype) {
-  let _isCompleted = Object.values(_debugObj.value).every(
-    (value) => value == null
-  );
-  if (!_isCompleted) {
-    return false;
-  } else if (!_this.value.price) {
-    return false;
-  }
-  //-----
-  formtype == "Create_this" ? Create_this() : Update_this();
-  return true;
-}
+
 
 async function Create_this() {
   //UpdateRowItem User DAta with no graphic to update
   //---set--loading row operation
   __thisOpsStatus.value = true;
-  //is File Encapsulated ( if so ) ... extract the file by choosing ( either it was from folder or from camera_directlly )
-  let _fileExistance = _fileAttributeName.value ?? false;
-  if (_fileExistance) {
-    //_this.value['file_']={'files':_fileExistance}
-    _this.value[_fileExistance] = _fileAsRaw.value;
-    if (typeof _fileAsRaw.value == "object") {
-      _this.value["file_"] = { files: _fileExistance };
-    } else {
-      _this.value["file_"] = { file: _fileExistance };
-    }
-  }
   //--------set Operational parameters
   _this.value["thisOps"] = __thisOps;
   _this.value["thisSubOps"] = "new";
@@ -3537,16 +3521,6 @@ async function Update_this() {
   //---set--loading row operation
   __thisOpsStatus.value = true;
   //-------------
-  let _fileExistance = _fileAttributeName.value ?? false;
-  if (_fileExistance) {
-    //_this.value['file_']={'files':_fileExistance}
-    _this.value[_fileExistance] = _fileAsRaw.value;
-    if (typeof _fileAsRaw.value == "object") {
-      _this.value["file_"] = { files: _fileExistance };
-    } else {
-      _this.value["file_"] = { file: _fileExistance };
-    }
-  }
   //----------set Operational parameters
   _this.value["thisOps"] = __thisOps;
   _this.value["thisSubOps"] = "update";
