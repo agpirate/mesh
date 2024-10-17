@@ -1309,7 +1309,7 @@ import { saleitClientStore } from "@/stores/dataStores/saleitClientStore"; //sal
 import { salechatStore } from "@/stores/dataStores/salechatStore"; //saleit Store ( Main Store)
 
 import { useRowFilter } from "@/composables/filters/cartfilter";
-import { screenSize } from "src/services/utils";
+import { screenSize } from "src/utils/utils.js";
 var {
   totalPrice,
   storeItems,

@@ -86,11 +86,11 @@ module.exports = configure(function (ctx) {
           "http://" +
           (ctx.dev ? server_IP[0] + ":9100" : server_IP[1] + ":8080"),
         //-----------------------------
-        Client_IPI: ctx.dev ? client_IP[0] : client_IP[1],
+        Client_IPI: ctx.dev ? client_IP[0] : client_IP[2],
         Client_PORTI: ctx.dev ? client_PORT[0] : client_PORT[1],
         Client_IP_PORT:
           "http://" +
-          (ctx.dev ? client_IP[0] + ":9100" : client_IP[1] + ":8080"),
+          (ctx.dev ? client_IP[0] + ":9100" : client_IP[2] + ":8080"),
 
         Mongose_IPI: "127.0.0.1",
         Mongose_PORTI: "27017",

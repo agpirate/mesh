@@ -225,7 +225,6 @@ router.delete(modelIName, async (req, res) => {
   }
   //------------
   // reqData['userID']=userID
-  console.log("\nClients Response Creating New\n");
   reqParams["userID"] = userID;
   try {
     return await updateSaleit(reqParams, operation, deleteOperation).then(

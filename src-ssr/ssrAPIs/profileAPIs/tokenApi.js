@@ -2,6 +2,7 @@ import {
   profileModel,
   threeaModel,
 } from "../../backendCore/models/profileModels.js";
+import {_checkToken} from "app/src-ssr/hooks/useAuth"
 
 import { mongoose } from "mongoose";
 var ObjectId = mongoose.Types.ObjectId;
@@ -25,62 +26,34 @@ router.post("/login", async (req, res) => {
   //---------------------Grap User Data of Request_Header + Body
   let reqData = req.body ?? {};
   let authKeys = Object.keys(reqData);
+  let findBy = {};
+  if(reqData.token ?? false){
+   let [userID,accKey] = await _checkToken(reqData.token)
+   if(userID){
+    findBy["_id"] = new ObjectId(userID);
+   }
+  }else{
   //createKey_parameters at leastOne Existance ?
   const exists = createKey.every((item) => new Set(authKeys).has(item));
   if (!authKeys.length && !exists) {
     return res.status(404).send("createKey", "is Null");
   }
-
-  let findBy = {};
-  for (let k in createKey) {
-    let key = createKey[k];
-    let value = reqData[key] ?? false;
-    console.log(key, "\n", createKey, _objectID.includes(key), value);
-    if (value) {
-      if (_objectID.includes(key)) {
-        try {
-          findBy["_id"] = new ObjectId(value);
-        } catch {}
-      } else {
-        findBy[key] = key == "phone" && value.length == 10 ? value : value;
-      }
-    }
+  findBy['phone'] =  reqData['phone']
   }
   delete findBy["phoneCode"];
-  console.log(findBy, "findbyyyyyy\n\n", reqData);
-  //createKey_parameters casting and build findQuery
-  // if(reqData[createKey[0]] ?? false){ findBy[createKey[0]] = reqData[createKey[0]]}
-  // else{findBy['_id'] = new ObjectId(reqData[createKey[1]])}
-
   //-------------Find User On Database
   try {
     return await profileModel
       .findOne(findBy)
       .then(async (modelData) => {
-        console.log(
-          `\n\n User Authentication Profile == ${
-            modelData ?? null
-          },, for userID = \n`
-        );
-        console.log(findBy);
         // changing mondodb object(.toObject() ; .lean()) will not redefine the << _id key to id >> automatic
         if (modelData && Object.keys(modelData).length) {
-          console.log(
-            `\n User Acckey  == ${modelData.acckey ?? false}  <= ${
-              modelData.acckey ?? false ? "Yes" : "No"
-            } < == >User Already Existed ?\n`
-          );
           //------user Already Registered..Then Check for Roles use acckey
           let queryID = new ObjectId(modelData.acckey);
           //--------------Search For Role and Permissions----Start
           return await threeaModel
             .findOne({ _id: queryID })
             .then((_rolePermisions) => {
-              console.log(
-                `\n Checked :_ User Acckey / ID == ${
-                  _rolePermisions?.id ?? false
-                }  <= < == >User Already Existed ?\n`
-              );
 
               if (_rolePermisions) {
                 modelData = modelData.toObject() ?? false; //lean()
@@ -102,9 +75,7 @@ router.post("/login", async (req, res) => {
                     .status(501)
                     .json({ data: "Token Generating Error" });
                 }
-                // Function to generate refresh token
-                // const generateRefreshToken = jwt.sign({ id: modelData['_id'],userId: modelData['_id'], }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
-                //---set Token as Response
+  //---set Token as Response
                 const maxAge_ = 24 * 60 * 60 * 1000; // this need to match Token "expiresIn"
                 res.setHeader("authorization", `Bearer ${token}`); //To send the token in the Authorization header, the client needs to include it in subsequent requests:
                 res.cookie("access_token", token, {
@@ -124,6 +95,7 @@ router.post("/login", async (req, res) => {
                 res.setHeader("role", _rolePermisions.profile.group ?? null); //Injecting new_attribute into mongodb(findOne or Obj)_ data is not good..best...In Header
                 ///console.log('User is Authenticated && Has Permissions of ===>',_rolePermisions)
                 modelData["acctype"] = _rolePermisions;
+                modelData["token"] = token;
                 modelData["id"] = modelData["_id"]; // changing mondodb object(.toObject() ; .lean()) will not redefine the << _id key to id >> automatic
                 console.log(
                   req.hostname,

@@ -326,7 +326,7 @@ import {
 import axios from "axios";
 import { toRaw } from "vue";
 import { useLocalStorage } from "@vueuse/core";
-import { screenSize } from "src/services/utils";
+import { screenSize } from "src/utils/utils";
 import {
   getCountry,
   getState,

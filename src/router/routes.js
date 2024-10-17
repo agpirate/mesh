@@ -1,4 +1,3 @@
-import _acctype from "src/hooks/_acctype";
 import { iservicei_Menu } from "src/composables/constVariables";
 
 //employee-saleit-asset-rawmaterial-goods-supplier-customer-monpay-mispay-statment
@@ -13,7 +12,6 @@ const routes = [
     meta: {
       _isauthenticated: false,
       _groups: false,
-      _modelGACWall: _acctype["saleit"],
     },
     children: [
       //-------------------------------
@@ -24,7 +22,6 @@ const routes = [
         meta: {
           _isauthenticated: false,
           _groups: false,
-          _modelGACWall: _acctype["saleit"],
         },
       },
 

@@ -102,7 +102,7 @@ export const profileStore = defineStore(STORE_NAME, () => {
 
     try {
       return await modalApi
-        .get(_suburl, requestOptions)
+        .get(API_URL, requestOptions)
         .then((response) => {
           console.log("Sale it Store \n", response.data);
           if (response.status == 200) {

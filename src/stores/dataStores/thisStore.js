@@ -1,25 +1,9 @@
 import { defineStore } from "pinia";
 import { ref, reactive, computed } from "vue";
-import axios from "axios";
-import { useLocalStorage, useSessionStorage } from "@vueuse/core";
-import { toRaw } from "vue";
+import {_getthismonth,_getthisyear} from "src/services/timeQuery";
 import { requestHeader, modalApi, procApiWrap } from "src/services/axiosApi.js";
-const _apiUrl = "/saleitapi";
-const _suburl = _apiUrl + "/this";
-const API_URL = process.env.Client_IP_PORT + _suburl; //const API_URL = `${import.meta.env.API_URL}/users`;
-
-//const $q = useQuasar();              //{[[[[   .get(   url,{params:{},headers:{}})  ]]]]}....received as obj_req.params || response.data/staus/
 
 const STORE_NAME = "thisStore";
-const SETTINGS_LOCAL_STORAGE_KEY = "settings";
-
-//-------------TimeBase Query_Helper
-import {
-  _getthismonth,
-  _getthisyear,
-  monthDataFilter,
-  yearDataFilter,
-} from "src/services/timeQuery";
 
 //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
 export const thisStore = defineStore(STORE_NAME, () => {
@@ -147,13 +131,7 @@ export const thisStore = defineStore(STORE_NAME, () => {
   }
 
   return {
-    //-----synchronize give (DATAs)
-    //asyncAnualData,
-    //asyncMonthData,
-    // asyncDatas,
-    //------------getter(computed) porting
-    //getyearDatas,
-    //getmonthDatas,
+
     getDatas,
     resultFounded,
     getresultFounded,

@@ -1397,7 +1397,7 @@ var showsideMenu = ref(false);
 
 
 import { exportFile, useQuasar, useMeta } from "quasar";
-import { screenSize } from "src/services/utils";
+import { screenSize } from "src/utils/utils.js";
 //import userProfile from "src/components/userProfile.vue"
 import { timeStore } from "src/stores/jstStores/serviceStore.js";
 import { useRouter } from "vue-router";
@@ -2004,7 +2004,7 @@ let _enroll = async () => {
       _thisOps.value = null;
       routeIt("MyServices", "MyServices", "saleitClient");
       return true;
-    }else{router.push('/')}
+    }else{}
   }
     _thisOps.value = null;
 

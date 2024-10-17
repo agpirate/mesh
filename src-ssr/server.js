@@ -80,7 +80,7 @@ export const create = ssrCreate((/* { ... } */) => {
   app.use(cookieParser());
   app.set("view engine", "ejs");
   //------------------- Incoming request body data setting and organizations (bodyparser middleware)
-  app.use(bodyParser.json());
+  app.use(bodyParser.json());//use JSON.parse(body.data) per request...& parsing null is error
   app.use(bodyParser.urlencoded({ extended: true }));
   //-------------------------serving statics
   //---------------serving statics

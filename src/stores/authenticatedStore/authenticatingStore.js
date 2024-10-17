@@ -4,17 +4,18 @@ import { ref, reactive, computed } from "vue";
 //const querystring = require("node:querystring"); //querystring.parse
 import setDHeaders from "src/composables/setHeaders";
 import { useLocalStorage, useSessionStorage } from "@vueuse/core";
+import {_setBrowserLogin_Data,
+  _checkEnrollment,_checkLogedCredentials,_checkLogin,_clearLogin} from "src/hooks/useAuth"
+
 //const $q = useQuasar();              //{[[[[   .get(   url,{params:{},headers:{}})  ]]]]}....received as obj_req.params || response.data/staus/
 
 import { requestHeader, procApiWrap } from "src/services/axiosApi.js";
 const _apiUrl = "/api";
 var _suburl = _apiUrl + "/login";
-var API_URL = process.env.Client_IP_PORT + _suburl; //const API_URL = `${import.meta.env.API_URL}/users`;
 
 import _localStorage from "src/services/storeService"; //_localStorage._clear()
 
 const STORE_NAME = "authenticatingStore";
-const SETTINGS_LOCAL_STORAGE_KEY = "settings";
 //--------------------------------------------Helpers
 //-------------RequestHeader_Helper
 //--------------------------------------------Helpers
@@ -37,91 +38,50 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
   let getLogisREgistered = computed(() => logisRegistered.value);
 
   //---------------------------
-
   function set_reqHeader(_header = null) {
     return true;
   }
 
   //action
-  async function setlogStatus(
-    _isRegistered = null,
-    user = null,
-    cookies = null,
-  ) {
+  async function _setStoreLogin_Data(_isRegistered = null,user = null ) {
     //set from use_request or find cached data
-
     if (_isRegistered ?? false) {
       let updatValue = _isRegistered ?? (false);
       logisRegistered.value = useLocalStorage("_isRegistered", updatValue);
     } else {
     }
-    console.log("loging UserData", user);
-    //storage for fast usage
+    //- even any store_pinia variable persiste it's value even on refresh && for more solid
+    //persistance use, the browser storage watched,updated from store_storage & variables
+    //useLocalStorage ( update,create new value in browsr store)
+    // && store_storage watch the key_browser_change && the variable too watch
     if (user && Object.keys(user).length) {
-      let _user = user; // useLocalStorage('user',user)
-      //logStatus.value.user =user
       logUser.value = useLocalStorage("user", user, { mergeDefaults: true });
-
-      try {
-        //--
-        useLocalStorage("userID", user["id"] ?? "");
-        //localStorage.setItem('phone',(user.phone ?? null))
-        // useLocalStorage('phone',user['phone']  ?? '')
-        //localStorage.setItem('acctype',(user.acctype ?? null))
-        useLocalStorage("acctype", user.acctype ?? "", { mergeDefaults: true });
-        //-----------
-        // useLocalStorage('geo.llat',user['geolocation'],{ mergeDefaults: true })
-        // useLocalStorage('geo.llong',user['geolocation']?.['long'] ?? '',{ mergeDefaults: true });
-
-        //------
-        // useSessionStorage('_iss',user.acctype ?? '') //------------
-        useSessionStorage("token", user["token"] ?? ""); //-------------
-        useSessionStorage("qw", user["queryWeight"]["1"]); //-------------
-        useSessionStorage("userID", user["id"] ?? ""); //-------------
-      } catch (e) {
-        console.log("Loging e", e, user.acckey);
-      }
     } else {
-      //-------store logStatus.value
       logUser.value = useLocalStorage("user", logUser.value);
     }
     return true;
   }
 
   async function clearlogStatus() {
-    _localStorage._clear();
-    // //changing storage value--> update store_values
-    useLocalStorage("_isRegistered", null);
-    useLocalStorage("user", null);
-    //storage for fast usage
-    useLocalStorage("userID", null);
-    _localStorage._clear("userID");
-
-    useLocalStorage("phone", null);
-    _localStorage._clear("phone");
-    // useLocalStorage('keyID',null)
-    useLocalStorage("_acctype", null);
-    //----------
+    //----- clear browser Data
+    await _clearLogin()
+    //----- clear the store_linked browser stores(that react to the variables too !!)
+    useLocalStorage("_isRegistered", null)
+    useLocalStorage("user", null)
     return true;
   }
-  ////////console.log('setLoges..........',logStatus.value)
-
-  //  setlogStatus(false,null,'austore')//reinitialize the storage values on refresh
-
   //---------------------AUTHENTICATE-----------------
-  let _rolingkey = ["phone", "id"]; //key for authenticating.. new Data
+  let _rolingkey = ["phone", "token",'id']; //key for authenticating.. new Data
   async function useLogin(formData = {}) {
-    let enrollInformation = _localStorage._get('enrolled')
-    formData = Object.assign(formData, (await _checkExistLogin()) ?? formData);
-    console.log("((1)) Incoming User/Storage Data " + formData);
+    formData = await _checkLogedCredentials(formData)
+    console.log("((1)) Incoming User/Storage Data 2" + formData);
+
     if ((formData[_rolingkey[0]] ?? formData[_rolingkey[1]]) == null) {
       return { status: false, data: "LogIn Keys :" + formData };
     }
+    let enrollInformation =await _checkEnrollment()
     //-------------Cleare Stores
-    await clearlogStatus();
-    // _localStorage._clear();
-    console.error("Clearing Storage");
-    console.log(formData);
+    await _clearLogin();
     try {
       return await procApiWrap
         .post(_suburl, formData)
@@ -129,7 +89,6 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
           let models = resp.data["acctype"] ?? false;
           console.log("((2)) Response User/Storage Data " + resp.data);
           if (resp.status && models) {
-            //Good Day....Data IS comings with .data .headers .Ok(200)_staus
             //-----
             resp.data["acctype"] = {};
             resp.data["group"] = models["group"] ?? "";
@@ -145,17 +104,13 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
                 );
               }
             }
-//---------
-            if(Boolean(enrollInformation)){
-              _localStorage._set('enrolled',enrollInformation)
+            //---------
+            console.log(enrollInformation,'stored Infor Enroll')
+            if(enrollInformation){
               resp.data.enrolled = true
-            }else if(resp.data?.enrolled ?? false){
-              _localStorage._set('enrolled',String(resp.data.enrolled ?? false))
-
             }
-
-            console.log('stored rolle ',enrollInformation,typeof enrollInformation)
-            await setlogStatus(true, resp.data, "true");
+            await _setStoreLogin_Data(true, resp.data, "true");
+            await _setBrowserLogin_Data(resp.data,enrollInformation)
           } else {
             // await clearlogStatus();
           }
@@ -171,19 +126,7 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
     }
   }
 
-  async function _checkExistLogin() {
-    //---this would hold inherited reactivity(assigning variable with reactive =reactive)
-    var _storageAuthenticated = Boolean(
-      useLocalStorage("_isRegistered").value ?? false
-    );
-    let _checkid = useLocalStorage("userID").value ?? null;
-    if (_storageAuthenticated && _checkid) {
-      //_isRegistered
-      return { id: _checkid };
-    }
-    return null;
-    //---------use Storage id && phone to check for realUserData
-  }
+
 
   return {
     getLogStatus,
@@ -191,7 +134,7 @@ export var authenticatingStore = defineStore(STORE_NAME, () => {
     getLogUser,
     //-----------
     set_reqHeader,
-    setlogStatus,
+    _setStoreLogin_Data,
     //--------------
     clearlogStatus,
     //asyncDatas,

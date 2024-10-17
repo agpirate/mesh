@@ -2,10 +2,10 @@ import {
   profileModel,
   threeaModel,
 } from "app/src-ssr/backendCore/models/profileModels";
+import {_checkToken} from "app/src-ssr/hooks/useAuth"
 import { mongoose } from "mongoose";
 //var Schema = mongoose.Schema,
 ObjectId = mongoose.Types.ObjectId;
-const jwt = require("jsonwebtoken");
 
 // Authentication middleware
 async function authenticate(req, res, next) {
@@ -68,20 +68,7 @@ async function authenticate(req, res, next) {
   var _userQuery = _header?.acckey ?? null; //_iss
 
   //----------process.env.TOKEN_SECRET
-  try {
-    const decoded = jwt.verify(_cookie, process.env.TOKEN_SECRET);
-    console.log(`Token Decoded For = \n`);
-    console.log(decoded);
-    //---------Embeding Generated_Data && Forwarding
-    if (decoded) {
-      _userID = decoded.userID ?? _userID;
-      _issID = decoded["acckey"] ?? _issID;
-    } else {
-    }
-  } catch {
-    console.log(`Token Decoded Error = \n`);
-  }
-
+  [_userID,_issID] = await _checkToken(_cookie)
   //--------------Check User for REgisteration using user_id ? or return error
   if (_userID) {
     await profileModel

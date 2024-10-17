@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref, reactive, computed } from "vue";
-import axios from "axios";
-import { useLocalStorage, useSessionStorage } from "@vueuse/core";
 import { toRaw } from "vue";
+import {_getthismonth,_getthisyear} from "src/services/timeQuery";
+import { httpStatusCodes } from "src/composables/constVariables";
 
 import { requestHeader, modalApi, procApiWrap } from "src/services/axiosApi.js";
 const _apiUrl = "/saleitapi";
@@ -11,21 +11,13 @@ var API_URL = process.env.Client_IP_PORT + _suburl; //const API_URL = `${import.
 
 const STORE_NAME = "saleitStore";
 
-const SETTINGS_LOCAL_STORAGE_KEY = "settings";
 
 //--------------------------------------------Helpers
 //--------------------------------------------Helpers
 
 //-------------TimeBase Query_Helper
-import {
-  _getthismonth,
-  _getthisyear,
-  monthDataFilter,
-  yearDataFilter,
-} from "src/services/timeQuery";
 
-import { httpStatusCodes } from "src/composables/constVariables";
-import _localStorage from "src/services/storeService";
+
 //////////////////////////////////////////--------------Axios Wrapper UUUUUUPPPPPPPPPPPP
 export const saleitStore = defineStore(STORE_NAME, () => {
   //state
@@ -51,10 +43,6 @@ export const saleitStore = defineStore(STORE_NAME, () => {
   //getter/ computed
   const getDatas = computed(() => Datas.value);
   const getstatus_Rows = computed(() => status_Rows.value);
-
-  const getyearDatas = computed(() => yearDatas.value);
-  const getmonthDatas = computed(() => monthDatas.value);
-  const getloadingStatus = computed(() => loadingStatus.value);
 
   //action
 
@@ -85,7 +73,6 @@ export const saleitStore = defineStore(STORE_NAME, () => {
     let paramObj = Object.assign({}, syncQuery.value);
     paramObj["timestamp"] = toRaw(await _gettime()); //timestamp create New Request & but could create autonomouse requests(due_ seconds updating ?)
     var requestOptions = {
-      method: "GET",
       headers: await requestHeader("saleit"),
       params: {},
     };
@@ -139,6 +126,8 @@ export const saleitStore = defineStore(STORE_NAME, () => {
   //createDataa
   async function createData(formData = {}, objParam = {}) {
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    console.log('cccccccccreating')
+
     try {
       return await procApiWrap
         .post(_suburl, formData, objParam)
@@ -150,6 +139,8 @@ export const saleitStore = defineStore(STORE_NAME, () => {
           return { status: false, data: e };
         }); //Handler NonFriendly Errors
     } catch (e) {
+    console.log(e)
+
       return { status: false, data: e };
     } //Handler Supper Non_Friendly Errors
   }
